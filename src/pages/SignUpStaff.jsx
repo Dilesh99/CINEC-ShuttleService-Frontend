@@ -162,7 +162,7 @@ const SignUp2 = () => {
           src={St1}
           alt="Cinec Campus"
           sx={{
-            mt:{xs:3, sm:18},
+            mt:{xs:3, sm:18, md:0},
             width: { xs: "100%", md: "380px" },
             height: { xs: "auto", md: "380px" },
             mb: { xs: 2, md: 0 },
