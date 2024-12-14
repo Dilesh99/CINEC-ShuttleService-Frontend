@@ -30,9 +30,9 @@ const SignUp2 = () => {
           alignItems: "center",
           justifyContent: "center",
           bgcolor: "rgba(136, 193, 255, 0.8)",
-          p: 3,
-          minHeight: "100vh",
-          width: "100vw",
+          p: 4,
+          
+          
           
         }}
       >
@@ -69,6 +69,7 @@ const SignUp2 = () => {
               sx={{
                 width: { xs: "220px", md: "380px" },
                 mb: 2,
+                textAlign:'center'
               }}
             >
               <TextField
@@ -107,7 +108,7 @@ const SignUp2 = () => {
             bgcolor: "#002147",
             color: "white",
             fontWeight: 800,
-            width: { xs: "220px", md: "380px" },
+            width: { xs: "220px", md: "300px" },
             height: { xs: "40px", md: "50px" },
             borderRadius: "30px",
             mb: 2,
@@ -161,6 +162,7 @@ const SignUp2 = () => {
           src={St1}
           alt="Cinec Campus"
           sx={{
+            mt:{xs:3, sm:18},
             width: { xs: "100%", md: "380px" },
             height: { xs: "auto", md: "380px" },
             mb: { xs: 2, md: 0 },
