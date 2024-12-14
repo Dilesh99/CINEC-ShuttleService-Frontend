@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
+import {CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
 import BG from "../assets/B1.png"
 import IM2 from "../assets/M2.png"
 import L1 from "../assets/Logo2.png"
@@ -12,15 +12,10 @@ import { Link } from 'react-router-dom';
 
 const SignUp = () => {
   return (
+    <>
+    <CssBaseline /> 
 
-    <Grid2 container size={{xs:10}}  
-    sx={{
-        mt:'-0.52%',
-        marginLeft: { xs: "-1.6%", sm: "-0.98%", md: "-0.51%" },
-        marginRight: { xs: "-1.6%", sm: "-0.97%", md: "-0.51%" }, 
-        mb:'-1%',
-        height:'100%'
-        }}>
+    <Grid2 container size={{xs:10}}  >
         <Box
           component="img"
           src={BG}
@@ -378,7 +373,7 @@ const SignUp = () => {
 
         
   
-    
+    </>
   )
 }
 

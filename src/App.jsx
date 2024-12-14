@@ -56,7 +56,9 @@ function App() {
 
       <BrowserRouter>
         <Routes>
-        <Route index element={<Interaction/>} ></Route>
+        <Route index element={<SignIn/>} ></Route>
+        
+        <Route path='/interaction' element={<Interaction/>} ></Route>
         <Route path='/signup' element={<SignUp/>} ></Route>
         <Route path='/signupM' element={<SignUpM/>} ></Route>
         <Route path='/signup2' element={<SignUp2/>} ></Route>

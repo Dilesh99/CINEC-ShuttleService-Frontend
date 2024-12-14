@@ -1,6 +1,6 @@
-import React from 'react'
-import { Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
-import BG from "../assets/B1.png"
+import React, { useEffect } from 'react'
+import {  CssBaseline,Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
+import BG from "../assets/bg5.jpg"
 import IM1 from "../assets/IM1.png"
 import L1 from "../assets/Logo2.png"
 import LockIcon from '@mui/icons-material/Lock';
@@ -9,26 +9,40 @@ import { Link } from 'react-router-dom';
 
 
 const SignIn = () => {
-  return (
 
-    <Grid2 container size={{xs:10}}  
-    sx={{
-        mt:'-0.52%',
-        marginLeft: { xs: "-1.6%", sm: "-0.98%", md: "-0.51%" },
-        marginRight: { xs: "-1.6%", sm: "-0.97%", md: "-0.51%" }, 
-        mb:'-1%',
-        height:'100%'
-        }}>
+    useEffect(() => {
+        // Disable scrolling on mount
+        document.body.style.overflow = 'hidden';
+        return () => {
+          // Restore scrolling on unmount
+          document.body.style.overflow = '';
+        };
+      }, []);
+
+  return (
+    <>
+     <CssBaseline />
+    <Grid2 container size={{xs:10}}  >
         <Box
           component="img"
           src={BG}
           alt="Background Image"
           sx= {{
                 
-                width:'100%',
-                height: { xs: '543px',sm: '543px', md:'800px', lg:'800px',
-                position:'relative',
-                }}}
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white",
+            minHeight: "100vh",
+            width: "100vw", // Ensures full viewport width
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            margin: 0,
+            padding: 0,
+            overflow: "hidden", // Prevent scrollbars if content overflows
+                }}
         />
         
         <Grid2 container size={{xs:10}} >
@@ -55,7 +69,7 @@ const SignIn = () => {
             sx={{ 
                 mt:'-2%', 
                 width: { xs: '84%', sm: '70%', md: '48%', lg:'48%' },
-                height: { xs: '400px', sm:'425px',  md: '615px', lg:'660px' },
+                height: { xs: '400px', sm:'425px',  md: '615px', lg:'615px' },
                 borderTopLeftRadius:{xs:10, sm:10, md:10, lg:10},
                 borderEndStartRadius:{xs:10, sm:10, md:10, lg:10},
                 borderTopRightRadius: {xs:10, sm:10, md:0, lg:0},  
@@ -100,13 +114,13 @@ const SignIn = () => {
                         mb: { xs: 0.5, sm: 1, md: 1.5, lg: 1.5 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Enter Your Username"
+                <TextField id="outlined-basic" type='text' variant="outlined" placeholder=" Username"
                     InputProps={{startAdornment: (<InputAdornment position="start"><AccountCircleOutlinedIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
-                    '& input': {padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
+                    '& input': {padding: '0 5px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
             </Box>
 
                 <Box //Text field 5
@@ -117,13 +131,13 @@ const SignIn = () => {
                         mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Enter Your Password"
+                <TextField id="outlined-basic" type='password' variant="outlined" placeholder="Password"
                     InputProps={{startAdornment: (<InputAdornment position="start"><LockIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
-                    '& input': {padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
+                    '& input': {padding: '0 5px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
             </Box>
 
 
@@ -175,7 +189,7 @@ const SignIn = () => {
                     
                 }}
             >
-                <Link to="/signup" style={{ textDecoration: 'none'}}><Button Button href=" " variant='text'
+                <Link to="/interaction" style={{ textDecoration: 'none'}}><Button Button href=" " variant='text'
                     sx={{alignItems:'center', justifyContent:'center', justifyItems:'center', display:'flex', 
                         fontSize:{xs:'10px', sm:'15px', md:'16px', lg:'16px'}, 
                         color:'#D4790E', fontWeight: 800,
@@ -198,7 +212,7 @@ const SignIn = () => {
             sx={{ 
                 mt:'-2%', 
                 width:{xs:0, sm:0, md:'36%', lg:'36%'},   
-                height:{xs:0, sm:0, md:'615px', lg:'660px'},
+                height:{xs:0, sm:0, md:'615px', lg:'615px'},
                 borderTopRightRadius:{xs:0, sm:0, md:10, lg:10},
                 borderTopLeftRadius: {xs:0, sm:0, md:0, lg:0},
                 borderEndEndRadius:{xs:10, sm:10, md:10, lg:10},
@@ -259,7 +273,7 @@ const SignIn = () => {
 
         
   
-    
+        </> 
   )
 }
 

@@ -15,6 +15,7 @@ import {
 import {styled } from '@mui/system';
 import { Link } from 'react-router-dom';
 import Layout from "../components/Layout";
+import BackgroundImage from "/src/assets/bg5.jpg";
 
 
 const ContentContainer = styled(Box)(({ theme }) => ({
@@ -246,18 +247,20 @@ const AlarmForm = () => {
 <Layout>
   <Box
     sx={{
-      mt:'-3%',
-      marginLeft: { xs: "-1.6%", sm: "-0.98%", md: "-0.51%" },
-      marginRight: { xs: "-1.6%", sm: "-0.97%", md: "-0.51%" },
-      position: 'relative',
-      minHeight: '100vh',
-      display: 'flex', // Flexbox for centering
-      alignItems: 'center', // Vertical centering
-      justifyContent: 'center', // Horizontal centering
-      backgroundImage: `url('/src/assets/setAlrm.png')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "black",
+      minHeight: "100vh",
+      width: "100vw", // Ensures full viewport width
+      backgroundImage: `url(${BackgroundImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      margin: 0,
+      padding: 0,
+      overflow: "hidden", // Prevent scrollbars if content overflows
     }}
   >
     {/* Centered Container */}
@@ -354,7 +357,10 @@ const AlarmForm = () => {
             <Typography variant="h6" sx={{ width: '40%' }}>
               Active days:
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box sx={{display: 'flex',
+    flexWrap: 'wrap',        // Enable wrapping
+    justifyContent: 'center', // Distribute space between items
+    gap: '10px',  }}>
               {['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'].map((day) => (
                 <DayButton key={day}>{day}</DayButton>
               ))}

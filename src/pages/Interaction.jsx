@@ -1,25 +1,30 @@
 import React from 'react';
-import { Grid2, Typography, Box, Button} from '@mui/material';
+import { CssBaseline,Grid2, Typography, Box, Button} from '@mui/material';
 import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
 import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
 import { Link } from 'react-router-dom';
+import BackgroundImage from "/src/assets/B2.png";
 
 function Interaction() {
   return (
-
+    <>
+    <CssBaseline />
     <Grid2 container
-      sx={{
-        mt:'-1%',
-        mb:'-1%',
-        marginLeft: { xs: "-1.6%", sm: "-0.98%", md: "-0.51%" },
-        marginRight: { xs: "-1.6%", sm: "-0.97%", md: "-0.51%" },
-        height: { xs: '120vh', sm: '120vh', md: '100vh', lg:'101vh' },
-        backgroundImage: `url('src/assets/B2.png')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        display: 'flex',
-        justifyContent: 'center',
-        color: '#ffffff',
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+          minHeight: "100vh",
+          width: "100vw", // Ensures full viewport width
+          backgroundImage: `url(${BackgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          margin: 0,
+          padding: 0,
+          overflow: "hidden", // Prevent scrollbars if content overflows
       }}>
     
       <Box
@@ -96,6 +101,7 @@ function Interaction() {
         }}/>
 
     </Grid2>
+    </>
   );
 }
 
