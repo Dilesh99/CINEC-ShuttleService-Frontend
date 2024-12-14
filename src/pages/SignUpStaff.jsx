@@ -31,6 +31,8 @@ const SignUp2 = () => {
           justifyContent: "center",
           bgcolor: "rgba(136, 193, 255, 0.8)",
           p: 3,
+          minHeight: "100vh",
+          width: "100vw",
           
         }}
       >

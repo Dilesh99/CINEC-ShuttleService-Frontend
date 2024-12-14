@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
 import BG from "../assets/B1.png"
 import IM2 from "../assets/M2.png"
@@ -11,6 +11,14 @@ import { Link } from 'react-router-dom';
 
 
 const SignUp = () => {
+    useEffect(() => {
+        // Disable scrolling on mount
+        document.body.style.overflow = 'hidden';
+        return () => {
+          // Restore scrolling on unmount
+          document.body.style.overflow = '';
+        };
+      }, []);
   return (
     <>
     <CssBaseline /> 
@@ -50,7 +58,7 @@ const SignUp = () => {
             sx={{ 
                 mt:'-1%', 
                 width:{ xs: '84%', sm: '78%', md: '48%', lg:'48%' },   
-                height:{ xs: '500px', sm:'530px',  md: '615px', lg:'660px' },
+                height:{ xs: '500px', sm:'530px',  md: '615px', lg:'630px' },
                 borderTopLeftRadius:{xs:10, sm:10, md:10, lg:10},
                 borderEndStartRadius:{xs:10, sm:10, md:10, lg:10},
                 borderTopRightRadius: {xs:10, sm:10, md:0, lg:0},  
@@ -214,7 +222,7 @@ const SignUp = () => {
             sx={{ 
                 mt:'-1%', 
                 width:{xs:0, sm:0, md:'36%', lg:'36%'},   
-                height:{xs:0, sm:0, md:'615px', lg:'660px'},
+                height:{xs:0, sm:0, md:'615px', lg:'630px'},
                 borderTopRightRadius:10,
                 borderEndEndRadius:10,
                 borderTopLeftRadius: 0, 
