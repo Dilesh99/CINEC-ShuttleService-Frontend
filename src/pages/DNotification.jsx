@@ -35,7 +35,7 @@ function ShuttleService() {
           src="src/assets/W-PNG.png"
           alt="CINEC Logo"
           sx={{
-            height: { xs: '30px', sm: '40px', md: '40px', lg: '40px' },
+            height: { xs: '35px', sm: '40px', md: '40px', lg: '40px' },
             
           }}
         />
@@ -45,8 +45,9 @@ function ShuttleService() {
           variant="h5"
           sx={{
             textAlign: 'center',
-            fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2rem', lg: '2.5rem' },
+            fontSize: { xs: '16px', sm: '22px', md: '23px', lg: '2.5rem' },
             color: '#ffffff',
+            mt:{ xs: '14px', sm: '2px', md: '0px', lg: '0px' },
             mb: 2,
           }}
         >
@@ -67,7 +68,8 @@ function ShuttleService() {
               <CardContent
                 sx={{
                   borderTopLeftRadius:10,
-                  borderBottomLeftRadius:10,
+                  borderBottomLeftRadius:{ xs: 0, sm: 0, md: 10, lg:10 },
+                  borderTopRightRadius:{ xs: 10, sm: 10, md: 0, lg:0 },
                   backgroundColor: '#022E61',
                   color: '#fff',
                   flex: 0.8,
@@ -75,9 +77,9 @@ function ShuttleService() {
                   textAlign: { xs: 'center', md: 'left' },
                 }}
               >
-                <Typography variant="h5" gutterBottom>
+                <Typography variant="h5" gutterBottom sx={{fontSize:{ xs: '16px', sm: '18px', md: '18px', lg:'18px' },}}>
                   <LocationOnIcon /> Turn on your location
-                </Typography>
+                </Typography><br/>
 
                 <Box display="flex" justifyContent="center" gap={2} mb={3}>
                   <Button href='/shuttleService2'
@@ -131,11 +133,11 @@ function ShuttleService() {
               p: 4,
               borderTopRightRadius:10,
               borderBottomRightRadius:10, }}>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h6" gutterBottom sx={{xs:'12px'}}>
                   <EditIcon /> Add a note
                 </Typography>
 
-                <Box mb={3}>
+                <Box mb={3} >
                   {[
                      'The shuttle will depart from Malabe in 10 mins',
                      'Just started the journey',
@@ -153,7 +155,7 @@ function ShuttleService() {
                           onChange={() => handleCheckboxChange(reason)}
                         />
                       }
-                      label={reason}
+                      label={reason} 
                     />
                   ))}
                 </Box>

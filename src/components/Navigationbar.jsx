@@ -26,16 +26,20 @@ const settings = [
   { name: 'Logout', path: '/SignIn' }
 ];
 
-export default function Navigationbar() {
+const Navigationbar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-
+  
   const location = useLocation(); // Hook to access current path
 
   const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
   const handleCloseNavMenu = () => setAnchorElNav(null);
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
   const handleCloseUserMenu = () => setAnchorElUser(null);
+
+  // Example logic to disable specific buttons
+  const isBookingDisabled = true; // Set to true to disable the "BOOKING" button
+  const isPaymentDisabled = true; // Set to true to disable the "PAYMENT" button
 
   return (
     <AppBar position="fixed" sx={{ backgroundColor: 'primary.light', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -69,6 +73,7 @@ export default function Navigationbar() {
                   component={Link}
                   to={page.path}
                   onClick={handleCloseNavMenu}
+                  disabled={page.name === 'BOOKING' && isBookingDisabled || page.name === 'PAYMENT' && isPaymentDisabled}
                 >
                   <Typography
                     textAlign="center"
@@ -85,20 +90,6 @@ export default function Navigationbar() {
                 </MenuItem>
               ))}
             </Menu>
-          </Box>
-
-          {/* Logo */}
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' } }}>
-            <Link to="#" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-              <img
-                src="/src/assets/Logo.jpg"
-                alt="Logo"
-                style={{
-                  width: 50,
-                  height: 'auto'
-                }}
-              />
-            </Link>
           </Box>
 
           {/* Desktop Menu */}
@@ -121,6 +112,10 @@ export default function Navigationbar() {
                       ? '2px solid #F5A623'
                       : 'none', // Underline for active page or root for HOME
                 }}
+                disabled={
+                  (page.name === 'BOOKING' && isBookingDisabled) ||
+                  (page.name === 'PAYMENT' && isPaymentDisabled)
+                } // Disable condition
               >
                 {page.name}
               </Button>
@@ -161,4 +156,7 @@ export default function Navigationbar() {
       </Container>
     </AppBar>
   );
-}
+};
+
+export default Navigationbar;
+

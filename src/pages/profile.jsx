@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Avatar, Box, Button, TextField, Typography, IconButton } from '@mui/material';
+import { CssBaseline,Avatar, Box, Button, TextField, Typography, IconButton } from '@mui/material';
 import Layout from "../components/layout";
 import EditIcon from '@mui/icons-material/Edit';
+import InnerBackgroundImage from "/src/assets/Profile-bgimg.jpg";
 
 const ProfileCard = () => {
   const [formData, setFormData] = useState({
@@ -18,23 +19,28 @@ const ProfileCard = () => {
   return (
     <>
       <Layout>
+      <CssBaseline />
       <Box
         sx={{
-         // marginTop: { xs: '11%', sm: '7.5%', md: '4%' },
-         marginLeft: { xs: "-1.6%", sm: "-0.98%", md: "-0.51%" },
-         marginRight: { xs: "-1.6%", sm: "-0.97%", md: "-0.51%" },
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          backgroundImage: `url("/src/assets/Profile-bgimg.jpg")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          padding: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+          minHeight: "100vh",
+          width: "100vw", // Ensures full viewport width
+          backgroundImage: `url(${InnerBackgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          margin: 0,
+          padding: 0,
+          overflow: "hidden", // Prevent scrollbars if content overflows
         }}
       >
         <Box
           sx={{
+            marginTop: { xs: "-10%", sm: "13%", md: "8%", lg: "4%" },
             width: { xs: '90%', sm: '80%', md: '60%', lg: '70%' },
             borderRadius: 5,
             position: 'relative',

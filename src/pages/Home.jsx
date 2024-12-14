@@ -1,9 +1,9 @@
-import { Box, Typography, Grid, Card, CardContent, Icon } from "@mui/material";
+import { CssBaseline, Box, Typography, Grid, Card, CardContent, Icon } from "@mui/material";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import BackgroundImage from "/src/assets/Home-bgimg.jpg";
 import InnerBackgroundImage from "/src/assets/home img.jpg";
-import Layout from "../components/Layout";
 import { useNavigate } from "react-router-dom";
+import Layout from "../components/Layout";
 
 const routes = [
   { name: "Gampaha1", route: "Route A" },
@@ -22,22 +22,25 @@ function RouteSelection() {
   };
 
   return (
+    <>
     <Layout>
+      <CssBaseline /> {/* Resets default margins and paddings globally */}
       <Box
         sx={{
-          marginLeft: { xs: "-1.6%", sm: "-0.98%", md: "-0.51%" },
-          marginRight: { xs: "-1.6%", sm: "-0.97%", md: "-0.51%" },
-          display: "fixed",
+          display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          color: "white",
-          minHeight: "90vh",
           justifyContent: "center",
-          padding: 2,
+          color: "white",
+          minHeight: "100vh",
+          width: "100vw", // Ensures full viewport width
           backgroundImage: `url(${BackgroundImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
+          margin: 0,
+          padding: 0,
+          overflow: "hidden", // Prevent scrollbars if content overflows
         }}
       >
         <Box
@@ -147,7 +150,8 @@ function RouteSelection() {
           </Box>
         </Box>
       </Box>
-    </Layout>
+      </Layout>
+    </>
   );
 }
 
