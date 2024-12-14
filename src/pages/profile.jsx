@@ -149,7 +149,7 @@ const ProfileCard = () => {
                   fontSize: { xs: '0.875rem', sm: '1rem' },
                 }}
               >
-                Edit
+                Save
               </Button>
             </Box>
           </Box>

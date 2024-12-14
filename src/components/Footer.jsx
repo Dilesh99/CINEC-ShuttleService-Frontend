@@ -23,6 +23,8 @@ const Footer = () => {
     };
   }, []); // Run effect once on mount and cleanup on unmount
 
+  
+
   return (
     <>
       <CssBaseline />
@@ -31,7 +33,7 @@ const Footer = () => {
         sx={{
           bgcolor: '#181818',
           color: '#ffffff',
-          py: 4,
+          py: 2,
           px: { xs: 2, sm: 8, md: 10, lg: 15 },
           margin: 0,
           overflow: "hidden",
@@ -84,7 +86,7 @@ const Footer = () => {
               sx={{
                 fontWeight: 700,
                 fontSize: { xs: '14px', sm: '14px' },
-                mb: 3,
+                mb: 2,
                 textAlign: 'center',
               }}
             >
@@ -98,34 +100,36 @@ const Footer = () => {
                   color: '#ffffff',
                   fontSize: { xs: '12px', sm: '12px' },
                   textDecoration: 'none',
-                  mb: 2,
+                  mb: 1,
                   '&:hover': { color: '#D4790E' },
                 }}
               >
                 HOME
               </Link>
               <Link
-                href="/booking"
+                href="#"
                 sx={{
                   display: 'block',
                   color: '#ffffff',
                   fontSize: { xs: '12px', sm: '12px' },
                   textDecoration: 'none',
-                  mb: 2,
-                  '&:hover': { color: '#D4790E' },
+                  mb: 1,
+                  cursor: 'not-allowed', // Disable pointer interaction
+                  opacity: 0.5, // Reduced visibility
                 }}
               >
                 BOOKING
               </Link>
               <Link
-                href="/payment"
+                href="#"
                 sx={{
                   display: 'block',
                   color: '#ffffff',
                   fontSize: { xs: '12px', sm: '12px' },
                   textDecoration: 'none',
-                  mb: 2,
-                  '&:hover': { color: '#D4790E' },
+                  mb: 1,
+                  cursor: 'not-allowed',
+                  opacity: 0.5,
                 }}
               >
                 PAYMENT
@@ -137,7 +141,7 @@ const Footer = () => {
                   color: '#ffffff',
                   fontSize: { xs: '12px', sm: '12px' },
                   textDecoration: 'none',
-                  mb: 1.5,
+                  mb: 1,
                   '&:hover': { color: '#D4790E' },
                 }}
               >
@@ -153,14 +157,14 @@ const Footer = () => {
               sx={{
                 fontWeight: 700,
                 fontSize: { xs: '14px', sm: '14px' },
-                mb: 3,
+                mb: 2,
                 textAlign: 'center',
               }}
             >
               CONTACT US
             </Typography>
 
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
               {/* Row 1: Address */}
               <Grid item xs={6}>
                 <Typography variant="body2" sx={{ fontSize: { xs: '12px', sm: '13px' }, fontWeight: 'bold', textAlign:'right' }}>
@@ -240,8 +244,8 @@ const Footer = () => {
         <Box
           sx={{
             borderTop: '1px solid #ffffff',
-            mt: 6,
-            pt: 4,
+            mt: 4,
+            pt: 2,
             textAlign: 'center',
           }}
         >

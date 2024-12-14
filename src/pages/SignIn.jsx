@@ -56,10 +56,10 @@ const SignIn = () => {
                     sx={{
                         
                         width: {xs:'190px', sm:'200px', md:'0px', lg:'0px'},  
-                        height: {xs:'60px', sm:'60px', md:'0px', lg:'0px'},
+                        height: {xs:'60px', sm:'70px', md:'0px', lg:'0px'},
                         position: 'absolute',  
-                        top: {xs:'30px', sm:'25px', md:'0px', lg:'0px'},
-                        left: {xs:'22%', sm:'37%', md:'0px', lg:'0px'},
+                        top: {xs:'150px', sm:'150px', md:'0px', lg:'0px'},
+                        left: {xs:'30%', sm:'37%', md:'0px', lg:'0px'},
                                     
                         }}
                  />
@@ -76,12 +76,14 @@ const SignIn = () => {
                 borderEndEndRadius: {xs:10, sm:10, md:0, lg:0},
                 bgcolor: '#ffffff', 
                 flexDirection: 'column',  
-                marginLeft: '8%',  
+                marginLeft: { xs: '0%', sm: '0%', md: '8%', lg:'8%' },  
                 alignItems: 'flex-start',  
                 justifyContent: 'flex-start',  
                 position: 'absolute',
-                left:{ xs:0, sm: '7%', md: 0, lg:0 },
-                top: { xs: '118px', sm: '100px', md: '10%', lg:'10%' }, }}> 
+                left:{ xs:'50%', sm: '50%', md: 0, lg:0 },
+                top: {  xs: '50%', sm: '50%', md: '10%', lg:'10%' },
+                transform: { xs: 'translate(-50%, -50%)', sm: 'translate(-50%, -50%)', md: 'none', lg: 'none' }, // Center for smaller screens
+            }}> 
 
             <Typography 
                 sx={{color: { xs: '#D4790E', sm: '#D4790E', md: '#D4790E', lg:'#002147FF' }, fontFamily:'inter', textAlign:'center',
@@ -114,13 +116,13 @@ const SignIn = () => {
                         mb: { xs: 0.5, sm: 1, md: 1.5, lg: 1.5 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" type='text' variant="outlined" placeholder=" Username"
+                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Username"
                     InputProps={{startAdornment: (<InputAdornment position="start"><AccountCircleOutlinedIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
-                    '& input': {padding: '0 5px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
+                    '& input': {padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
             </Box>
 
                 <Box //Text field 5
@@ -131,13 +133,13 @@ const SignIn = () => {
                         mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" type='password' variant="outlined" placeholder="Password"
+                <TextField id="outlined-basic" label="" variant="outlined" type='password' placeholder="Password"
                     InputProps={{startAdornment: (<InputAdornment position="start"><LockIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
-                    '& input': {padding: '0 5px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
+                    '& input': {padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
             </Box>
 
 

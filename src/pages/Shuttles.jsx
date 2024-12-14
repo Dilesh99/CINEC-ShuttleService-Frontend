@@ -88,6 +88,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ padding: 5 }}>
         <Button
+        href='/admin'
           variant="contained"
           fullWidth
           sx={{

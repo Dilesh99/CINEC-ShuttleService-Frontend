@@ -1,7 +1,7 @@
 
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from 'react';
-import { Button, Typography, Box, Checkbox, FormControlLabel, TextField, Paper } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { CssBaseline, Button, Typography, Box, Checkbox, FormControlLabel, TextField, Paper } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -14,14 +14,16 @@ function ShuttleService2() {
     );
   };
 
+
   return (
+    <>
+    <CssBaseline />
+    
     <Box display="flex" justifyContent="center" 
     sx={{
       backgroundColor: '#47758C',
       p: { xs: 2, sm: 4, md: 7.4 },
-      mt:'-2%',
-      marginLeft: { xs: "-1.6%", sm: "-0.98%", md: "-0.51%" },
-      marginRight: { xs: "-1.6%", sm: "-0.97%", md: "-0.51%" },
+      mt:'-3%',
       mb:'-10%',
       }}>
       <Box sx={{ width: '100%', maxWidth: '1440px' }}>
@@ -43,7 +45,7 @@ function ShuttleService2() {
             textAlign: 'center',
             fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2rem', lg: '2.5rem' },
             color: '#ffffff',
-            mb: 2,
+            mb: 1.5,
           }}
         >
           SHUTTLE - GAMPAHA 1
@@ -174,6 +176,7 @@ function ShuttleService2() {
         </Box>
       </Box>
     </Box>
+    </>
   );
 }
 

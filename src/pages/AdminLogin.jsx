@@ -1,21 +1,30 @@
 import React from 'react'
-import { Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
+import {CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
 import LockIcon from '@mui/icons-material/Lock';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 
 
 const AdminLogin = () => {
   return (
-
+    <>
+    <CssBaseline />
     <Grid2 container size={{xs:12}}  sx={{width:'100%', height:'100%'}}>
         <Box 
           sx= {{ 
-                mt:'-0.52%',
-                marginLeft: { xs: "-1.6%", sm: "-0.98%", md: "-0.51%" },
-                marginRight: { xs: "-1.6%", sm: "-0.97%", md: "-0.51%" },
-                width:'100%', 
-                height: { xs: '540px',sm: '540px', md:'100%', lg:'100%'},
-                position:'absolute', bgcolor: '#1E67BB' , }}
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white",
+            minHeight: "100vh",
+            width: "100vw", // Ensures full viewport width
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            margin: 0,
+            padding: 0,
+            overflow: "hidden", // Prevent scrollbars if content overflow
+            bgcolor: '#1E67BB' , }}
         />        
        
    
@@ -29,8 +38,13 @@ const AdminLogin = () => {
                 width: { xs: '84%', sm: '60%', md: '45%', lg:'40%' },
                 height: { xs: '400px', sm:'450px',  md: '450px', lg:'480px' },
                 borderRadius:{xs:10, sm:10, md:10, lg:10},
-                bgcolor: '#ffffff', flexDirection: 'column', marginLeft: { xs: '8%', sm: '19%', md: '10%', lg:'12%' }, alignItems: 'center', justifyContent: 'center',  position: 'absolute', left:{ xs: 0, sm:'8px',  md: '190px', lg:'285px' },
-                top: { xs: '50px', sm: '50px', md: '8%', lg:'12%' }, }}> 
+                bgcolor: '#ffffff', flexDirection: 'column',   position: 'absolute', alignItems: 'center',  
+                justifyContent: 'center',  
+                
+                left:{ xs:'50%', sm: '50%', md: '50%', lg:'50%'},
+                top: {  xs: '50%', sm: '50%', md: '50%', lg:'50%' },
+                transform: { xs: 'translate(-50%, -50%)', sm: 'translate(-50%, -50%)', md: 'translate(-50%, -50%)', lg: 'translate(-50%, -50%)'},}}> 
+                
 
             <Typography 
                 sx={{color: { xs: '#D4790E', sm: '#D4790E', md: '#D4790E', lg:'#002147FF' }, fontFamily:'inter', textAlign:'center',
@@ -66,7 +80,7 @@ const AdminLogin = () => {
                         mb: { xs: 0.5, sm: 1, md: 1.5, lg: 1.5 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Enter Your Username"
+                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Username"
                     InputProps={{startAdornment: (<InputAdornment position="start"><AccountCircleOutlinedIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
@@ -83,7 +97,7 @@ const AdminLogin = () => {
                         mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Enter Your Password"
+                <TextField id="outlined-basic" label="" variant="outlined" type='password' placeholder="Password"
                     InputProps={{startAdornment: (<InputAdornment position="start"><LockIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
@@ -119,7 +133,7 @@ const AdminLogin = () => {
 
         </Grid2>
 
-        
+        </>
   
     
   )

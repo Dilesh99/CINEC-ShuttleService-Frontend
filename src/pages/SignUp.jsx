@@ -1,24 +1,19 @@
 import React, { useEffect } from 'react'
 import {CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
-import BG from "../assets/B1.png"
+import BG from "../assets/bg5.jpg"
 import IM2 from "../assets/M2.png"
 import L1 from "../assets/Logo2.png"
 import LockIcon from '@mui/icons-material/Lock';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { Link } from 'react-router-dom';
 
 
 const SignUp = () => {
-    useEffect(() => {
-        // Disable scrolling on mount
-        document.body.style.overflow = 'hidden';
-        return () => {
-          // Restore scrolling on unmount
-          document.body.style.overflow = '';
-        };
-      }, []);
+   
+
   return (
     <>
     <CssBaseline /> 
@@ -30,8 +25,8 @@ const SignUp = () => {
           alt="Background Image"
           sx= {{
                 
-                width:'100%', 
-                height:{ xs: '700px',sm: '800px', md:'800px', lg:'800px'},}}
+            width: "100vw",
+                height:{ xs: '1000px',sm: '1100px', md:'701px', lg:'701px'},}}
         />
         
         <Grid2 container size={{xs:10}} >
@@ -58,11 +53,11 @@ const SignUp = () => {
             sx={{ 
                 mt:'-1%', 
                 width:{ xs: '84%', sm: '78%', md: '48%', lg:'48%' },   
-                height:{ xs: '500px', sm:'530px',  md: '615px', lg:'630px' },
+                height:{ xs: '550px', sm:'530px',  md: '615px', lg:'630px' },
                 borderTopLeftRadius:{xs:10, sm:10, md:10, lg:10},
-                borderEndStartRadius:{xs:10, sm:10, md:10, lg:10},
+                borderEndStartRadius:{xs:0, sm:0, md:10, lg:10},
                 borderTopRightRadius: {xs:10, sm:10, md:0, lg:0},  
-                borderEndEndRadius: {xs:10, sm:10, md:0, lg:0},  
+                borderEndEndRadius: {xs:0, sm:0, md:0, lg:0},  
                 bgcolor: '#ffffff', 
                 flexDirection: 'column',  
                 marginLeft: { xs: '8%', sm: '11%', md: '8%', lg:'8%' },  
@@ -83,7 +78,7 @@ const SignUp = () => {
 
             <Typography sx={{color:'#002147FF', fontFamily:'inter', textAlign:'center',
                 fontSize:{xs:'18px', sm:'30px', md:'30px', lg:'32px'},
-                mb:1, fontFamily:'inter', fontWeight:'800'}}>
+                mb:0, fontFamily:'inter', fontWeight:'800'}}>
                     CINEC SHUTTLE SERVICES
             </Typography>
 
@@ -93,16 +88,16 @@ const SignUp = () => {
                     sx={{'& > :not(style)': {m: { xs: 0, sm: 1, md: 1, lg: 1 },
                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                         mt: { xs: 1, sm: 1, md: 1, lg: 2 },
-                        mb: { xs: 0.5, sm: 1, md: 1.5, lg: 1.5 },
+                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Enter Your Username"
+                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Username"
                     InputProps={{startAdornment: (<InputAdornment position="start"><AccountCircleOutlinedIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
-                    '& input': {padding: '0 8px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
+                    '& input': {padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
             </Box>
 
 
@@ -111,16 +106,16 @@ const SignUp = () => {
                     sx={{'& > :not(style)': {m: { xs: 0, sm: 1, md: 1, lg: 1 },
                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                         mt: { xs: 1, sm: 1, md: 1, lg: 1},
-                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
+                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Enter Your Student ID"
+                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Student ID"
                     InputProps={{startAdornment: (<InputAdornment position="start"><BadgeOutlinedIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
-                    '& input': {padding: '0 8px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
+                    '& input': {padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
             </Box>
 
             <Box //Text field 3
@@ -128,16 +123,16 @@ const SignUp = () => {
                     sx={{'& > :not(style)': {m: { xs: 0, sm: 1, md: 1, lg: 1 },
                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                         mt: { xs: 1, sm: 1, md: 1, lg: 1 },
-                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
+                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Enter Your Email"
+                <TextField id="outlined-basic" label="" type='email' variant="outlined" placeholder="Email"
                     InputProps={{startAdornment: (<InputAdornment position="start"><EmailOutlinedIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '45px', md: '40px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
-                    '& input': {padding: '0 8px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
+                    '& input': {padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
             </Box>
             
             <Box //Text field 4
@@ -145,16 +140,16 @@ const SignUp = () => {
                     sx={{'& > :not(style)': {m: { xs: 0, sm: 1, md: 1, lg: 1 },
                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                         mt: { xs: 1, sm: 1, md: 1, lg: 1},
-                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
+                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Enter Your Phone No."
+                <TextField id="outlined-basic" label="" type="tel" variant="outlined" placeholder="Phone No."
                     InputProps={{startAdornment: (<InputAdornment position="start"><BadgeOutlinedIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
-                    '& input': {padding: '0 8px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
+                    '& input': {padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
             </Box>
 
             <Box //Text field 5
@@ -162,22 +157,38 @@ const SignUp = () => {
                     sx={{'& > :not(style)': {m: { xs: 0, sm: 1, md: 1, lg: 1 },
                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                         mt: { xs: 1, sm: 1, md: 1, lg: 1 },
-                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
+                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Enter Your Password"
+                <TextField id="outlined-basic" label="" type="password" variant="outlined" placeholder="Password"
                     InputProps={{startAdornment: (<InputAdornment position="start"><LockIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
-                    '& input': {padding: '0 8px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
+                    '& input': {padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
             </Box>
             
+            <Box //Text field 6
+                    component="form"
+                    sx={{'& > :not(style)': {m: { xs: 0, sm: 1, md: 1, lg: 1 },
+                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                        mt: { xs: 1, sm: 1, md: 1, lg: 1 },
+                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
+                        },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
+                    }}noValidate autoComplete="off">
+                <TextField id="outlined-basic" label="" type="password" variant="outlined" placeholder="Conform Password"
+                    InputProps={{startAdornment: (<InputAdornment position="start"><AddPhotoAlternateIcon/></InputAdornment>),}}
+                    sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                    '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
+                        '& fieldset': {borderColor: '#000000',},
+                        '&:hover fieldset': {borderColor: '#002147FF', },},
+                    '& input': {padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%',},}}/>
+            </Box>
 
             <Box  //Box of Button that used to center the box
                 sx={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
-              <Link to="/signupM" style={{ textDecoration: 'none'}}> <Button href=" " type="submit" variant="contained"
+              <Link to="#" style={{ textDecoration: 'none'}}> <Button href=" " type="submit" variant="contained"
                         sx={{alignItems:'center', justifyContent:'center', justifyItems:'center', display:'flex', fontWeight: 800, 
                             bgcolor:'#002147',  padding:'5px',
                             fontSize:{xs:'14px', sm:'18px', md:'16px', lg:'18px'},
@@ -193,7 +204,7 @@ const SignUp = () => {
                 </Button></Link>
             </Box>                
 
-
+        <Box sx={{display:'flex', justifyContent:'center'}}>
             <Typography sx={{color: '#002147FF', fontFamily:'inter', textAlign:'center',
                 fontSize:{xs:'10px', sm:'12px', md:'14px', lg:'16px'},
                 mt:0, mb:0, fontFamily:'inter', fontWeight: 300,
@@ -205,13 +216,16 @@ const SignUp = () => {
             <Box  //Box of Button that used to center the box
                 sx={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
                 <Link to="/signin" style={{ textDecoration: 'none'}}><Button href=" " variant='text'
-                    sx={{alignItems:'center', justifyContent:'center', justifyItems:'center', display:'flex', 
+                    sx={{
+                        
+                        alignItems:'center', justifyContent:'center', justifyItems:'center', 
                         fontSize:{xs:'10px', sm:'12px', md:'14px', lg:'16px'}, 
-                        color:'#D4790E', fontWeight: 800, mt:0,
+                        color:'#D4790E', fontWeight: 800, mt:{xs:'-1.5vh',sm:'-1.1vh'},
                         '&:hover': { color: '#002147', },}}>
                         Sign In
                 </Button></Link>
             </Box>
+        </Box>
 </Box>
             
                 
@@ -221,25 +235,27 @@ const SignUp = () => {
             <Box  container size={{xs:4}} 
             sx={{ 
                 mt:'-1%', 
-                width:{xs:0, sm:0, md:'36%', lg:'36%'},   
-                height:{xs:0, sm:0, md:'615px', lg:'630px'},
-                borderTopRightRadius:10,
-                borderEndEndRadius:10,
+                width:{xs:'84%', sm:'600px', md:'36%', lg:'36%'},   
+                height:{xs:'300px', sm:'300px', md:'615px', lg:'630px'},
+                borderTopRightRadius:{xs:0, sm:0, md:10, lg:10},
+                borderEndEndRadius:{xs:10, sm:10, md:10, lg:10},
+                borderEndStartRadius:{xs:10, sm:10, md:10, lg:10},
                 borderTopLeftRadius: 0, 
                 bgcolor: '#000000', 
                 flexDirection: 'column',  
-                marginRight: '8%',  
+                marginRight: {xs:'8%',sm:'84.5px',md:'8%',lg:'8%'
+                },  
                 alignItems: 'flex-start',  
                 justifyContent: 'flex-start',  
                 position: 'absolute',
                 right: 0,
-                top: {xs:0, sm:0, md:'8%', lg:'8%'}}}>
+                top: {xs:'585px', sm:'670px', md:'8%', lg:'8%'}}}>
 
                 <Box 
                 sx={{ 
                     
-                    width: {xs:0, sm:0, md:'100%', lg:'100%'},  
-                    height: {xs:0, sm:0, md:'100%', lg:'100%'}, 
+                    width: {xs:'100%', sm:'100%', md:'100%', lg:'100%'},  
+                    height: {xs:'100%', sm:'100%', md:'100%', lg:'100%'}, 
                     position: 'relative'  //  absolute positioning
                 }}
                     >
@@ -280,8 +296,8 @@ const SignUp = () => {
                                 }}
                             >
                             
-                            <Typography sx={{ fontSize: {xs:0, sm:0, md:'22px', lg:'24px'}, fontWeight: 600, color:'#ffffff', mt:{xs:0, sm:0, md:8, lg:18} }}>ACCOUNT</Typography>
-                            <Typography sx={{ fontSize: {xs:0, sm:0, md:'22px', lg:'24px'}, fontWeight: 600, color:'#ffffff', mb: 1}}>VERIFICATION</Typography>
+                            <Typography sx={{ fontSize: {xs:'14px', sm:'15px', md:'22px', lg:'24px'}, fontWeight: 600, color:'#ffffff', mt:{xs:0, sm:0, md:8, lg:18} }}>ACCOUNT</Typography>
+                            <Typography sx={{ fontSize: {xs:'14px', sm:'15px', md:'22px', lg:'24px'}, fontWeight: 600, color:'#ffffff', mb: 1}}>VERIFICATION</Typography>
 
                             <Box
                                 sx={{
@@ -303,12 +319,12 @@ const SignUp = () => {
                                     
                                     }}
                                     sx={{
-                                    width: {xs:0, sm:0, md:'180px', lg:'200px'},
+                                    width: {xs:'140px', sm:'140px', md:'180px', lg:'200px'},
                                     textAlign: 'center',
-                                    border:{xs:0, sm:0, md:'2px solid #D4790E', lg:'2px solid #D4790E'},
-                                    borderRadius:{xs:0, sm:0, md:'10px', lg:'10px'},
-                                    mt:2,
-                                    mb:4,
+                                    border:{xs:'1px solid #D4790E', sm:'1px solid #D4790E', md:'2px solid #D4790E', lg:'2px solid #D4790E'},
+                                    borderRadius:{xs:'8px', sm:'8px', md:'10px', lg:'10px'},
+                                    mt:{xs:1, sm:1, md:2, lg:2},
+                                    mb:{xs:2, sm:2, md:4, lg:4},
                                     '& input': {
                                         textAlign: 'center',  // Center-align text
                                         color:'#ffffff'
@@ -326,11 +342,11 @@ const SignUp = () => {
                                 fontWeight: 800,
                                 bgcolor: '#D4790E',
                                 color: '##002147',
-                                padding: {xs:0, sm:0, md:'5px', lg:'5px'},
-                                fontSize: {xs:0, sm:0, md:'16px', lg:'17px'},
-                                width: {xs:0, sm:0, md:'180px', lg:'190px'},
-                                height: {xs:0, sm:0, md:'40px', lg:'40px'},
-                                borderRadius: {xs:0, sm:0, md:'30px', lg:'30px'},
+                                padding: {xs:'3px', sm:'4px', md:'5px', lg:'5px'},
+                                fontSize: {xs:'12px', sm:'13px', md:'16px', lg:'17px'},
+                                width: {xs:'150px', sm:'150px', md:'180px', lg:'190px'},
+                                height: {xs:'35px', sm:'35px', md:'40px', lg:'40px'},
+                                borderRadius: {xs:'28px', sm:'28px', md:'30px', lg:'30px'},
                                 mb:0,
                                 '&:hover': { bgcolor: '#ffffff', color:'#000000'},
                                 }}
@@ -343,8 +359,8 @@ const SignUp = () => {
                             sx={{
                                 color: '#FFFFFF',
                                 fontFamily: 'inter',
-                                fontSize: {xs:0, sm:0, md:'4', lg:'4'},
-                                mt: 2,
+                                fontSize: {xs:'3', sm:'3', md:'4', lg:'4'},
+                                mt: {xs:1, sm:1, md:2, lg:2},
                                 fontWeight: 300,
                             }}
                             >
@@ -357,7 +373,7 @@ const SignUp = () => {
                             <Button href=" " 
                                 variant="text"
                                 sx={{
-                                fontSize: {xs:0, sm:0, md:'14px', lg:'16px'},
+                                fontSize: {xs:'12px', sm:'13px', md:'14px', lg:'16px'},
                                 color: '#D4790E',
                                 fontWeight: 800,
                                 '&:hover': { color: '#ffffff' },
