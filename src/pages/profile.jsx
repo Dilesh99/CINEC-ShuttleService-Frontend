@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CssBaseline,Avatar, Box, Button, TextField, Typography, IconButton } from '@mui/material';
 import Layout from "../components/layout";
 import EditIcon from '@mui/icons-material/Edit';
-import InnerBackgroundImage from "/src/assets/Profile-bgimg.jpg";
+import InnerBackgroundImage from "/src/assets/bg5.jpg";
 
 const ProfileCard = () => {
   const [formData, setFormData] = useState({

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Button, Container, Grid, Typography } from '@mui/material';
 import Layout from "../components/Layout";
-import BackgroundImage from "/src/assets/schedule.png";
+import BackgroundImage from "/src/assets/bg5.jpg";
 import InnerBackgroundImage from "/src/assets/image 6.png";
 
 const Schedule = () => {
@@ -154,6 +154,7 @@ const Schedule = () => {
               sx={{
                 backgroundColor: '#ffab00',
                 fontWeight: 'bold',
+                borderRadius:5,
                 padding: { xs: '8px 16px', sm: '10px 24px' },
               }}
             >

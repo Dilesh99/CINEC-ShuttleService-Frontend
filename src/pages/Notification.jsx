@@ -7,7 +7,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Layout from "../components/Layout";
-import InnerBackgroundImage from "/src/assets/notificationBG.png";
+import InnerBackgroundImage from "/src/assets/bg5.jpg";
 
 export default function Notification() {
   return (

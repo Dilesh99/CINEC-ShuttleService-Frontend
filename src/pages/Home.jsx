@@ -1,6 +1,6 @@
 import { CssBaseline, Box, Typography, Grid, Card, CardContent, Icon } from "@mui/material";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
-import BackgroundImage from "/src/assets/Home-bgimg.jpg";
+import BackgroundImage from "/src/assets/bg5.jpg";
 import InnerBackgroundImage from "/src/assets/home img.jpg";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";

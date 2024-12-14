@@ -6,7 +6,7 @@ import { Typography } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import Layout from "../components/Layout";
 import { Link } from 'react-router-dom';
-import BackgroundImage from "/src/assets/locationBG.png";
+import BackgroundImage from "/src/assets/bg5.jpg";
 
 export default function Location() {
   // Get the query parameter 'route' from the URL
