@@ -38,6 +38,7 @@ const Footer = () => {
           width: "100vw",
           mt: 0,
           fontFamily: 'Arial, sans-serif',
+        
         }}
       >
         <Grid container spacing={4}>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Box, Button, Container, Grid, Typography } from '@mui/material';
 import Layout from "../components/Layout";
+import BackgroundImage from "/src/assets/schedule.png";
+import InnerBackgroundImage from "/src/assets/image 6.png";
 
 const Schedule = () => {
   const scheduleData = [
@@ -27,43 +29,48 @@ const Schedule = () => {
     <Layout>
       <Box
         sx={{
-          marginLeft: { xs: "-1.6%", sm: "-0.98%", md: "-0.51%" },
-          marginRight: { xs: "-1.6%", sm: "-0.97%", md: "-0.51%" },
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          color: 'white',
-          minHeight: '100vh',
-          justifyContent: 'center',
-          padding: 2,
-          backgroundImage: `url(/src/assets/schedule.png)`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+          minHeight: "100vh",
+          width: "100vw", // Ensures full viewport width
+          backgroundImage: `url(${BackgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          margin: 0,
+          padding: 0,
+          overflow: "hidden", // Prevent scrollbars if content overflows
         }}
       >
         {/* Decorative Image */}
         <Box
-          component="img"
-          src="/src/assets/image 6.png"
           sx={{
-            position: 'absolute',
-            top: { xs: '14%', sm: '19%', md: '18%' },
-            height: { xs: '100%', sm: '106%', md: '70%' },
-            width: { xs: '85%', sm: '85%', md: '75%' },
-            objectFit: 'cover',
-            zIndex: 1,
+            backgroundImage: `url(${InnerBackgroundImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            borderRadius: 5,
+            textAlign: "center",
+            width: { xs: "90%", sm: "80%", md: "60%", lg: "70%" },
+            marginTop: { xs: "14%", sm: "13%", md: "8%", lg: "1%" },
+            position: "relative",
           }}
         />
 
         {/* Content Container */}
         <Container
           sx={{
-            marginTop: { xs: '13%', sm: '12%', md: '-1%' },
+           
             bgcolor: 'rgba(0, 30, 71, 0.85)',
-            padding: { xs: 2, sm: 4, md: 6 },
-            borderRadius: 2,
+            padding: { xs: 3, sm: 4, md: 6 },
+            borderRadius: 5,
+            width: { xs: "90%", sm: "80%", md: "60%", lg: "70%" },
+            marginTop: { xs: "14%", sm: "13%", md: "8%", lg: "7%" },
             zIndex: 2,
+            marginBottom: '5%',
           }}
         >
           <Typography
