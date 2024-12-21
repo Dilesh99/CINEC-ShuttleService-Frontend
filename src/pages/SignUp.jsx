@@ -59,6 +59,7 @@ const SignUp = () => {
                 borderTopRightRadius: {xs:10, sm:10, md:0, lg:0},  
                 borderEndEndRadius: {xs:0, sm:0, md:0, lg:0},  
                 bgcolor: '#ffffff', 
+                opacity:0.9, 
                 flexDirection: 'column',  
                 marginLeft: { xs: '8%', sm: '11%', md: '8%', lg:'8%' },  
                 alignItems: 'flex-start',  

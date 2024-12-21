@@ -79,6 +79,7 @@ const SignIn = () => {
                 marginLeft: { xs: '0%', sm: '0%', md: '8%', lg:'8%' },  
                 alignItems: 'flex-start',  
                 justifyContent: 'flex-start',  
+                opacity:0.9,
                 position: 'absolute',
                 left:{ xs:'50%', sm: '50%', md: 0, lg:0 },
                 top: {  xs: '50%', sm: '50%', md: '10%', lg:'10%' },
