@@ -8,6 +8,59 @@ import { Link } from "react-router-dom";
 import St1 from "../assets/St1.jpg"; // Update with your actual image path
 
 const SignUp2 = () => {
+  const [username, setUsername] = useState('');
+    const [staffID, setStaffID] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone_number, setPhone_number] = useState('');
+    const [password, setPassword] = useState('');
+    const [secondPassword, setSecondPassword] = useState('');
+
+    const handleSignUp = async () => {
+        var canSignUp = true;
+        var errors = "";
+        if(staffID.length != 6){
+            errors += "\nMissing characters in ID";
+            canSignUp = false;
+        }
+        if(phone_number.length != 10){
+            errors += "\nInvalid phone number";
+            canSignUp = false;
+        }
+        if(password != secondPassword){
+          errors += "\nPasswords do not match";
+            canSignUp = false;
+        }
+
+        if(canSignUp){
+            const response = await fetch(`http://localhost:8080/sendStaffLogins`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ staffID, password })
+            });
+            if (await response.json()) {
+                window.alert("Staff member already signed up");
+            }
+            else {
+                const response = await fetch(`http://localhost:8080/updateStaff`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ staffID, username, email, phone_number, password })
+                });
+                const data = await response.text();
+                console.log(data);
+            }
+        }
+        else{
+            window.alert(errors);
+        }
+
+    }
+
+  
   return (
     <>
     <CssBaseline />
