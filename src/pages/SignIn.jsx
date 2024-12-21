@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {  CssBaseline,Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
 import BG from "../assets/bg5.jpg"
 import IM1 from "../assets/IM1.png"
@@ -7,9 +7,16 @@ import LockIcon from '@mui/icons-material/Lock';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { Link } from 'react-router-dom';
 
+import { StuMethods } from '../backend/StuMethods';
+import { StaffMethods } from '../backend/StaffMethods'
+import { DriverMethods } from '../backend/DriverMethods'
+
+
 
 const SignIn = () => {
 
+    var person = '';
+    var object = null;
     useEffect(() => {
         // Disable scrolling on mount
         document.body.style.overflow = 'hidden';
@@ -18,6 +25,68 @@ const SignIn = () => {
           document.body.style.overflow = '';
         };
       }, []);
+
+      const [username, setUsername] = useState('');
+      const [password, setPassword] = useState('');
+  
+      const handleSignIn = async () => {
+        console.log("Button clicked");
+        if(username.length == 6){
+            person = 'Staff';
+        }
+        else if(username[0] == 'M' || username[0] == 'F'){
+            person = 'Student';
+        }
+        else if(username[0] == 'D'){
+            person = 'Driver';
+        }
+        else{
+            window.alert('Incorrect login');
+            person = '';
+            return;
+        }
+
+        try {
+            switch(person){
+                case 'Staff':
+                    object = await StaffMethods.getStaff(username);
+                    break;
+                case 'Student':
+                    object = await StuMethods.getStudent(username);
+                    break;
+                case 'Driver':
+                    object = await DriverMethods.getDriver(username);
+                    break;
+                default:
+                    object = null;
+                    break;
+            }
+          } catch (error) {
+            console.error(error);
+          }
+          console.log(object);
+          if (object == null){
+            window.alert("Incorrect ID");
+            return;
+          }
+          if(password == ''){
+            window.alert('Please enter password');
+            return;
+          }
+          if(object.password == password){
+            window.alert('login successful');
+            if(person == "Staff" || person == "Student"){
+                window.location.href = '/home';
+            }
+            else{
+                window.location.href = '/shuttleService';
+            }
+            
+          }
+          else{
+            window.alert('Incorrect password');
+          }
+      };
 
   return (
     <>
@@ -117,8 +186,8 @@ const SignIn = () => {
                         mb: { xs: 0.5, sm: 1, md: 1.5, lg: 1.5 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Username"
-                    InputProps={{startAdornment: (<InputAdornment position="start"><AccountCircleOutlinedIcon /></InputAdornment>),}}
+                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Username" onChange={(e) => setUsername(e.target.value)}
+                    InputProps={{startAdornment: (<InputAdornment position="start" ><AccountCircleOutlinedIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
@@ -134,7 +203,7 @@ const SignIn = () => {
                         mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="" variant="outlined" type='password' placeholder="Password"
+                <TextField id="outlined-basic" label="" variant="outlined" type='password' placeholder="Password" onChange={(e) => setPassword(e.target.value)}
                     InputProps={{startAdornment: (<InputAdornment position="start"><LockIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
@@ -161,7 +230,7 @@ const SignIn = () => {
                     
                 }}
             >
-                <Link to="/home" style={{ textDecoration: 'none'}}><Button href=" "  type="submit" variant="contained"
+                        <Button  type="submit" variant="contained"
                         sx={{alignItems:'center', justifyContent:'center', justifyItems:'center', display:'flex', fontWeight: 800, 
                             bgcolor:'#002147',  padding:'5px',
                             fontSize:{xs:'16px', sm:'18px', md:'18px', lg:'20px'},
@@ -172,9 +241,9 @@ const SignIn = () => {
                             '&:hover': {
                                 bgcolor: '#D4790E',  
                               },
-                        }}>
+                        }}onClick={handleSignIn}>
                             Sign In
-                        </Button></Link>
+                        </Button>
             </Box>                
 
             <Typography sx={{color: '#002147FF', fontFamily:'inter', textAlign:'center',
