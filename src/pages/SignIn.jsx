@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
+import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, CircularProgress } from '@mui/material'
 import BG from "../assets/bg5.jpg"
 import IM1 from "../assets/IM1.png"
 import L1 from "../assets/Logo2.png"
@@ -22,10 +22,12 @@ const SignIn = () => {
         };
     }, []);
 
+    const [isLoading, setIsloading] = useState(false);
     const [ID, setID] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSignIn = async () => {
+        setIsloading(true);
         if (ID.length == 6) {
             person = 'Staff';
         }
@@ -38,6 +40,7 @@ const SignIn = () => {
         else {
             window.alert('Incorrect login');
             person = '';
+            setIsloading(false);
             return;
         }
 
@@ -83,8 +86,9 @@ const SignIn = () => {
                     window.location.href = "/home";
                 }
                 else if(person == "Driver"){
-                    if(driverID == D001)
-                    window.location.href = "/shuttleService?Gampaha01";
+                    if(driverID == "D001"){
+                        window.location.href = "/shuttleService";
+                    }
                 }
                 else{
                     window.alert("Error log in");
@@ -94,6 +98,9 @@ const SignIn = () => {
             }
         } catch (error) {
 
+        }
+        finally{
+            setIsloading(false);
         }
 
     };
@@ -272,8 +279,11 @@ const SignIn = () => {
                                         '&:hover': {
                                             bgcolor: '#D4790E',
                                         },
-                                    }} onClick={handleSignIn}>
-                                    Sign In
+                                    }} 
+                                    onClick={handleSignIn}
+                                    disabled={isLoading}
+                                    >
+                                    {isLoading?<CircularProgress size={24} color="inherit"/> : "Sign In"}
                                 </Button>
                             </Box>
 
