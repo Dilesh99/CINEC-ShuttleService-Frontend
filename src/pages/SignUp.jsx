@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
 <<<<<<< HEAD
-import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, IconButton  } from '@mui/material'
-=======
-import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, CircularProgress } from '@mui/material'
->>>>>>> 46af9913fcd406f715b9fadbf1b584172be9b6a5
+import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, IconButton, CircularProgress  } from '@mui/material'
 import BG from "../assets/bg5.jpg"
 import IM2 from "../assets/M2.png"
 import L1 from "../assets/Logo2.png"
