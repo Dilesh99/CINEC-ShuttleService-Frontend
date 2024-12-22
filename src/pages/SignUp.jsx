@@ -26,6 +26,10 @@ const SignUp = () => {
     const [secondPassword, setSecondPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showsecondPassword, setShowsecondPassword] = useState(false);
+    const [fileName, setFileName] = useState("");
+    const [photoPreview, setPhotoPreview] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(""); // State for success message
+    const [isSubmitted, setIsSubmitted] = useState(false); // State to track submission
 
     const handleSignUp = async () => {
         setIsLoading(true);
@@ -81,6 +85,19 @@ const SignUp = () => {
 
     }
 
+  // Handle the file upload
+  const handleFileUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Logic to handle the uploaded file (e.g., save it or preview it)
+
+      // Set success message
+      setSuccessMessage("Image added successfully!");
+
+      // Optional: Reset success message after a few seconds (e.g., 3 seconds)
+     /*setTimeout(() => setSuccessMessage(null), 3000);*/
+    }
+  };
 
     return (
         <>
@@ -121,7 +138,7 @@ const SignUp = () => {
                             sx={{
                                 mt: '-1%',
                                 width: { xs: '84%', sm: '78%', md: '48%', lg: '48%' },
-                                height: { xs: '550px', sm: '530px', md: '615px', lg: '630px' },
+                                height: { xs: '390px', sm: '530px', md: '615px', lg: '630px' },
                                 borderTopLeftRadius: { xs: 10, sm: 10, md: 10, lg: 10 },
                                 borderEndStartRadius: { xs: 0, sm: 0, md: 10, lg: 10 },
                                 borderTopRightRadius: { xs: 10, sm: 10, md: 0, lg: 0 },
@@ -338,55 +355,7 @@ const SignUp = () => {
                                     }} />
                             </Box>
                                     
-                                    
-                                    
-                                    
-                                  
-
-                            <Box  //Box of Button that used to center the box
-                                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
-                                <Link to="#" style={{ textDecoration: 'none' }}> <Button href=" " type="submit" variant="contained"
-                                    sx={{
-                                        alignItems: 'center', justifyContent: 'center', justifyItems: 'center', display: 'flex', fontWeight: 800,
-                                        bgcolor: '#002147', padding: '5px',
-                                        fontSize: { xs: '14px', sm: '18px', md: '16px', lg: '18px' },
-                                        width: { xs: '170px', sm: '290px', md: '310px', lg: '370px' },
-                                        height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' },
-                                        borderRadius: '30px',
-                                        mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
-                                        mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
-                                        '&:hover': {
-                                            bgcolor: '#D4790E',
-                                        },
-                                    }}>
-                                    SEND CODE
-                                </Button></Link>
-                            </Box>
-
-                            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                <Typography sx={{
-                                    color: '#002147FF', fontFamily: 'inter', textAlign: 'center',
-                                    fontSize: { xs: '10px', sm: '12px', md: '14px', lg: '16px' },
-                                    mt: 0, mb: 0, fontFamily: 'inter', fontWeight: 300,
-                                }}>
-                                    Already have an account?
-                                </Typography>
-
-
-                                <Box  //Box of Button that used to center the box
-                                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
-                                    <Link to="/signin" style={{ textDecoration: 'none' }}><Button href=" " variant='text'
-                                        sx={{
-
-                                            alignItems: 'center', justifyContent: 'center', justifyItems: 'center',
-                                            fontSize: { xs: '10px', sm: '12px', md: '14px', lg: '16px' },
-                                            color: '#D4790E', fontWeight: 800, mt: { xs: '-1.5vh', sm: '-1.1vh' },
-                                            '&:hover': { color: '#002147', },
-                                        }}>
-                                        Sign in
-                                    </Button></Link>
-                                </Box>
-                            </Box>
+                                                   
                         </Box>
 
 
@@ -395,7 +364,7 @@ const SignUp = () => {
                     <Grid2 container size={{ xs: 4 }}>
                         <Box container size={{ xs: 4 }}
                             sx={{
-                                mt: '-1%',
+                                mt:{xs:'-25%', sm:'-10%', md:'-1%'},
                                 width: { xs: '84%', sm: '600px', md: '36%', lg: '36%' },
                                 height: { xs: '300px', sm: '300px', md: '615px', lg: '630px' },
                                 borderTopRightRadius: { xs: 0, sm: 0, md: 10, lg: 10 },
@@ -462,108 +431,146 @@ const SignUp = () => {
                                     <Typography sx={{ fontSize: { xs: '14px', sm: '15px', md: '22px', lg: '24px' }, fontWeight: 600, color: '#ffffff', mt: { xs: 0, sm: 0, md: 8, lg: 18 } }}>ACCOUNT</Typography>
                                     <Typography sx={{ fontSize: { xs: '14px', sm: '15px', md: '22px', lg: '24px' }, fontWeight: 600, color: '#ffffff', mb: 1 }}>VERIFICATION</Typography>
 
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
+                                   {/* Hidden file input */}
+            <input
+              accept="image/*"
+              id="upload-photo"
+              type="file"
+              style={{ display: "none" }}
+              onChange={handleFileUpload}
+            />
 
-                                        }}
-                                    >
-                                        <TextField
-                                            variant="outlined"
-                                            label=""
-                                            placeholder='Enter the Code'
+            {/* Custom Button for File Upload */}
+            <label htmlFor="upload-photo">
+              <Button
+                variant="outlined"
+                
+                component="span"
+                sx={{
+                  color:'primary.main',
+                  bgcolor:'white',
+                  fontWeight: 600,
+                  padding: "5px",
+                  fontSize: { xs: "14px", sm: "18px", md: "16px", lg: "18px" },
+                  width: {
+                    xs: "170px",
+                    sm: "190px",
+                    md: "190px",
+                    lg: "190px",
+                  },
+                  height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
+                  borderRadius: "10px",
+                  mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+                  mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+                  "&:hover": {
+                    bgcolor: "white",
+                    color: "secondary.main",
+                  },
+                  boxShadow: 3,
+                }}
+              >
+                Upload Photo
+              </Button>
+            </label>
 
-                                            inputProps={{
-                                                maxLength: 4,          // Limit input to 4 characters
-                                                inputMode: 'numeric',   // Show numeric keyboard on mobile devices
-                                                pattern: "[0-9]*",      // Allow only numbers
+            {/* Success message */}
+            {successMessage && (
+              <Typography
+                sx={{
+                  color: "primary.main",
+                  fontFamily: "inter",
+                  textAlign: "center",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  mt: 3,
+                }}
+              >
+                {successMessage}
+              </Typography>
+            )}
 
-                                            }}
-                                            sx={{
-                                                width: { xs: '140px', sm: '140px', md: '180px', lg: '200px' },
-                                                textAlign: 'center',
-                                                border: { xs: '1px solid #D4790E', sm: '1px solid #D4790E', md: '2px solid #D4790E', lg: '2px solid #D4790E' },
-                                                borderRadius: { xs: '8px', sm: '8px', md: '10px', lg: '10px' },
-                                                mt: { xs: 1, sm: 1, md: 2, lg: 2 },
-                                                mb: { xs: 2, sm: 2, md: 4, lg: 4 },
-                                                '& input': {
-                                                    textAlign: 'center',  // Center-align text
-                                                    color: '#ffffff'
-                                                },
-                                            }}
+            {/* submit button*/}
 
-                                        />
-                                    </Box>
+            <Box //Box of Button that used to center the box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Link to="#" style={{ textDecoration: "none" }}>
+                {" "}
+                <Button
+                  href=" "
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    justifyItems: "center",
+                    display: "flex",
+                    fontWeight: 800,
+                    bgcolor: "#002147",
+                    padding: "5px",
+                    fontSize: {
+                      xs: "14px",
+                      sm: "18px",
+                      md: "16px",
+                      lg: "18px",
+                    },
+                    width: {
+                      xs: "170px",
+                      sm: "290px",
+                      md: "310px",
+                      lg: "370px",
+                    },
+                    height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
+                    borderRadius: "30px",
+                    mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+                    mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+                    "&:hover": {
+                      bgcolor: "rgba(70, 108, 148, 0.8)",
+                    },
+                  }}
+                >
+                  Sign up
+                </Button>
+              </Link>
+            </Box>
 
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3 }}>
-                                        <Button
-                                            type="submit"
-                                            variant="contained"
-                                            sx={{
-                                                fontWeight: 800,
-                                                bgcolor: '#D4790E',
-                                                color: '##002147',
-                                                padding: { xs: '3px', sm: '4px', md: '5px', lg: '5px' },
-                                                fontSize: { xs: '12px', sm: '13px', md: '16px', lg: '17px' },
-                                                width: { xs: '150px', sm: '150px', md: '180px', lg: '190px' },
-                                                height: { xs: '35px', sm: '35px', md: '40px', lg: '40px' },
-                                                borderRadius: { xs: '28px', sm: '28px', md: '30px', lg: '30px' },
-                                                mb: 0,
-                                                '&:hover': { bgcolor: '#ffffff', color: '#000000' },
-                                            }} onClick={handleSignUp}
-                                            disabled={isLoading}
-                                        >
-                                            {isLoading?<CircularProgress size={24} color='inherit'/>:"CONTINUE"}
-                                        </Button>
-                                    </Box>
-
-                                    <Typography
-                                        sx={{
-                                            color: '#FFFFFF',
-                                            fontFamily: 'inter',
-                                            fontSize: { xs: '3', sm: '3', md: '4', lg: '4' },
-                                            mt: { xs: 1, sm: 1, md: 2, lg: 2 },
-                                            fontWeight: 300,
-                                        }}
-                                    >
-                                        Did not get the code?
-                                    </Typography>
-
-                                    <Box sx={{
-
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                    }}>
-                                        <Button href=" "
-                                            variant="text"
-                                            sx={{
-                                                fontSize: { xs: '12px', sm: '13px', md: '14px', lg: '16px' },
-                                                color: '#D4790E',
-                                                fontWeight: 800,
-                                                '&:hover': { color: '#ffffff' },
-                                            }}
-                                        >
-                                            Send again
-                                        </Button>
-                                    </Box>
-                                </Box>
-                            </Box>
-                        </Box>
-
-
-
-
-                    </Grid2>
-
-
-                </Grid2>
-            </Grid2>
-
-
-
-        </>
-    )
-}
+            {/* "Already have an account?" Section */}
+            <Typography
+              sx={{
+                color: "#ffff",
+                fontFamily: "inter",
+                textAlign: "center",
+                fontSize: { xs: "12px", md: "16px" },
+                fontWeight: 300,
+              }}
+            >
+              Already have an account?
+            </Typography>
+            <Link to="/signin" style={{ textDecoration: "none" }}>
+              <Button
+                variant="text"
+                sx={{
+                  color: "#D4790E",
+                  fontWeight: 800,
+                  "&:hover": { color: "#000000" },
+                }}
+              >
+                Sign In
+              </Button>
+            </Link>
+          </Box>
+        </Box>
+        </Box>
+        </Grid2>
+        </Grid2>
+        </Grid2>
+        
+    </>
+  );
+};
 
 export default SignUp
