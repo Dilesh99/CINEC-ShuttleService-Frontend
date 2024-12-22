@@ -70,7 +70,7 @@ const Schedule = () => {
             width: { xs: "90%", sm: "80%", md: "60%", lg: "70%" },
             marginTop: { xs: "14%", sm: "13%", md: "8%", lg: "7%" },
             zIndex: 2,
-            marginBottom: '5%',
+            marginBottom:{xs:"10%",sm:"0",md:"5%",lg:"5%"},
           }}
         >
           <Typography
@@ -105,7 +105,7 @@ const Schedule = () => {
                     display: 'flex',
                     justifyContent: "space-between",
                     color: 'white',
-                    paddingX: '20%',
+                    paddingX:{xs:'10%',md:'20%'},
                     marginBottom: 1,
                   }}
                 >
@@ -118,7 +118,7 @@ const Schedule = () => {
             </Grid>
 
             {/* Campus to Wattla */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={15} md={6}>
               <Typography
                 variant="h5"
                 align="center"
@@ -134,7 +134,7 @@ const Schedule = () => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     color: 'white',
-                    paddingX: '20%',
+                    paddingX:{xs:'10%',md:'20%'},
                     marginBottom: 1,
                   }}
                 >

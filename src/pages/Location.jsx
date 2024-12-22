@@ -45,7 +45,7 @@ export default function Location() {
               marginRight: 'auto',
               position: 'relative',
               top: '10%',
-              marginBottom:{xs:"10%",sm:"0",md:"5%",lg:"5%"},
+              marginBottom:{xs:"15%",sm:"0",md:"5%",lg:"5%"},
               display: 'flex',  // Center content vertically
               flexDirection: 'column',
               justifyContent: 'center', // Center vertically
@@ -152,10 +152,11 @@ export default function Location() {
                 >
                   <Box
                     width={{ xs: 'auto', sm: '75%', md: '80%' }} // Adjust the width for responsiveness
-                    margin={'0 auto'}
+                    margin={' auto'}
                     height={'100%'}
                     marginBottom={'13%'} 
-                    marginLeft={{xs:'9%',sm:'30%',md:'12%'  }}
+                  //  marginLeft={{xs:'11%',sm:'30%',md:'12%'  }}
+                    padding={{xs:5, md:0 }}
                     
                   >
                     <iframe
