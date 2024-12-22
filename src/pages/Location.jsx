@@ -8,6 +8,9 @@ import Layout from "../components/Layout";
 import { Link } from 'react-router-dom';
 import BackgroundImage from "/src/assets/bg5.jpg";
 
+
+
+
 export default function Location() {
   // Get the query parameter 'route' from the URL
   const location = useLocation();
