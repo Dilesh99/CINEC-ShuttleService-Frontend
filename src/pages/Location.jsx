@@ -39,13 +39,13 @@ export default function Location() {
               marginTop: { xs: "30%", sm: "13%", md: "8%", lg: "6%" },
               width: { xs: '90%', sm: '52%', md: '60%', lg: '70%' }, // Adjust width on tablet
               height: '85%',
-              backgroundColor: 'rgba(0, 33, 71, 0.90)',
+              backgroundColor: "rgba(10, 33, 71, 0.8)",
               borderRadius: 6,
               marginLeft: 'auto',
               marginRight: 'auto',
               position: 'relative',
               top: '10%',
-              marginBottom: '5%',
+              marginBottom:{xs:"10%",sm:"0",md:"5%",lg:"5%"},
               display: 'flex',  // Center content vertically
               flexDirection: 'column',
               justifyContent: 'center', // Center vertically
@@ -115,6 +115,7 @@ export default function Location() {
                         sx={{
                           backgroundColor: 'white',
                           width: '100%',
+                          textAlign:'center'
                         }}
                       >
                         VIEW BUS SCHEDULE
@@ -150,11 +151,11 @@ export default function Location() {
                   }}
                 >
                   <Box
-                    width={{ xs: '98%', sm: '75%', md: '80%' }} // Adjust the width for responsiveness
+                    width={{ xs: 'auto', sm: '75%', md: '80%' }} // Adjust the width for responsiveness
                     margin={'0 auto'}
                     height={'100%'}
                     marginBottom={'13%'} 
-                    marginLeft={{xs:'16%',sm:'30%',md:'12%'  }}
+                    marginLeft={{xs:'9%',sm:'30%',md:'12%'  }}
                     
                   >
                     <iframe

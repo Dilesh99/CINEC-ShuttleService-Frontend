@@ -52,7 +52,8 @@ function RouteSelection() {
             borderRadius: 5,
             textAlign: "center",
             width: { xs: "90%", sm: "80%", md: "60%", lg: "70%" },
-            marginTop: { xs: "14%", sm: "13%", md: "8%", lg: "1%" },
+            marginTop: { xs: "30%", sm: "13%", md: "8%", lg: "1%" },
+            marginBottom:{xs:"10%",sm:"0",md:"0",lg:"0"},
             position: "relative",
           }}
         >
@@ -71,7 +72,8 @@ function RouteSelection() {
               gutterBottom
               sx={{
                 fontSize: { xs: "1.2rem", sm: "1.4rem", md: "1.5rem", lg: "1.8rem" },
-                marginTop: { md: "-4%" },
+                textAlign: "center",
+                marginTop: { md: "-4%"},
               }}
             >
               SELECT YOUR ROUTE
@@ -81,7 +83,7 @@ function RouteSelection() {
               sx={{
                 mb: 4,
                 fontSize: { xs: "0.9rem", sm: "0.9rem", md: "1rem", lg: "1.2rem" },
-                maxWidth: { xs: "100%", sm: "100%", md: "80%", lg: "75%" },
+                maxWidth: { xs: "80%", sm: "100%", md: "80%", lg: "75%" },
                 textAlign: "center",
                 mx: "auto",
               }}

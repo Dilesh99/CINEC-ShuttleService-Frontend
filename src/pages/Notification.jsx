@@ -42,16 +42,16 @@ export default function Notification() {
                     ,overflow: 'hidden',
                     backgroundImage: `url('src/assets/secondBg.png')`,
                     backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", position:'relative',
-                     marginTop: { xs: "0%", sm: "13%", md: "8%", lg: "8%" },
+                     marginTop: { xs: "30%", sm: "13%", md: "8%", lg: "8%" },
                     borderRadius: 6,
-                    marginBottom:'5%',
+                    marginBottom:{xs:"10%",sm:"0",md:"5%",lg:"5%"},
                     
                     boxShadow:3}}>
 
                     <Box
                         sx={{
                             
-                            backgroundColor:'rgba(0, 33, 71, 0.85)',borderRadius: 6,
+                            backgroundColor:"rgba(10, 33, 71, 0.8)",borderRadius: 6,
                         }}>
 
                             <Typography variant='h3'color='white' textAlign={'center'} sx={{ fontSize:'200%', position:'relative', top:'20px',letterSpacing:'3px',fontWeight:"50"}}>Notification

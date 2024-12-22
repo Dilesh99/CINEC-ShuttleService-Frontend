@@ -76,7 +76,7 @@ const Sidebar = styled(Box)(({ theme }) => ({
     
   },
   [theme.breakpoints.down('sm')]: {
-    width: '100%',
+    width: '90%',
     padding: theme.spacing(1),
     marginBottom: theme.spacing(0),
     borderTopLeftRadius: '20px',
@@ -111,10 +111,11 @@ const FormSection = styled(Box)(({ theme }) => ({
     borderTopRightRadius: '0px',
   },
   [theme.breakpoints.down('sm')]: {
-    width: '100%',
+    width: '90%',
     padding: theme.spacing(1),
     borderBottomLeftRadius: '20px',
     borderTopRightRadius: '0px',
+    marginBottom:'10%'
   },
 }));
 
@@ -135,19 +136,24 @@ const SaveButton = styled(Button)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     alignSelf: 'center', // Center button on smaller screens
     width: 'auto',
+    
   },
+  
 }));
 
 const DayButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#fff',
   color: '#d4790e',
-  borderRadius: '100%',
-  width: '35px',
+  borderRadius: '80%', // Ensures the button is circular
+  width: '35px', // Equal width and height
   height: '35px',
-  fontSize: '13px',
+  fontSize: '12px',
   border: '1px solid #d4790e',
   cursor: 'pointer',
-  padding: '-3px',
+  padding: '0', // No negative padding
+  display: 'flex', // Ensures the content is centered
+  alignItems: 'center',
+  justifyContent: 'center',
   [theme.breakpoints.down('md')]: {
     width: '30px',
     height: '30px',
@@ -159,6 +165,7 @@ const DayButton = styled(Button)(({ theme }) => ({
     fontSize: '10px',
   },
 }));
+
 
 const SetAlarmSection = () => (
   <Sidebar>
@@ -226,20 +233,19 @@ const AlarmForm = () => {
           <FormSection>
             <Box display="flex" flexDirection="column" gap={2}>
               <Box display="flex" alignItems="center">
-                <Typography variant="h6" sx={{ width: '40%' }}>
+                <Typography variant="h6" sx={{ width: '30%' }}>
                   Alarm name:
                 </Typography>
                 <TextField
                   variant="outlined"
-                  placeholder="_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ "
-                  fullWidth
+                  
                   InputProps={{
-                    style: { backgroundColor: '#fff', color: '#000' },
+                    style: { backgroundColor: '#fff', color: '#000', borderRadius:'10px' },
                   }}
                 />
               </Box>
               <Box display="flex" alignItems="center">
-                <Typography variant="h6" sx={{ width: '40%' }}>
+                <Typography variant="h6" sx={{ width: '35%' }}>
                   Alarm on/off:
                 </Typography>
                 <RadioGroup row name="alarmOnOff" defaultValue="on">
@@ -248,20 +254,20 @@ const AlarmForm = () => {
                 </RadioGroup>
               </Box>
               <Box display="flex" alignItems="center">
-                <Typography variant="h6" sx={{ width: '40%' }}>
+                <Typography variant="h6" sx={{ width: '30%' }}>
                   Radius:
                 </Typography>
                 <TextField
                   variant="outlined"
                   value="100 m"
-                  fullWidth
+                 
                   InputProps={{
-                    style: { backgroundColor: '#fff', color: '#000' },
+                    style: { backgroundColor: '#fff', color: '#000',borderRadius:'10px' },
                   }}
                 />
               </Box>
               <Box display="flex" alignItems="center">
-                <Typography variant="h6" sx={{ width: '40%' }}>
+                <Typography variant="h6" sx={{ width: '35%' }}>
                   Repeat:
                 </Typography>
                 <RadioGroup row name="repeat" defaultValue="on">
@@ -270,7 +276,7 @@ const AlarmForm = () => {
                 </RadioGroup>
               </Box>
               <Box display="flex" alignItems="center">
-                <Typography variant="h6" sx={{ width: '40%' }}>
+                <Typography variant="h6" sx={{ width: '30%' }}>
                   Active days:
                 </Typography>
                 <Box
@@ -279,6 +285,7 @@ const AlarmForm = () => {
                     flexWrap: 'wrap',
                     justifyContent: 'center',
                     gap: '10px',
+                    
                   }}
                 >
                   {activeDays.map((day) => (

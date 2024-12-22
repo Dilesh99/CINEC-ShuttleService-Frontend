@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-<<<<<<< HEAD
 import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, IconButton, CircularProgress  } from '@mui/material'
 import BG from "../assets/bg5.jpg"
 import IM2 from "../assets/M2.png"
