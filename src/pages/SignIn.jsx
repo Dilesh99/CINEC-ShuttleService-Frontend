@@ -28,8 +28,11 @@ const SignIn = () => {
     const [ID, setID] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isTyping, setIsTyping] = useState(false); // Tracks if the user is typing in the password field
+    const [error, setError] = useState(''); // Error message state
 
     const handleSignIn = async () => {
+        setError(''); // Clear any previous errors
         setIsloading(true);
         if (ID.length == 6) {
             person = 'Staff';
@@ -41,7 +44,7 @@ const SignIn = () => {
             person = 'Driver';
         }
         else {
-            window.alert('Incorrect login');
+            setError('Incorrect Login')
             person = '';
             setIsloading(false);
             return;
@@ -94,13 +97,13 @@ const SignIn = () => {
                     }
                 }
                 else{
-                    window.alert("Error log in");
+                    setError("Error log in");
                 }
             } else {
-                window.alert("Incorrect ID or Password");
+                setError("Incorrect ID or Password");
             }
         } catch (error) {
-
+            setError("An error occurred while logging in. Please try again later.");
         }
         finally{
             setIsloading(false);
@@ -158,7 +161,7 @@ const SignIn = () => {
                             sx={{
                                 mt: '-2%',
                                 width: { xs: '84%', sm: '70%', md: '48%', lg: '48%' },
-                                height: { xs: '400px', sm: '425px', md: '615px', lg: '615px' },
+                                height: { xs: '405px', sm: '425px', md: '615px', lg: '615px' },
                                 borderTopLeftRadius: { xs: 10, sm: 10, md: 10, lg: 10 },
                                 borderEndStartRadius: { xs: 10, sm: 10, md: 10, lg: 10 },
                                 borderTopRightRadius: { xs: 10, sm: 10, md: 0, lg: 0 },
@@ -238,27 +241,26 @@ const SignIn = () => {
                                     }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 }} noValidate autoComplete="off">
                                 <TextField id="outlined-basic" label="" variant="outlined" type={showPassword ? "text" : "password"} placeholder="Password" 
-                                onChange={
-                                    (e) => setPassword(e.target.value)}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        setIsTyping(e.target.value.length > 0); // Toggle isTyping based on input
+                                      }}
                                         InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
                                             <LockIcon />
                                             </InputAdornment>
                                         ),
-                                        endAdornment: (
+                                        endAdornment: isTyping ? ( // Show the visibility toggle only while typing
                                             <InputAdornment position="end">
-                                            <IconButton
-                                                 onClick={(e) => {
-                                                    e.preventDefault(); // Prevent default action
-                                                    setShowPassword((prev) => !prev); // Toggle password visibility
-                                                  }}
-                                                  edge="end"
-                                            >
-                                                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                                            </IconButton>
+                                              <IconButton
+                                                onClick={() => setShowPassword((prev) => !prev)}
+                                                edge="end"
+                                              >
+                                                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                              </IconButton>
                                             </InputAdornment>
-                                        ),
+                                          ) : null,
                                         }}
                                     sx={{
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
@@ -282,6 +284,13 @@ const SignIn = () => {
                                 Forgot Password?
                             </Button>
 
+                            
+                            
+                            {error  &&  (
+                            <Typography sx={{ color: "red", fontSize: "12px", marginBottom: "16px", textAlign:'center', marginRight:{xs:'8%',md:'0'}, marginLeft:{xs:'8%', md:'0'}}}>
+                                {error}
+                            </Typography>
+                            )}
 
                             <Box  //Box of Button that used to center the box
                                 sx={{
@@ -314,7 +323,7 @@ const SignIn = () => {
                             <Typography sx={{
                                 color: '#002147FF', fontFamily: 'inter', textAlign: 'center',
                                 fontSize: { xs: '10px', sm: '14px', md: '14px', lg: '16px' },
-                                mb: 0,  fontWeight: 300,
+                                mb:{xs:'-1%',md:'0'},  fontWeight: 300,
                             }}>
                                 If you don't have account
                             </Typography>

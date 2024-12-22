@@ -20,6 +20,45 @@ const SignUp2 = () => {
   const [secondPassword, setSecondPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showsecondPassword, setShowsecondPassword] = useState(false);
+  const [fileName, setFileName] = useState("");
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+  const [isSubmitted, setIsSubmitted] = useState(false); // State to track submission
+
+
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFileName(file.name);
+
+      // Generate a preview of the image
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCancel = () => {
+    setFileName("");
+    setPhotoPreview(null);
+    setIsSubmitted(false); // Reset submission state on cancel
+    document.getElementById("upload-photo").value = null; // Reset the file input field
+    setSuccessMessage(""); // Reset success message
+  };
+    
+ 
+
+  const handleSubmit = () => {
+    if (!photoPreview) return;
+
+    // Perform your submission logic here
+    console.log("Photo submitted:", fileName);
+    setSuccessMessage("Submit Successful!");
+    setIsSubmitted(true); // Set submission state to true
+  };
 
   const handleSignUp = async () => {
     var canSignUp = true;
@@ -74,7 +113,7 @@ const SignUp2 = () => {
         container
         sx={{
           width: "100%",
-          height: "100%",
+          height: "110%",
           flexDirection: { xs: "column", md: "row" },
         }}
       >
@@ -89,7 +128,7 @@ const SignUp2 = () => {
             alignItems: "center",
             justifyContent: "center",
             bgcolor: "rgba(136, 193, 255, 0.8)",
-            p: 4,
+            p: 7,
 
 
 
@@ -301,48 +340,7 @@ const SignUp2 = () => {
                                     }} />
                             </Box>
 
-                            <Box  //Box of Button that used to center the box
-                            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
-                            <Link to="#" style={{ textDecoration: 'none' }}> <Button href=" " type="submit" variant="contained"
-                                sx={{
-                                    alignItems: 'center', justifyContent: 'center', justifyItems: 'center', display: 'flex', fontWeight: 800,
-                                    bgcolor: '#002147', padding: '5px',
-                                    fontSize: { xs: '14px', sm: '18px', md: '16px', lg: '18px' },
-                                    width: { xs: '170px', sm: '290px', md: '310px', lg: '370px' },
-                                    height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' },
-                                    borderRadius: '30px',
-                                    mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
-                                    mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
-                                    '&:hover': {
-                                        bgcolor: '#D4790E',
-                                    },
-                                }}>
-                                SEND CODE
-                            </Button></Link>
-                        </Box>
-           <Typography
-            sx={{
-              color: "#002147FF",
-              fontFamily: "inter",
-              textAlign: "center",
-              fontSize: { xs: "12px", md: "16px" },
-              fontWeight: 300,
-            }}
-          >
-            Already have an account?
-          </Typography>
-          <Link to="/signin" style={{ textDecoration: "none" }}>
-            <Button
-              variant="text"
-              sx={{
-                color: "#D4790E",
-                fontWeight: 800,
-                '&:hover': { color: "#000000" },
-              }}
-            >
-              Sign In
-            </Button>
-          </Link>
+
         </Grid>
 
         {/* Right Section */}
@@ -372,61 +370,190 @@ const SignUp2 = () => {
             }}
           />
 
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              mt: 2,
+           <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        mt: 2,
+      }}
+    >
+      <Typography
+        sx={{ fontSize: { xs: "16px", md: "20px" }, fontWeight: 700 }}
+      >
+        VERIFICATION
+      </Typography>
+
+      {/* Hidden file input */}
+      <input
+        accept="image/*"
+        id="upload-photo"
+        type="file"
+        style={{ display: "none" }}
+        onChange={handleFileUpload}
+      />
+
+      {/* Custom Button for File Upload */}
+      <label htmlFor="upload-photo">
+        <Button
+          variant=""
+          color ="rgba(123, 164, 208, 0.8)"
+          component="span"
+          sx={{
+            color:"rgba(83, 129, 177, 0.8)",
+            fontWeight: 600,
+            padding: "5px",
+            fontSize: { xs: "14px", sm: "18px", md: "16px", lg: "18px" },
+            width: { xs: "170px", sm: "1900px", md: "190px", lg: "190px" },
+            height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
+            borderRadius: "10px",
+            mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+            mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+            "&:hover": {
+              bgcolor:"rgba(50, 146, 249, 0.8)", color:'white'
+            },
+            boxShadow:3
+          }}
+        >
+          Upload Photo
+        </Button>
+      </label>
+
+      {/* Display file name */}
+      {fileName && !isSubmitted && (
+        <Typography
+          sx={{
+            color: "#002147FF",
+            fontFamily: "inter",
+            textAlign: "center",
+            fontSize: { xs: "12px", md: "16px" },
+            fontWeight: 300,
+            mt: 1,
+          }}
+        >
+          Selected File: {fileName}
+        </Typography>
+      )}
+
+      {/* Photo preview */}
+      {photoPreview && !isSubmitted && (
+        <Box
+          sx={{
+            mt: 2,
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="body1">Photo Preview:</Typography>
+          <img
+            src={photoPreview}
+            alt="Uploaded Preview"
+            style={{
+              width: "200px",
+              height: "auto",
+              borderRadius: "8px",
+              marginTop: "8px",
             }}
-          >
-            <Typography
-              sx={{ fontSize: { xs: "16px", md: "20px" }, fontWeight: 700 }}
-            >
-              ACCOUNT VERIFICATION
-            </Typography>
-            <TextField
-              placeholder="Enter the Code"
-              inputProps={{
-                maxLength: 4,
-                inputMode: "numeric",
-                pattern: "[0-9]*",
-              }}
-              sx={{
-                width: { xs: "150px", md: "200px" },
-                textAlign: "center",
-                border: "1px solid #1D3B5C",
-                borderRadius: "10px",
-                mt: 2,
-              }}
-            />
+          />
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2, gap: 2, mb:5 }}>
+            {/* Cancel Button */}
             <Button
-              href="/signin"
-              type="submit"
-              variant="contained"
+              variant="outlined"
+              color="secondary.light2"
+              onClick={handleCancel}
               sx={{
-                bgcolor: "#4B7B98",
-                color: "white",
-                fontWeight: 800,
-                mt: 2,
-                '&:hover': { bgcolor: "#D4790E" },
+                fontWeight: 700,
+                "&:hover": {bgcolor:"rgba(70, 108, 148, 0.8)", color:'white' },
               }}
             >
-              CONTINUE
+              Cancel
             </Button>
-            <Typography sx={{ color: "#000", fontWeight: 300, mt: 2 }}>
-              Did not get the code?
-            </Typography>
+
+            {/* Submit Button */}
             <Button
-              variant="text"
-              sx={{ color: "#D4790E", fontWeight: 800, '&:hover': { color: "#000" } }}
+              variant="container"
+             
+              onClick={handleSubmit}
+              sx={{
+                bgcolor: "rgba(17, 101, 191, 0.8)",
+                color: "white",
+                fontWeight: 600,
+                "&:hover": { backgroundColor: "rgba(77, 147, 223, 0.8)", color:"white" },
+              }}
             >
-              Send again
+              Submit
             </Button>
           </Box>
-        </Grid>
-      </Grid>
-    </>
+        </Box>
+      )}
+
+      {/* Success message */}
+      {successMessage && (
+        <Typography
+          sx={{
+            color: "green",
+            fontFamily: "inter",
+            textAlign: "center",
+            fontSize: { xs: "14px", md: "16px" },
+            fontWeight: 500,
+            mt: 3,
+          }}
+        >
+          {successMessage}
+        </Typography>
+      )}
+
+
+
+      {/* submit button*/ }
+
+      <Box  //Box of Button that used to center the box
+                                      sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
+                                      <Link to="#" style={{ textDecoration: 'none' }}> <Button href=" " type="submit" variant="contained"
+                                          sx={{
+                                              alignItems: 'center', justifyContent: 'center', justifyItems: 'center', display: 'flex', fontWeight: 800,
+                                              bgcolor: '#002147', padding: '5px',
+                                              fontSize: { xs: '14px', sm: '18px', md: '16px', lg: '18px' },
+                                              width: { xs: '170px', sm: '290px', md: '310px', lg: '370px' },
+                                              height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' },
+                                              borderRadius: '30px',
+                                              mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+                                              mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+                                              '&:hover': {
+                                                  bgcolor: 'rgba(70, 108, 148, 0.8)',
+                                              },
+                                          }}>
+                                          Sign up
+                                      </Button></Link>
+                                  </Box>
+
+      {/* "Already have an account?" Section */}
+      <Typography
+        sx={{
+          color: "#002147FF",
+          fontFamily: "inter",
+          textAlign: "center",
+          fontSize: { xs: "12px", md: "16px" },
+          fontWeight: 300,
+        }}
+      >
+        Already have an account?
+      </Typography>
+      <Link to="/signin" style={{ textDecoration: "none" }}>
+        <Button
+          variant="text"
+          sx={{
+            color: "#D4790E",
+            fontWeight: 800,
+            "&:hover": { color: "#000000" },
+          }}
+        >
+          Sign In
+        </Button>
+      </Link>
+    </Box>
+    </Grid>
+  </Grid>
+  </>
   );
 };
 
