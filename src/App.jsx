@@ -75,7 +75,7 @@ function App() {
         <Route path='/schedule' element={<Schedule/>} ></Route>    
         <Route path='/signin2' element={<SignIn2/>} ></Route>
         <Route path="/shuttleService/:driverID" element={<ShuttleService />} />
-        <Route path='/shuttleService2' element={<ShuttleService2/>} ></Route>  
+        <Route path='/shuttleService2/:driverID' element={<ShuttleService2/>} ></Route>  
         <Route path='/admindashboard' element={<Admin/>} ></Route>
         <Route path='/students' element={<St/>} ></Route>
         <Route path='/staff' element={<Sta/>} ></Route>

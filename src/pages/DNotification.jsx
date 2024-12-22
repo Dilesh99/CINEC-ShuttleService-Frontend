@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // for capturing the dynamic ID from the URL
+import { useNavigate, useParams } from 'react-router-dom'; // for capturing the dynamic ID from the URL
 import { CssBaseline, Button, Typography, Box, CardContent, Checkbox, FormControlLabel, TextField, Paper } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,9 +11,11 @@ function ShuttleService() {
   const [locationOn, setLocationOn] = useState(false);
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [busDetails, setBusDetails] = useState(null); // To store dynamic bus details
+  const navigate = useNavigate();
 
   const toggleLocation = () => {
-    setLocationOn(!locationOn);
+    // When the button is clicked, redirect to the dynamic shuttle page
+    navigate(`/shuttleService2/${driverID}`);
   };
 
   const handleCheckboxChange = (reason) => {
@@ -93,7 +95,7 @@ function ShuttleService() {
                   </Typography><br />
 
                   <Box display="flex" justifyContent="center" gap={2} mb={3}>
-                    <Button href='/shuttleService2'
+                    <Button 
                       variant="contained"
                       color={locationOn ? 'primary' : 'default'}
                       onClick={toggleLocation}
@@ -104,7 +106,7 @@ function ShuttleService() {
                     >
                       TURN ON
                     </Button>
-                    <Button href='/signin2'
+                    <Button href='/'
                       variant="contained"
                       color={!locationOn ? 'primary' : 'default'}
                       onClick={toggleLocation}
