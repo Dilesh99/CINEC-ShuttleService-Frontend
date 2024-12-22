@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, IconButton } from '@mui/material'
+<<<<<<< HEAD
+import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, IconButton  } from '@mui/material'
+=======
+import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, CircularProgress } from '@mui/material'
+>>>>>>> 46af9913fcd406f715b9fadbf1b584172be9b6a5
 import BG from "../assets/bg5.jpg"
 import IM2 from "../assets/M2.png"
 import L1 from "../assets/Logo2.png"
@@ -16,6 +20,8 @@ import { Link } from 'react-router-dom';
 
 const SignUp = () => {
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const [username, setUsername] = useState('');
     const [studentID, setStudentID] = useState('');
     const [email, setEmail] = useState('');
@@ -26,6 +32,7 @@ const SignUp = () => {
     const [showsecondPassword, setShowsecondPassword] = useState(false);
 
     const handleSignUp = async () => {
+        setIsLoading(true);
         var canSignUp = true;
         var errors = "";
         if(studentID.length != 12){
@@ -55,6 +62,7 @@ const SignUp = () => {
             });
             if (await response.json()) {
                 window.alert("Student already signed up");
+                setIsLoading(false);
             }
             else {
                 var studentsID = studentID;
@@ -72,6 +80,7 @@ const SignUp = () => {
         }
         else{
             window.alert(errors);
+            setIsLoading(false);
         }
 
     }
@@ -508,8 +517,9 @@ const SignUp = () => {
                                                 mb: 0,
                                                 '&:hover': { bgcolor: '#ffffff', color: '#000000' },
                                             }} onClick={handleSignUp}
+                                            disabled={isLoading}
                                         >
-                                            CONTINUE
+                                            {isLoading?<CircularProgress size={24} color='inherit'/>:"CONTINUE"}
                                         </Button>
                                     </Box>
 
