@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
+import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, IconButton } from '@mui/material'
 import BG from "../assets/bg5.jpg"
 import IM2 from "../assets/M2.png"
 import L1 from "../assets/Logo2.png"
@@ -8,6 +8,9 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+
 import { Link } from 'react-router-dom';
 
 
@@ -19,6 +22,8 @@ const SignUp = () => {
     const [phone_number, setPhone_number] = useState('');
     const [password, setPassword] = useState('');
     const [secondPassword, setSecondPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showsecondPassword, setShowsecondPassword] = useState(false);
 
     const handleSignUp = async () => {
         var canSignUp = true;
@@ -133,7 +138,7 @@ const SignUp = () => {
                                     color: { xs: '#D4790E', sm: '#D4790E', md: '#D4790E', lg: '#002147FF' }, fontFamily: 'inter', textAlign: 'center',
                                     fontSize: { xs: '16px', sm: '20px', md: '20px', lg: '24px' },
                                     mt: { xs: 3, sm: 3, md: 5, lg: 4 },
-                                    fontFamily: 'inter'
+                                    
                                 }}>
                                 Create an Account for
                             </Typography>
@@ -141,7 +146,7 @@ const SignUp = () => {
                             <Typography sx={{
                                 color: '#002147FF', fontFamily: 'inter', textAlign: 'center',
                                 fontSize: { xs: '18px', sm: '30px', md: '30px', lg: '32px' },
-                                mb: 0, fontFamily: 'inter', fontWeight: '800'
+                                mb: 0,  fontWeight: '800'
                             }}>
                                 CINEC SHUTTLE SERVICES
                             </Typography>
@@ -166,7 +171,7 @@ const SignUp = () => {
                                             '& fieldset': { borderColor: '#000000', },
                                             '&:hover fieldset': { borderColor: '#002147FF', },
                                         },
-                                        '& input': { padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%', },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
                                     }} />
                             </Box>
 
@@ -190,7 +195,7 @@ const SignUp = () => {
                                             '& fieldset': { borderColor: '#000000', },
                                             '&:hover fieldset': { borderColor: '#002147FF', },
                                         },
-                                        '& input': { padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%', },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
                                     }} />
                             </Box>
 
@@ -213,7 +218,7 @@ const SignUp = () => {
                                             '& fieldset': { borderColor: '#000000', },
                                             '&:hover fieldset': { borderColor: '#002147FF', },
                                         },
-                                        '& input': { padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%', },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
                                     }} />
                             </Box>
 
@@ -236,22 +241,43 @@ const SignUp = () => {
                                             '& fieldset': { borderColor: '#000000', },
                                             '&:hover fieldset': { borderColor: '#002147FF', },
                                         },
-                                        '& input': { padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%', },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
                                     }} />
                             </Box>
 
-                            <Box //Text field 5
+                            <Box // password field
                                 component="form"
                                 sx={{
                                     '& > :not(style)': {
                                         m: { xs: 0, sm: 1, md: 1, lg: 1 },
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                                         mt: { xs: 1, sm: 1, md: 1, lg: 1 },
-                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
+                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                                     }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 }} noValidate autoComplete="off">
-                                <TextField id="outlined-basic" label="" type="password" variant="outlined" placeholder="Password" onChange={(e) => setPassword(e.target.value)}
-                                    InputProps={{ startAdornment: (<InputAdornment position="start"><LockIcon /></InputAdornment>), }}
+                                <TextField id="outlined-basic" label="" variant="outlined" type={showPassword ? "text" : "Password"} placeholder="Password" 
+                                onChange={
+                                    (e) => setPassword(e.target.value)}
+                                        InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <LockIcon />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                            <IconButton
+                                                 onClick={(e) => {
+                                                    e.preventDefault(); // Prevent default action
+                                                    setShowPassword((prev) => !prev); // Toggle password visibility
+                                                  }}
+                                                  edge="end"
+                                            >
+                                                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                            </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        }}
                                     sx={{
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                                         '& .MuiOutlinedInput-root': {
@@ -259,22 +285,43 @@ const SignUp = () => {
                                             '& fieldset': { borderColor: '#000000', },
                                             '&:hover fieldset': { borderColor: '#002147FF', },
                                         },
-                                        '& input': { padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%', },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
                                     }} />
                             </Box>
 
-                            <Box //Text field 6
+                            <Box // conform password field
                                 component="form"
                                 sx={{
                                     '& > :not(style)': {
                                         m: { xs: 0, sm: 1, md: 1, lg: 1 },
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                                         mt: { xs: 1, sm: 1, md: 1, lg: 1 },
-                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
+                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                                     }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 }} noValidate autoComplete="off">
-                                <TextField id="outlined-basic" label="" type="password" variant="outlined" placeholder="Conform Password" onChange={(e)=>setSecondPassword(e.target.value)}
-                                    InputProps={{ startAdornment: (<InputAdornment position="start"><AddPhotoAlternateIcon /></InputAdornment>), }}
+                                <TextField id="outlined-basic" label="" variant="outlined" type={showsecondPassword? "text" : "password"} placeholder="Conform password" 
+                                onChange={
+                                    (e) => setSecondPassword(e.target.value)}
+                                        InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <LockIcon />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                            <IconButton
+                                                 onClick={(e) => {
+                                                    e.preventDefault(); // Prevent default action
+                                                    setShowsecondPassword((prev) => !prev); // Toggle password visibility
+                                                  }}
+                                                  edge="end"
+                                            >
+                                                {showsecondPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                            </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        }}
                                     sx={{
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                                         '& .MuiOutlinedInput-root': {
@@ -282,9 +329,14 @@ const SignUp = () => {
                                             '& fieldset': { borderColor: '#000000', },
                                             '&:hover fieldset': { borderColor: '#002147FF', },
                                         },
-                                        '& input': { padding: '0 8px', fontSize: '14px', color: '#002147FF', height: '100%', },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
                                     }} />
                             </Box>
+                                    
+                                    
+                                    
+                                    
+                                  
 
                             <Box  //Box of Button that used to center the box
                                 sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>

@@ -1,11 +1,15 @@
-import React from "react";
-import { CssBaseline, Box, Button, Grid, TextField, Typography, InputAdornment } from "@mui/material";
+import React, { useState } from "react";
+import { CssBaseline, Box, Button, Grid, TextField, Typography, InputAdornment, IconButton } from "@mui/material";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import LockIcon from "@mui/icons-material/Lock";
 import { Link } from "react-router-dom";
 import St1 from "../assets/St1.jpg"; // Update with your actual image path
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+
 
 const SignUp2 = () => {
   const [username, setUsername] = useState('');
@@ -14,6 +18,8 @@ const SignUp2 = () => {
   const [phone_number, setPhone_number] = useState('');
   const [password, setPassword] = useState('');
   const [secondPassword, setSecondPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showsecondPassword, setShowsecondPassword] = useState(false);
 
   const handleSignUp = async () => {
     var canSignUp = true;
@@ -114,63 +120,207 @@ const SignUp2 = () => {
           </Typography>
 
           {/** Input Fields */}
-          {["Username", " Staff ID", "Email", "Phone No", "Password"].map(
-            (placeholder, index) => (
-              <Box
-                key={index}
-                component="form"
-                sx={{
-                  width: { xs: "220px", md: "380px" },
-                  mb: 2,
-                  textAlign: 'center'
-                }}
-              >
-                <TextField
-                  id={`input-${index}`}
-                  placeholder={placeholder}
-                  variant="outlined"
-                  type={placeholder === "Password" ? "password" : placeholder === "Email" ? "email" : placeholder === "Phone No" ? "number" : "text"} // Secure password input
+          <Box //Text field 1
+                                component="form"
+                                sx={{
+                                    '& > :not(style)': {
+                                        m: { xs: 0, sm: 1, md: 1, lg: 1 },
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        mt: { xs: 1, sm: 1, md: 1, lg: 2 },
+                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
+                                    }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                }} noValidate autoComplete="off">
+                                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Username" onChange={(e) => setUsername(e.target.value)}
+                                    InputProps={{ startAdornment: (<InputAdornment position="start"><AccountCircleOutlinedIcon /></InputAdornment>), }}
+                                    sx={{
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        '& .MuiOutlinedInput-root': {
+                                            height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px',
+                                            '& fieldset': { borderColor: '#000000', },
+                                            '&:hover fieldset': { borderColor: '#002147FF', },
+                                        },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
+                                    }} />
+                            </Box>
 
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        {index === 0 && <AccountCircleOutlinedIcon />}
-                        {index === 1 && <BadgeOutlinedIcon />}
-                        {index === 2 && <EmailOutlinedIcon />}
-                        {index === 3 && <BadgeOutlinedIcon />}
-                        {index === 4 && <LockIcon />}
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      height: { xs: "40px", md: "50px" },
-                      borderRadius: "30px",
-                    },
-                  }}
-                />
-              </Box>
-            )
-          )}
 
-          <Button
-            href=""
-            type="submit"
-            variant="contained"
-            sx={{
-              bgcolor: "#002147",
-              color: "white",
-              fontWeight: 800,
-              width: { xs: "220px", md: "300px" },
-              height: { xs: "40px", md: "50px" },
-              borderRadius: "30px",
-              mb: 2,
-              '&:hover': { bgcolor: "#D4790E" },
-            }}
-          >
-            SEND CODE
-          </Button>
-          <Typography
+                            <Box //Text field 2
+                                component="form"
+                                sx={{
+                                    '& > :not(style)': {
+                                        m: { xs: 0, sm: 1, md: 1, lg: 1 },
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        mt: { xs: 1, sm: 1, md: 1, lg: 1 },
+                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
+                                    }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                }} noValidate autoComplete="off">
+                                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Student ID" onChange={(e) => setStaffID(e.target.value)}
+                                    InputProps={{ startAdornment: (<InputAdornment position="start"><BadgeOutlinedIcon /></InputAdornment>), }}
+                                    sx={{
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        '& .MuiOutlinedInput-root': {
+                                            height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px',
+                                            '& fieldset': { borderColor: '#000000', },
+                                            '&:hover fieldset': { borderColor: '#002147FF', },
+                                        },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
+                                    }} />
+                            </Box>
+
+                            <Box //Text field 3
+                                component="form"
+                                sx={{
+                                    '& > :not(style)': {
+                                        m: { xs: 0, sm: 1, md: 1, lg: 1 },
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        mt: { xs: 1, sm: 1, md: 1, lg: 1 },
+                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
+                                    }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                }} noValidate autoComplete="off">
+                                <TextField id="outlined-basic" label="" type='email' variant="outlined" placeholder="Email" onChange={(e) => setEmail(e.target.value)}
+                                    InputProps={{ startAdornment: (<InputAdornment position="start"><EmailOutlinedIcon /></InputAdornment>), }}
+                                    sx={{
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        '& .MuiOutlinedInput-root': {
+                                            height: { xs: '34px', sm: '45px', md: '40px', lg: '50px' }, borderRadius: '30px',
+                                            '& fieldset': { borderColor: '#000000', },
+                                            '&:hover fieldset': { borderColor: '#002147FF', },
+                                        },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
+                                      }} />
+                            </Box>
+
+                            <Box //Text field 4
+                                component="form"
+                                sx={{
+                                    '& > :not(style)': {
+                                        m: { xs: 0, sm: 1, md: 1, lg: 1 },
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        mt: { xs: 1, sm: 1, md: 1, lg: 1 },
+                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1 },
+                                    }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                }} noValidate autoComplete="off">
+                                <TextField id="outlined-basic" label="" type="tel" variant="outlined" placeholder="Phone No." onChange={(e) => setPhone_number(e.target.value)}
+                                    InputProps={{ startAdornment: (<InputAdornment position="start"><BadgeOutlinedIcon /></InputAdornment>), }}
+                                    sx={{
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        '& .MuiOutlinedInput-root': {
+                                            height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px',
+                                            '& fieldset': { borderColor: '#000000', },
+                                            '&:hover fieldset': { borderColor: '#002147FF', },
+                                        },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
+                                      }} />
+                            </Box>
+
+                            <Box // password field
+                                component="form"
+                                sx={{
+                                    '& > :not(style)': {
+                                        m: { xs: 0, sm: 1, md: 1, lg: 1 },
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        mt: { xs: 1, sm: 1, md: 1, lg: 1 },
+                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
+                                    }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                }} noValidate autoComplete="off">
+                                <TextField id="outlined-basic" label="" variant="outlined" type={showPassword ? "text" : "Password"} placeholder="Password" 
+                                onChange={
+                                    (e) => setPassword(e.target.value)}
+                                        InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <LockIcon />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                            <IconButton
+                                                 onClick={(e) => {
+                                                    e.preventDefault(); // Prevent default action
+                                                    setShowPassword((prev) => !prev); // Toggle password visibility
+                                                  }}
+                                                  edge="end"
+                                            >
+                                                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                            </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        }}
+                                    sx={{
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        '& .MuiOutlinedInput-root': {
+                                            height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px',
+                                            '& fieldset': { borderColor: '#000000', },
+                                            '&:hover fieldset': { borderColor: '#002147FF', },
+                                        },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
+                                    }} />
+                            </Box>
+
+                            <Box // conform password field
+                                component="form"
+                                sx={{
+                                    '& > :not(style)': {
+                                        m: { xs: 0, sm: 1, md: 1, lg: 1 },
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        mt: { xs: 1, sm: 1, md: 1, lg: 1 },
+                                        mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
+                                    }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                }} noValidate autoComplete="off">
+                                <TextField id="outlined-basic" label="" variant="outlined" type={showsecondPassword? "text" : "password"} placeholder="Conform password" 
+                                onChange={
+                                    (e) => setSecondPassword(e.target.value)}
+                                        InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <LockIcon />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                            <IconButton
+                                                 onClick={(e) => {
+                                                    e.preventDefault(); // Prevent default action
+                                                    setShowsecondPassword((prev) => !prev); // Toggle password visibility
+                                                  }}
+                                                  edge="end"
+                                            >
+                                                {showsecondPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                            </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        }}
+                                    sx={{
+                                        width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
+                                        '& .MuiOutlinedInput-root': {
+                                            height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px',
+                                            '& fieldset': { borderColor: '#000000', },
+                                            '&:hover fieldset': { borderColor: '#002147FF', },
+                                        },
+                                        '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
+                                    }} />
+                            </Box>
+
+                            <Box  //Box of Button that used to center the box
+                            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
+                            <Link to="#" style={{ textDecoration: 'none' }}> <Button href=" " type="submit" variant="contained"
+                                sx={{
+                                    alignItems: 'center', justifyContent: 'center', justifyItems: 'center', display: 'flex', fontWeight: 800,
+                                    bgcolor: '#002147', padding: '5px',
+                                    fontSize: { xs: '14px', sm: '18px', md: '16px', lg: '18px' },
+                                    width: { xs: '170px', sm: '290px', md: '310px', lg: '370px' },
+                                    height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' },
+                                    borderRadius: '30px',
+                                    mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+                                    mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+                                    '&:hover': {
+                                        bgcolor: '#D4790E',
+                                    },
+                                }}>
+                                SEND CODE
+                            </Button></Link>
+                        </Box>
+           <Typography
             sx={{
               color: "#002147FF",
               fontFamily: "inter",
