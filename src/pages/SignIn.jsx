@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
+import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment ,IconButton } from '@mui/material'
 import BG from "../assets/bg5.jpg"
 import IM1 from "../assets/IM1.png"
 import L1 from "../assets/Logo2.png"
 import LockIcon from '@mui/icons-material/Lock';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { Link } from 'react-router-dom';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 
 
@@ -24,6 +26,7 @@ const SignIn = () => {
 
     const [ID, setID] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSignIn = async () => {
         if (ID.length == 6) {
@@ -137,8 +140,8 @@ const SignIn = () => {
                                 width: { xs: '190px', sm: '200px', md: '0px', lg: '0px' },
                                 height: { xs: '60px', sm: '70px', md: '0px', lg: '0px' },
                                 position: 'absolute',
-                                top: { xs: '150px', sm: '150px', md: '0px', lg: '0px' },
-                                left: { xs: '30%', sm: '37%', md: '0px', lg: '0px' },
+                                top: { xs: '15px', sm: '150px', md: '0px', lg: '0px' },
+                                left: { xs: '26%', sm: '37%', md: '0px', lg: '0px' },
 
                             }}
                         />
@@ -170,7 +173,7 @@ const SignIn = () => {
                                     color: { xs: '#D4790E', sm: '#D4790E', md: '#D4790E', lg: '#002147FF' }, fontFamily: 'inter', textAlign: 'center',
                                     fontSize: { xs: '16px', sm: '20px', md: '24px', lg: '24px' },
                                     mt: { xs: 4, sm: 2.5, md: 8, lg: 10 },
-                                    fontFamily: 'inter'
+                                    
                                 }}>
                                 WELCOME TO
                             </Typography>
@@ -179,7 +182,7 @@ const SignIn = () => {
                                 color: '#002147FF', fontFamily: 'inter', textAlign: 'center',
                                 fontSize: { xs: '20px', sm: '22px', md: '30px', lg: '32px' },
                                 mb: { xs: 1, sm: 2, md: 2, lg: 3 },
-                                fontFamily: 'inter', fontWeight: '800'
+                                 fontWeight: '800'
                             }}>
                                 CINEC SHUTTLE SERVICES
                             </Typography>
@@ -189,7 +192,7 @@ const SignIn = () => {
                                 fontSize: { xs: '12px', sm: '16px', md: '16px', lg: '16px' },
                                 mt: { xs: 2, sm: 3, md: 3, lg: 5 },
                                 mb: { xs: 2, sm: 2, md: 2, lg: 2 },
-                                fontFamily: 'inter'
+                                
                             }}>
                                 Enter your ID & Password to SignIn
                             </Typography>
@@ -217,7 +220,7 @@ const SignIn = () => {
                                     }} />
                             </Box>
 
-                            <Box //Text field 5
+                            <Box // password field
                                 component="form"
                                 sx={{
                                     '& > :not(style)': {
@@ -227,8 +230,29 @@ const SignIn = () => {
                                         mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                                     }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 }} noValidate autoComplete="off">
-                                <TextField id="outlined-basic" label="" variant="outlined" type='password' placeholder="Password" onChange={(e) => setPassword(e.target.value)}
-                                    InputProps={{ startAdornment: (<InputAdornment position="start"><LockIcon /></InputAdornment>), }}
+                                <TextField id="outlined-basic" label="" variant="outlined" type={showPassword ? "text" : "password"} placeholder="Password" 
+                                onChange={
+                                    (e) => setPassword(e.target.value)}
+                                        InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <LockIcon />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                            <IconButton
+                                                 onClick={(e) => {
+                                                    e.preventDefault(); // Prevent default action
+                                                    setShowPassword((prev) => !prev); // Toggle password visibility
+                                                  }}
+                                                  edge="end"
+                                            >
+                                                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                            </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        }}
                                     sx={{
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                                         '& .MuiOutlinedInput-root': {
@@ -280,7 +304,7 @@ const SignIn = () => {
                             <Typography sx={{
                                 color: '#002147FF', fontFamily: 'inter', textAlign: 'center',
                                 fontSize: { xs: '10px', sm: '14px', md: '14px', lg: '16px' },
-                                mb: 0, fontFamily: 'inter', fontWeight: 300,
+                                mb: 0,  fontWeight: 300,
                             }}>
                                 If you don't have account
                             </Typography>
