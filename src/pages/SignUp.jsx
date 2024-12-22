@@ -10,7 +10,6 @@ import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { Link } from 'react-router-dom';
 
-import { StuMethods } from '../backend/StuMethods'
 
 const SignUp = () => {
 

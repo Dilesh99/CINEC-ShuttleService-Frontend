@@ -83,7 +83,8 @@ const SignIn = () => {
                     window.location.href = "/home";
                 }
                 else if(person == "Driver"){
-                    window.location.href = "/shuttleService";
+                    if(driverID == D001)
+                    window.location.href = "/shuttleService?Gampaha01";
                 }
                 else{
                     window.alert("Error log in");
@@ -190,7 +191,7 @@ const SignIn = () => {
                                 mb: { xs: 2, sm: 2, md: 2, lg: 2 },
                                 fontFamily: 'inter'
                             }}>
-                                Enter your Username & Password to SignIn
+                                Enter your ID & Password to SignIn
                             </Typography>
 
                             <Box //Text field 1
@@ -203,7 +204,7 @@ const SignIn = () => {
                                         mb: { xs: 0.5, sm: 1, md: 1.5, lg: 1.5 },
                                     }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 }} noValidate autoComplete="off">
-                                <TextField id="outlined-basic" label="" variant="outlined" placeholder="Username" onChange={(e) => setID(e.target.value)}
+                                <TextField id="outlined-basic" label="" variant="outlined" placeholder="ID" onChange={(e) => setID(e.target.value)}
                                     InputProps={{ startAdornment: (<InputAdornment position="start" ><AccountCircleOutlinedIcon /></InputAdornment>), }}
                                     sx={{
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
