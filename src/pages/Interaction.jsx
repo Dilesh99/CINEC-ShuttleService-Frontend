@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CssBaseline,Grid2, Typography, Box, Button} from '@mui/material';
 import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
@@ -32,15 +33,15 @@ function Interaction() {
           width: '100%',
           maxWidth: 800,
           textAlign: 'center',
-          mt: { xs: '100px', sm: '95px', md: '110px', lg:'120px' }, 
+          mt: { xs: '0px', sm: '95px', md: '110px', lg:'120px' }, 
           borderRadius: 2,
         }}
       >
   
         <Typography
-          sx={{fontSize: { xs: '18px', sm: '20px', md: '23px',lg:'28px' },fontFamily: 'Inter',fontWeight: 500, letterSpacing: '0.1em',mb: 2,
+          sx={{fontSize: { xs: '18px', sm: '20px', md: '23px',lg:'28px' },fontFamily: 'Inter',fontWeight: 500, letterSpacing: '0.1em',mb: 1,
           }}
-        > Welcome To
+        >WELCOME TO
         </Typography>
 
         <Typography
@@ -52,41 +53,50 @@ function Interaction() {
        <Grid2>
            <Link to="/signup2"> <Button href=" " variant="contained" color="warning" fullWidth
             sx={{
-                  width: { xs: '15rem', sm: '20rem', md: '25rem', lg:'25rem' } , borderRadius: '35px' ,mb: 2,fontWeight: 600,textTransform: 'none',py: { xs: 1, sm: 1.2, md: 1.2, lg:1.5},fontSize: { xs: '12px', sm: '14px', md: '16px', lg:'16px' }, bgColor: '#D4790E', 
+                  width: { xs: '15rem', sm: '20rem', md: '25rem', lg:'25rem' } , borderRadius: '35px' ,mb: 2,fontWeight: 600,textTransform: 'none',py: { xs: 0.5, sm: 1.2, md: 1.2, lg:1.5},fontSize: { xs: '12px', sm: '14px', md: '16px',justifyContent:'left', lg:'16px' }, bgColor: '#D4790E', 
                   '&:hover': { bgColor: '#e67e00' },
-                }}> 
-              <AssignmentIndOutlinedIcon sx={{ mr: 1 }} /> 
-            Sign Up as a Staff Member
+                }}>
+            <table>
+              <tr>
+                <td>
+                  <AssignmentIndOutlinedIcon sx={{ mr: 1,mt:{xs:0.6, md:1}}} /> 
+                </td>
+                <td>
+                  Sign Up as a Staff Member
+                </td>
+              </tr>
+            </table>
+              
+            
             </Button></Link>
       </Grid2>
 
       <Grid2>
         <Link to="/signup"><Button href=" " variant="contained" color="warning" fullWidth
           sx={{
-            width: { xs: '15rem', sm: '20rem', md: '25rem', lg:'25rem' } , borderRadius: '35px' ,mb: 2,fontWeight: 600,textTransform: 'none',py: { xs: 1, sm: 1.2, md: 1.2, lg:1.5 },fontSize: { xs: '12px', sm: '14px', md: '16px', lg:'16px' }, bgColor: '#D4790E', textAlign:'left', 
+            width: { xs: '15rem', sm: '20rem', md: '25rem', lg:'25rem' } , borderRadius: '35px' ,mb: 2,fontWeight: 600,textTransform: 'none',py: { xs: 0.5, sm: 1.2, md: 1.2, lg:1.5 },fontSize: { xs: '12px', sm: '14px', md: '16px', lg:'16px' }, bgColor: '#D4790E', textAlign:'left', justifyContent:'left',
             '&:hover': { bgColor: '#e67e00' },
           }}> 
-          <PermContactCalendarOutlinedIcon sx={{ mr: 5,  }}/>
-        Sign Up as a Student
+         
+            <table>
+              <tr>
+                <td>
+                <PermContactCalendarOutlinedIcon sx={{ mr: 1, mt:{xs:0.6, md:1} }}/>
+                </td>
+                <td>
+                  Sign Up as a Student
+                </td>
+              </tr>
+            </table>
+
       </Button></Link>
         </Grid2>
 
-        <Grid2>
-        <Link to="/SignIn2"><Button href=" " variant="contained" color="warning" fullWidth
-          sx={{
-            width: { xs: '15rem', sm: '20rem', md: '25rem', lg:'25rem' } , borderRadius: '35px' ,mb: 2,fontWeight: 600,
-            justifyContent:'center',textTransform: 'none',py: { xs: 1, sm: 1.2, md: 1.2, lg:1.5 },fontSize: { xs: '12px', sm: '14px', md: '16px', lg:'16px' }, bgColor: '#D4790E', textAlign:'left', 
-            '&:hover': { bgColor: '#e67e00' },
-          }}> 
-          <PermContactCalendarOutlinedIcon sx={{ mr: 5,  }}/>
-        Sign In as a Driver
-        </Button></Link>
-        </Grid2>
-   
+        
       <Typography
-        sx={{fontFamily: 'Inter',fontSize: { xs: '12px', sm: '14px', md: '16px', lg:'16px' },fontWeight: 400, mt: { xs: 1.5, sm: 1.5, md: 2, lg:2 }, textAlign:'right', marginRight:{ xs: '3rem', sm: '14rem', md: '13rem', lg:'13rem' }}}
+        sx={{fontFamily: 'Inter',fontSize: { xs: '12px', sm: '14px', md: '16px', lg:'16px' }, mt: { xs: 1.5, sm: 1.5, md: 1.5, lg:1.5 }, textAlign:'right', marginRight:{ xs: '3.2rem', sm: '14rem', md: '13rem', lg:'13rem' }}}
         > Already a member?<br/>
-         <Link to='/signin' ><Button href="#" sx={{ color: '#DAEEF5', fontWeight: '600', fontSize:{ xs: '12px', sm: '14px', md: '16px', lg:'16px' }, textAlign:'right',  color:'#DAEEF5', textDecoration:'none,' }}>
+         <Link to='/signin' ><Button href="#" sx={{ fontWeight: '600', fontSize:{ xs: '12px', sm: '14px', md: '16px', lg:'16px' }, textAlign:'right',  color:'#DAEEF5', textDecoration:'none,' }}>
             Sign In
           </Button></Link> 
         </Typography>
