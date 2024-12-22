@@ -93,7 +93,7 @@ const SignIn = () => {
                 }
                 else if(person == "Driver"){
                     if(driverID == "D001"){
-                        window.location.href = "/shuttleService";
+                        window.location.href(`/shuttleService/${driverID}`);
                     }
                 }
                 else{
