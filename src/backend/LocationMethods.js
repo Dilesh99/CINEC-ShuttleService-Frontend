@@ -1,13 +1,15 @@
+import { useState } from "react";
+
 let watchId = null;
 
 export const LocationMethods = {
-  startTracking: async function (shuttleID, setError) {
+  startTracking: async function (shuttleID) {
     if (!shuttleID) {
-      setError("Please select a shuttle ID before starting tracking.");
+      console.log("Please select a shuttle ID before starting tracking.");
       return;
     }
 
-    if ("geolocation" in navigator) {
+    if ("geolocation" in navigator && watchId == null) {
       watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -26,11 +28,11 @@ export const LocationMethods = {
               console.log("Location updated successfully");
             })
             .catch((err) => {
-              setError(`Error updating location: ${err.message}`);
+              console.log(`Error updating location: ${err.message}`);
             });
         },
         (error) => {
-          setError(`Error obtaining location: ${error.message}`);
+          console.log(`Error obtaining location: ${error.message}`);
         },
         {
           enableHighAccuracy: true,
@@ -39,25 +41,21 @@ export const LocationMethods = {
         }
       );
     } else {
-      setError("Geolocation is not supported by this browser.");
+      console.log("Already tracking");
     }
   },
 
-  stopTracking: async function (setError) {
+  stopTracking: async function () {
     if (watchId != null) {
       navigator.geolocation.clearWatch(watchId);
       watchId = null;
-      setError("Tracking stopped.");
+      console.log("Tracking stopped.");
     } else {
-      setError("Tracking is not active.");
+      console.log("Tracking is not active.");
     }
   },
 
-  seeCoordinates: async function () {
-    window.open('/view-location', '_blank');
-  },
-
-  fetchLocation: async function (shuttleID, setLocation, setError) {
+  fetchLocation: async function (shuttleID, setLocation) {
     try {
       const response = await fetch(
         `http://localhost:8080/getLocation?shuttleID=${shuttleID}`
@@ -72,7 +70,7 @@ export const LocationMethods = {
         latitude: data.latitude,
       });
     } catch (err) {
-      setError(`Error retrieving location: ${err.message}`);
+      console.error(`Error retrieving location: ${err.message}`);
     }
   },
 };

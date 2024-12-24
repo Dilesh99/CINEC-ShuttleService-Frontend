@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 
 const routes = [
-  { name: "Gampaha1", route: "Route A" },
-  { name: "Gampaha2", route: "Route B" },
-  { name: "Malabe", route: "Route C" },
-  { name: "Moratuwa", route: "Route D" },
-  { name: "Wattla", route: "Route E" },
-  { name: "Negombo", route: "Route F" },
+  { name: "GAMPAHA 1", route: "Route A" },
+  { name: "GAMPAHA 2", route: "Route B" },
+  { name: "MALABE", route: "Route C" },
+  { name: "MORATUWA", route: "Route D" },
+  { name: "WATTALA", route: "Route E" },
+  { name: "NEGAMBO", route: "Route F" },
 ];
 
 function RouteSelection() {

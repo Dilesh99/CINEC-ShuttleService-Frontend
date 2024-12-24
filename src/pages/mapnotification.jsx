@@ -87,10 +87,8 @@ function ShuttleService2() {
   };
 
   const toggleLocation = () => {
-    // When the button is clicked, redirect to the dynamic shuttle page
-    navigate(`/shuttleService/${driverID}`);
+    console.log('Tracking stopped');
   };
-
 
   return (
     <>

@@ -1,9 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // for capturing the dynamic ID from the URL
-import { CssBaseline, Button, Typography, Box, CardContent, Checkbox, FormControlLabel, TextField, Paper } from '@mui/material';
+import { CssBaseline, Button, Typography, Box, CardContent, Checkbox, FormControlLabel, TextField, Paper, CircularProgress } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EditIcon from '@mui/icons-material/Edit';
+
+import { LocationMethods } from '../backend/LocationMethods';
 
 
 function ShuttleService() {
@@ -13,9 +15,16 @@ function ShuttleService() {
   const [busDetails, setBusDetails] = useState(null); // To store dynamic bus details
   const navigate = useNavigate();
 
-  const toggleLocation = () => {
-    // When the button is clicked, redirect to the dynamic shuttle page
-    navigate(`/shuttleService2/${driverID}`);
+  const [isTracking, setIsTracking] = useState('TURN ON');
+
+  const startTracking = () => {
+    LocationMethods.startTracking(busDetails.route);
+    setIsTracking('TRACKING...');
+  };
+
+  const stopTracking = () => {
+    LocationMethods.stopTracking();
+    setIsTracking('TURN ON');
   };
 
   const handleCheckboxChange = (reason) => {
@@ -30,12 +39,12 @@ function ShuttleService() {
       // Mock data for bus details
       const busData = {
         D001: {
-          
           route: 'GAMPAHA 1',
           busNo: 'S0001',
           driverName: 'John Doe',
           startPlace: 'Malabe',
           destination: 'Gampaha',
+          mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d79.9528444!3d6.9110197!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
         },
         D002: {
           route: 'GAMPAHA 2',
@@ -43,15 +52,42 @@ function ShuttleService() {
           driverName: 'Jane Smith',
           startPlace: 'Colombo',
           destination: 'Gampaha',
+          mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
         },
         D003: {
-          route: 'GAMPAHA 3',
+          route: 'MALABE',
           busNo: 'S0003',
           driverName: 'Mike Johnson',
           startPlace: 'Kelaniya',
           destination: 'Gampaha',
+          mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
+        },
+        D004: {
+          route: 'MORATUWA',
+          busNo: 'S0003',
+          driverName: 'Mike Johnson',
+          startPlace: 'Kelaniya',
+          destination: 'Gampaha',
+          mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
+        },
+        D005: {
+          route: 'WATTALA',
+          busNo: 'S0003',
+          driverName: 'Mike Johnson',
+          startPlace: 'Kelaniya',
+          destination: 'Gampaha',
+          mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
+        },
+        D006: {
+          route: 'NEGAMBO',
+          busNo: 'S0003',
+          driverName: 'Mike Johnson',
+          startPlace: 'Kelaniya',
+          destination: 'Gampaha',
+          mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
         },
       };
+
 
       // Get bus data based on the driverID from the URL
       const busInfo = busData[driverID] || null;
@@ -98,18 +134,18 @@ function ShuttleService() {
                     <Button 
                       variant="contained"
                       color={locationOn ? 'primary' : 'default'}
-                      onClick={toggleLocation}
+                      onClick={startTracking}
                       sx={{
                         bgcolor: locationOn ? '#ffffff' : '#ffffff', color: locationOn ? '#000000' : '#000000',
                         borderRadius: '30px', width: { xs: '45%', sm: '30%' },
                       }}
                     >
-                      TURN ON
+                      {isTracking}
                     </Button>
-                    <Button href='/'
+                    <Button
                       variant="contained"
                       color={!locationOn ? 'primary' : 'default'}
-                      onClick={toggleLocation}
+                      onClick={stopTracking}
                       sx={{
                         bgcolor: !locationOn ? '#ffffff' : '#ffffff', color: !locationOn ? '#000000' : '#000000',
                         borderRadius: '30px', width: { xs: '45%', sm: '35%' },

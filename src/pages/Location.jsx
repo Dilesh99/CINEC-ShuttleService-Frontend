@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -8,6 +8,11 @@ import Layout from "../components/Layout";
 import { Link } from 'react-router-dom';
 import BackgroundImage from "/src/assets/bg5.jpg";
 
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import busIcon from '../assets/busIconMap.png';
+
+import { LocationMethods } from '../backend/LocationMethods';
+
 
 
 
@@ -15,6 +20,47 @@ export default function Location() {
   // Get the query parameter 'route' from the URL
   const location = useLocation();
   const routeName = new URLSearchParams(location.search).get('route'); // Extract route name from the query string
+
+  const [shuttleLocation, setShuttleLocation] = useState({
+    shuttleID: "",
+    longitude: null,
+    latitude: null
+  });
+  const [canTrack, setCanTrack] = useState(true);
+
+  const containerStyle = {
+    width: `{100%}`,
+    height: '300px',
+    border: 0,
+    borderRadius: '10px',
+  };
+
+  const center = shuttleLocation.latitude && shuttleLocation.longitude ? {
+    lat: shuttleLocation.latitude,
+    lng: shuttleLocation.longitude,
+  } : { lat: 0, lng: 0 };
+
+  const apiKey = 'AIzaSyDHSsPvUNS84N5jUnEyt5xxzGYkkynf6TU';
+
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      setCanTrack(true);
+    } else {
+      setCanTrack(false);
+    }
+  });
+  useEffect(() => {
+    if (canTrack) {
+      const intervalId = setInterval(() => {
+        LocationMethods.fetchLocation(routeName, setShuttleLocation);
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [canTrack, routeName]);
+
+  const isValidLocation = shuttleLocation.latitude && shuttleLocation.longitude;
 
   return (
     <div>
@@ -48,7 +94,7 @@ export default function Location() {
               marginRight: 'auto',
               position: 'relative',
               top: '10%',
-              marginBottom:{xs:"15%",sm:"0",md:"5%",lg:"5%"},
+              marginBottom: { xs: "15%", sm: "0", md: "5%", lg: "5%" },
               display: 'flex',  // Center content vertically
               flexDirection: 'column',
               justifyContent: 'center', // Center vertically
@@ -118,7 +164,7 @@ export default function Location() {
                         sx={{
                           backgroundColor: 'white',
                           width: '100%',
-                          textAlign:'center'
+                          textAlign: 'center'
                         }}
                       >
                         VIEW BUS SCHEDULE
@@ -157,22 +203,31 @@ export default function Location() {
                     width={{ xs: 'auto', sm: '75%', md: '80%' }} // Adjust the width for responsiveness
                     margin={' auto'}
                     height={'100%'}
-                    marginBottom={'13%'} 
-                  //  marginLeft={{xs:'11%',sm:'30%',md:'12%'  }}
-                    padding={{xs:5, md:0 }}
-                    
+                    marginBottom={'13%'}
+                    marginLeft={{ xs: '-11%', sm: '30%', md: '12%' }}
+                    padding={{ xs: 5, md: 0 }}
+
                   >
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d44810.48049958517!2d79.93826798411983!3d6.92352057383237!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae256d59601df81%3A0x31a1dd96e8d49ba!2sMalabe!5e0!3m2!1sen!2slk!4v1731276460672!5m2!1sen!2slk"
-                      width={'100%'}
-                      height={'300px'}
-                      style={{
-                        border: 0,
-                        borderRadius: '10px', // Optional: Add rounded corners for better aesthetics
-                      }}
-                      allowFullScreen
-                      loading="lazy"
-                    ></iframe>
+                    <LoadScript googleMapsApiKey={apiKey}>
+                      <GoogleMap
+                        mapContainerStyle={containerStyle}
+                        center={center}
+                        zoom={13}
+                      >
+                        {isValidLocation && (
+                          <Marker
+                            position={{
+                              lat: shuttleLocation.latitude,
+                              lng: shuttleLocation.longitude,
+                            }}
+                            /*icon={{
+                              url: busIcon,
+                              scaledSize: new window.google.maps.Size(40, 40),
+                            }}*/
+                          />
+                        )}
+                      </GoogleMap>
+                    </LoadScript>
                   </Box>
                 </Box>
               </Grid>
