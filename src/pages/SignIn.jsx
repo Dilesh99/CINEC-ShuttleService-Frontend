@@ -92,9 +92,7 @@ const SignIn = () => {
                     window.location.href = "/home";
                 }
                 else if(person == "Driver"){
-                    if(driverID == "D001"){
-                        window.location.href(`/shuttleService/${driverID}`);
-                    }
+                    window.location.href= `/shuttleService2/${driverID}`
                 }
                 else{
                     setError("Error log in");

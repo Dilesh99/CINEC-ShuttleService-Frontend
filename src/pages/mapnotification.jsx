@@ -18,7 +18,6 @@ function ShuttleService2() {
       // Mock data for bus details
       const busData = {
         D001: {
-          
           route: 'GAMPAHA 1',
           busNo: 'S0001',
           driverName: 'John Doe',
@@ -35,7 +34,31 @@ function ShuttleService2() {
           mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
         },
         D003: {
-          route: 'GAMPAHA 3',
+          route: 'Malabe',
+          busNo: 'S0003',
+          driverName: 'Mike Johnson',
+          startPlace: 'Kelaniya',
+          destination: 'Gampaha',
+          mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
+        },
+        D004: {
+          route: 'Maradana',
+          busNo: 'S0003',
+          driverName: 'Mike Johnson',
+          startPlace: 'Kelaniya',
+          destination: 'Gampaha',
+          mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
+        },
+        D005: {
+          route: 'Wattala',
+          busNo: 'S0003',
+          driverName: 'Mike Johnson',
+          startPlace: 'Kelaniya',
+          destination: 'Gampaha',
+          mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
+        },
+        D006: {
+          route: 'Negambo',
           busNo: 'S0003',
           driverName: 'Mike Johnson',
           startPlace: 'Kelaniya',
@@ -43,6 +66,7 @@ function ShuttleService2() {
           mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d80.1234567!3d7.1234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
         },
       };
+
      // Get bus data based on the driverID from the URL
      const busInfo = busData[driverID] || null;
 

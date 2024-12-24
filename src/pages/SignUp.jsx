@@ -24,6 +24,7 @@ const SignUp = () => {
     const [phone_number, setPhone_number] = useState('');
     const [password, setPassword] = useState('');
     const [secondPassword, setSecondPassword] = useState('');
+
     const [showPassword, setShowPassword] = useState(false);
     const [showsecondPassword, setShowsecondPassword] = useState(false);
     const [fileName, setFileName] = useState("");
@@ -498,10 +499,7 @@ const SignUp = () => {
                 justifyContent: "center",
               }}
             >
-              <Link to="#" style={{ textDecoration: "none" }}>
-                {" "}
-                <Button
-                  href=" "
+              <Button
                   type="submit"
                   variant="contained"
                   sx={{
@@ -532,10 +530,11 @@ const SignUp = () => {
                       bgcolor: "rgba(70, 108, 148, 0.8)",
                     },
                   }}
+                onClick={handleSignUp}
+                disabled={isLoading}
                 >
-                  Sign up
+                {isLoading? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
                 </Button>
-              </Link>
             </Box>
 
             {/* "Already have an account?" Section */}

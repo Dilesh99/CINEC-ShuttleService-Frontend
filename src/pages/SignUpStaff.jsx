@@ -8,6 +8,7 @@ import {
   Typography,
   InputAdornment,
   IconButton,
+  CircularProgress
 } from "@mui/material";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
@@ -20,12 +21,15 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const SignUp2 = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  
   const [username, setUsername] = useState("");
   const [staffID, setStaffID] = useState("");
   const [email, setEmail] = useState("");
   const [phone_number, setPhone_number] = useState("");
   const [password, setPassword] = useState("");
   const [secondPassword, setSecondPassword] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
   const [showsecondPassword, setShowsecondPassword] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -65,6 +69,7 @@ const SignUp2 = () => {
   };
 
   const handleSignUp = async () => {
+    setIsLoading(true);
     var canSignUp = true;
     var errors = "";
     if (staffID.length != 6) {
@@ -90,6 +95,7 @@ const SignUp2 = () => {
       });
       if (await response.json()) {
         window.alert("Staff member already signed up");
+        setIsLoading(false);
       } else {
         const response = await fetch(`http://localhost:8080/updateStaff`, {
           method: "PUT",
@@ -106,9 +112,12 @@ const SignUp2 = () => {
         });
         const data = await response.text();
         console.log(data);
+        setIsLoading(false);
+        window.location.href = '/home';
       }
     } else {
       window.alert(errors);
+      setIsLoading(false);
     }
   };
 
@@ -231,7 +240,7 @@ const SignUp2 = () => {
               id="outlined-basic"
               label=""
               variant="outlined"
-              placeholder="Student ID"
+              placeholder="ID"
               onChange={(e) => setStaffID(e.target.value)}
               InputProps={{
                 startAdornment: (
@@ -444,7 +453,7 @@ const SignUp2 = () => {
               label=""
               variant="outlined"
               type={showsecondPassword ? "text" : "password"}
-              placeholder="Conform password"
+              placeholder="Confirm password"
               onChange={(e) => setSecondPassword(e.target.value)}
               InputProps={{
                 startAdornment: (
@@ -676,10 +685,7 @@ const SignUp2 = () => {
                 justifyContent: "center",
               }}
             >
-              <Link to="#" style={{ textDecoration: "none" }}>
-                {" "}
                 <Button
-                  href=" "
                   type="submit"
                   variant="contained"
                   sx={{
@@ -710,10 +716,11 @@ const SignUp2 = () => {
                       bgcolor: "rgba(70, 108, 148, 0.8)",
                     },
                   }}
+                  onClick={handleSignUp}
+                  disabled={isLoading}
                 >
-                  Sign up
+                  {isLoading? <CircularProgress size={24} color="inherit"/> : "Sign Up"}
                 </Button>
-              </Link>
             </Box>
 
             {/* "Already have an account?" Section */}
