@@ -87,7 +87,7 @@ export default function Location() {
               marginRight: "auto",
               position: "relative",
               top: "10%",
-              marginBottom: { xs: "15%", sm: "0", md: "5%", lg: "5%" },
+              marginBottom: { xs: "10%", sm: "0", md: "5%", lg: "5%" },
               display: "flex", // Center content vertically
               flexDirection: "column",
               justifyContent: "center", // Center vertically
