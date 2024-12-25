@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 
 const routes = [
-  { name: "GAMPAHA 1", route: "Route A" },
-  { name: "GAMPAHA 2", route: "Route B" },
+  { name: "GAMPAHA1", route: "Route A" },
+  { name: "GAMPAHA2", route: "Route B" },
   { name: "MALABE", route: "Route C" },
   { name: "MORATUWA", route: "Route D" },
   { name: "WATTALA", route: "Route E" },
@@ -52,7 +52,7 @@ function RouteSelection() {
             borderRadius: 5,
             textAlign: "center",
             width: { xs: "90%", sm: "80%", md: "60%", lg: "70%" },
-            marginTop: { xs: "30%", sm: "13%", md: "8%", lg: "1%" },
+            marginTop: { xs: "30%", sm: "13%", md: "0%", lg: "0%" },
             marginBottom:{xs:"10%",sm:"0",md:"0",lg:"0"},
             position: "relative",
           }}
@@ -130,7 +130,7 @@ function RouteSelection() {
                         variant="h6"
                         sx={{
                           mt: 1,
-                          fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem", lg: "1.3rem" },
+                          fontSize: { xs: "0.8rem", sm: "1rem", md: "1rem", lg: "1rem" },
                         }}
                       >
                         {route.name}
