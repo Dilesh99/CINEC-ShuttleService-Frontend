@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
 import { Link } from "react-router-dom";
 import BackgroundImage from "/src/assets/bg5.jpg";
+import { useNavigate } from "react-router-dom";
 
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import busIcon from "../assets/busIconMap.png";
@@ -16,7 +17,12 @@ import { LocationMethods } from "../backend/LocationMethods";
 export default function Location() {
   // Get the query parameter 'route' from the URL
   const location = useLocation();
+  const navigate = useNavigate();
   const routeName = new URLSearchParams(location.search).get("route"); // Extract route name from the query string
+
+  const handleRouteClick = (routeName) => {
+    navigate(`/schedule?route=${routeName}`); // Navigate to schedule page with query parameter
+  };
 
   const [shuttleLocation, setShuttleLocation] = useState({
     shuttleID: "",
@@ -120,7 +126,8 @@ export default function Location() {
                       ></Box>
 
                       <Box
-                        width={"50%"}
+                         width={{ xs: "50%", sm: "60%", md: "50%", lg: "50%" }} // Adjust width for responsiveness
+                         height={{ xs: "180px", sm: "140px", md: "160px", lg: "180px" }} // Fixed height with breakpoints
                         padding={"2%"}
                         sx={{
                           backgroundColor: "#D4790E",
@@ -128,6 +135,10 @@ export default function Location() {
                           marginRight: "auto",
                           marginTop: "18%",
                           borderRadius: "15px",
+                          display: "flex", // To center content vertically and horizontally
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
                       >
                         <Button
@@ -138,6 +149,7 @@ export default function Location() {
                             marginTop: "5%",
                             borderRadius: "10px",
                             fontSize: { xs: "12px", sm: "14px", md: "14px" },
+                            marginBottom: "5%", // Add spacing between the button and text
                           }}
                         >
                           <Box
@@ -148,6 +160,7 @@ export default function Location() {
                               backgroundSize: "cover",
                               backgroundPosition: "center",
                               backgroundRepeat: "no-repeat",
+                              marginRight: "10px", // Add spacing between icon and text
                             }}
                           ></Box>
                           {routeName} {/* Dynamic route name */}
@@ -160,7 +173,7 @@ export default function Location() {
                           {routeName} to Campus: 07:00AM
                         </Typography>
                         <Typography
-                          f
+                          
                           fontSize={{ xs: "13px", md: "14px" }}
                           marginTop={"2%"}
                         >
@@ -177,7 +190,7 @@ export default function Location() {
                       marginTop={"10%"}
                     >
                       <Button
-                        href="/schedule"
+                       onClick={() => handleRouteClick(routeName)} // Navigate on schedule according to specific route
                         sx={{
                           backgroundColor: "white",
                           width: "100%",
@@ -190,6 +203,7 @@ export default function Location() {
                       <Link to="/setAlarm">
                         <Button
                           sx={{
+                            
                             backgroundColor: "white",
                             width: "100%",
                             marginTop: "10%",

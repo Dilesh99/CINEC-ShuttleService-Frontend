@@ -14,6 +14,7 @@ import { margin, styled } from '@mui/system';
 import { Link } from 'react-router-dom';
 import Layout from "../components/Layout";
 import BackgroundImage from "/src/assets/bg5.jpg";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ContentContainer = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -180,7 +181,7 @@ const DayButton = styled(Button)(({ theme }) => ({
 }));
 
 
-const SetAlarmSection = () => (
+const SetAlarmSection = ({ navigateBack }) => (
   <Sidebar>
     <Typography variant="h4" align="center" gutterBottom>
       SET AN ALARM
@@ -201,8 +202,9 @@ const SetAlarmSection = () => (
       university <br />
       life.
     </Typography>
-    <Link to="/location">
+    
       <Button
+        onClick={navigateBack}
         variant="contained"
         sx={{
           mt: 4,
@@ -214,12 +216,19 @@ const SetAlarmSection = () => (
       >
         BACK
       </Button>
-    </Link>
+    
   </Sidebar>
 );
 
 const AlarmForm = () => {
+
+  const navigate = useNavigate();
   const activeDays = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
+
+  // Function to navigate back to the previous page
+  const navigateBack = () => {
+    navigate(-1); // This will navigate back to the previous page
+  };
 
   return (
     <Layout>
@@ -243,7 +252,7 @@ const AlarmForm = () => {
         }}
       >
         <ContentContainer>
-          <SetAlarmSection />
+          <SetAlarmSection navigateBack={navigateBack} />
           <FormSection>
             <Box display="flex" flexDirection="column" gap={4}>
             <Box display="flex" alignItems="center">
