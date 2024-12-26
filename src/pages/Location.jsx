@@ -48,6 +48,7 @@ export default function Location() {
       setCanTrack(false);
     }
   });
+  
   useEffect(() => {
     if (canTrack) {
       const intervalId = setInterval(() => {
