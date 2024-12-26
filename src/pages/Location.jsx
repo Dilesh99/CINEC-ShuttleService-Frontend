@@ -40,7 +40,7 @@ export default function Location() {
         }
       : { lat: 0, lng: 0 };
 
-  const apiKey = "AIzaSyDHSsPvUNS84N5jUnEyt5xxzGYkkynf6TU";
+  const apiKey = "";
 
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
