@@ -39,7 +39,7 @@ function ShuttleService() {
       // Mock data for bus details
       const busData = {
         D001: {
-          route: 'GAMPAHA 1',
+          route: 'GAMPAHA1',
           busNo: 'S0001',
           driverName: 'John Doe',
           startPlace: 'Malabe',
@@ -47,7 +47,7 @@ function ShuttleService() {
           mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31724.940489733215!2d79.9528444!3d6.9110197!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMzkuNyJOIDc5wrA1NyAwMy40IkU!5e0!3m2!1sen!2slk!4v1698535609472!5m2!1sen!2slk",
         },
         D002: {
-          route: 'GAMPAHA 2',
+          route: 'GAMPAHA2',
           busNo: 'S0002',
           driverName: 'Jane Smith',
           startPlace: 'Colombo',
