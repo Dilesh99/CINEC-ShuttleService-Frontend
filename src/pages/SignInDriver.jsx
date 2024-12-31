@@ -67,14 +67,14 @@ const SignIn2 = () => {
                 sx={{color: { xs: '#D4790E', sm: '#D4790E', md: '#D4790E', lg:'#002147FF' }, fontFamily:'inter', textAlign:'center',
                 fontSize: {xs:'16px', sm:'19px', md:'21px', lg:'24px'},
                 mt:{xs:4, sm:4, md:8, lg:10}, 
-                fontFamily:'inter'}}>
+                }}>
                     WELCOME TO
             </Typography>
 
             <Typography sx={{color:'#002147FF', fontFamily:'inter', textAlign:'center',
                 fontSize:{xs:'20px', sm:'24px', md:'26px', lg:'32px'},
                 mb:{xs:1, sm:2, md:2, lg:3}, 
-                fontFamily:'inter', fontWeight:'1000'}}>
+                 fontWeight:'1000'}}>
                     CINEC SHUTTLE SERVICES
             </Typography>
 
@@ -82,7 +82,7 @@ const SignIn2 = () => {
                 fontSize:{xs:'12px', sm:'14px', md:'16px', lg:'16px'},
                 mt:{xs:2, sm:3, md:3, lg:5},
                 mb:{xs:2, sm:2, md:2, lg:2}, 
-                fontFamily:'inter'}}>
+                }}>
                     Enter your Username & Password to SignIn
             </Typography>
 

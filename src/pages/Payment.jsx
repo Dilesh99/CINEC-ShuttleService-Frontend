@@ -31,7 +31,7 @@ export default function Payment() {
                 backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", position:'relative'}}>
             
             <Box
-                sx={{width:'90%',backgroundColor:'rgba(0, 33, 71, 0.90)',borderRadius:'20',marginLeft:'auto',marginRight:'auto',
+                sx={{width:'90%',backgroundColor:'rgba(0, 33, 71, 0.90)',marginLeft:'auto',marginRight:'auto',
                 borderRadius: 6,
                 position:'relative',top:'10%',paddingBottom:'2.5%'}}>
                 
@@ -125,7 +125,7 @@ export default function Payment() {
                                     
                                 </FormGroup>
                                 <Button sx={{
-                                    backgroundColor:'#D4790E',color:'white',width:'40%',letterSpacing:'2px',height:'40px', borderRadius:'10px',fontWeight:'600',letterSpacing:'1px',boxShadow:'1px 1px 10px black'
+                                    backgroundColor:'#D4790E',color:'white',width:'40%',letterSpacing:'2px',height:'40px', borderRadius:'10px',fontWeight:'600',boxShadow:'1px 1px 10px black'
                                 }}>Pay Now</Button>
                                 
                             </Box>
@@ -141,7 +141,7 @@ export default function Payment() {
                             
                             <Box sx={{ position:'relative', marginLeft:'auto', marginRight:'auto',width:'50%', marginTop:'10%'}}>
                             <Button sx={{
-                                backgroundColor:'#D4790E', color:'black',width:'100%',height:'50px' ,boxShadow:'1px 1px 10px black',color:'white',letterSpacing:'2px',fontWeight:'600'
+                                backgroundColor:'#D4790E', width:'100%',height:'50px' ,boxShadow:'1px 1px 10px black',color:'white',letterSpacing:'2px',fontWeight:'600'
                             }}>Download pass</Button>
                         </Box>
 
