@@ -60,7 +60,6 @@ export const LocationMethods = {
       const response = await fetch(
         `http://localhost:8080/getLocation?shuttleID=${shuttleID}`
       );
-      console.log(response);
       if (!response.ok) {
         throw new Error(`Error fetching location: ${response.statusText}`);
       }

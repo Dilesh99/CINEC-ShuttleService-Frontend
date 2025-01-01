@@ -29,16 +29,15 @@ export default function Location() {
     longitude: null,
     latitude: null,
   });
+
+  const [userLocation, setUserLocation] = useState({
+    latitude: null,
+    longitude: null,
+  });
+
   const [canTrack, setCanTrack] = useState(true);
 
-
-  const center =
-    shuttleLocation.latitude && shuttleLocation.longitude
-      ? {
-          lat: shuttleLocation.latitude,
-          lng: shuttleLocation.longitude,
-        }
-      : { lat: 0, lng: 0 };
+  const [center, setCenter] = useState({ lat: 0, lng: 0 });
 
 
   document.addEventListener("visibilitychange", () => {
@@ -48,7 +47,33 @@ export default function Location() {
       setCanTrack(false);
     }
   });
-  
+
+  const getUserLocation = () => {
+    if (!navigator.geolocation) {
+      console.error("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        setUserLocation({ latitude, longitude, accuracy });
+      },
+      (error) => {
+        console.error("Error fetching user location:", error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  };
+
+  useEffect(() => {
+    getUserLocation();
+  }, []);
+
   useEffect(() => {
     if (canTrack) {
       const intervalId = setInterval(() => {
@@ -58,6 +83,43 @@ export default function Location() {
       return () => clearInterval(intervalId);
     }
   }, [canTrack, routeName]);
+
+  useEffect(() => {
+    if (shuttleLocation.latitude && shuttleLocation.longitude && userLocation.latitude && userLocation.longitude) {
+      const midLat = (shuttleLocation.latitude + userLocation.latitude) / 2;
+      const midLng = (shuttleLocation.longitude + userLocation.longitude) / 2;
+      setCenter({ lat: midLat, lng: midLng });
+    }
+  }, [shuttleLocation, userLocation]);
+
+  const animateMarkerPosition = (marker, newPosition) => {
+    const currentPosition = marker.getPosition();
+    const startLat = currentPosition.lat();
+    const startLng = currentPosition.lng();
+    const endLat = newPosition.lat;
+    const endLng = newPosition.lng;
+
+    let startTime;
+    const duration = 1000;
+
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+
+      const timeElapsed = timestamp - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+
+      const lat = startLat + (endLat - startLat) * progress;
+      const lng = startLng + (endLng - startLng) * progress;
+
+      marker.setPosition({ lat, lng });
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  };
 
   const isValidLocation = shuttleLocation.latitude && shuttleLocation.longitude;
 
@@ -126,8 +188,8 @@ export default function Location() {
                       ></Box>
 
                       <Box
-                         width={{ xs: "50%", sm: "60%", md: "50%", lg: "50%" }} // Adjust width for responsiveness
-                         height={{ xs: "180px", sm: "140px", md: "160px", lg: "180px" }} // Fixed height with breakpoints
+                        width={{ xs: "50%", sm: "60%", md: "50%", lg: "50%" }} // Adjust width for responsiveness
+                        height={{ xs: "180px", sm: "140px", md: "160px", lg: "180px" }} // Fixed height with breakpoints
                         padding={"2%"}
                         sx={{
                           backgroundColor: "#D4790E",
@@ -173,7 +235,7 @@ export default function Location() {
                           {routeName} to Campus: 07:00AM
                         </Typography>
                         <Typography
-                          
+
                           fontSize={{ xs: "13px", md: "14px" }}
                           marginTop={"2%"}
                         >
@@ -190,7 +252,7 @@ export default function Location() {
                       marginTop={"10%"}
                     >
                       <Button
-                       onClick={() => handleRouteClick(routeName)} // Navigate on schedule according to specific route
+                        onClick={() => handleRouteClick(routeName)} // Navigate on schedule according to specific route
                         sx={{
                           backgroundColor: "white",
                           width: "100%",
@@ -203,7 +265,7 @@ export default function Location() {
                       <Link to="/setAlarm">
                         <Button
                           sx={{
-                            
+
                             backgroundColor: "white",
                             width: "100%",
                             marginTop: "10%",
@@ -248,25 +310,50 @@ export default function Location() {
                   >
                     <LoadScript googleMapsApiKey={apiKey}>
                       <GoogleMap
-                        mapContainerStyle={{
-                          width: "100%", // Responsive width
-                          height: "100%", // Responsive height
-                        }}
+                        mapContainerStyle={{ width: "100%", height: "100%" }}
                         center={center}
                         zoom={13}
                       >
-                        {isValidLocation && (
+                        {shuttleLocation.latitude && shuttleLocation.longitude && (
                           <Marker
                             position={{
                               lat: shuttleLocation.latitude,
                               lng: shuttleLocation.longitude,
                             }}
-                          />
-                          /*icon={{
+                            icon={{
                               url: busIcon,
                               scaledSize: new window.google.maps.Size(40, 40),
-                            }}*/
+                            }}
+                            label={{
+                              text: "Shuttle",
+                              fontSize: "14px",
+                              color: "black",
+                              fontWeight: "bold",
+                              position: { x: 0, y: -30 },
+                            }}
+                            onLoad={(marker) => {
+                              animateMarkerPosition(marker, { lat: shuttleLocation.latitude, lng: shuttleLocation.longitude });
+                            }}
+                          />
+                        )}
 
+                        {userLocation.latitude && userLocation.longitude && (
+                          <Marker
+                            position={{
+                              lat: userLocation.latitude,
+                              lng: userLocation.longitude,
+                            }}
+                            label={{
+                              text: "You",
+                              fontSize: "14px",
+                              color: "black",
+                              fontWeight: "bold",
+                              position: { x: 0, y: -30 },
+                            }}
+                            onLoad={(marker) => {
+                              animateMarkerPosition(marker, { lat: userLocation.latitude, lng: userLocation.longitude });
+                            }}
+                          />
                         )}
                       </GoogleMap>
                     </LoadScript>
