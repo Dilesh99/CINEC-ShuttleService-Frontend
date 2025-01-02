@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, IconButton, CircularProgress  } from '@mui/material'
+import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, IconButton, CircularProgress } from '@mui/material'
 import BG from "../assets/bg5.jpg"
 import IM2 from "../assets/M2.png"
 import L1 from "../assets/Logo2.png"
@@ -10,6 +10,7 @@ import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { imageProcessMethods } from '../backend/imageProcess';
 
 import { Link } from 'react-router-dom';
 
@@ -17,6 +18,9 @@ import { Link } from 'react-router-dom';
 const SignUp = () => {
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const [imageVerified, setImageVerified] = useState(false);
+    const [imageStatus, setImageStatus] = useState(false);
 
     const [username, setUsername] = useState('');
     const [studentID, setStudentID] = useState('');
@@ -36,69 +40,80 @@ const SignUp = () => {
         setIsLoading(true);
         var canSignUp = true;
         var errors = "";
-        if(studentID.length != 12){
+        if (studentID.length != 12) {
             errors += "\nInvalid ID length";
             canSignUp = false;
         }
-        if(studentID[0] !="M" && studentID[0] != "F"){
+        if (studentID[0] != "M" && studentID[0] != "F") {
             errors += "\nInvalid student ID";
             canSignUp = false;
         }
-        if(phone_number.length != 10){
+        if (phone_number.length != 10) {
             errors += "\nInvalid phone number";
             canSignUp = false;
         }
-        if(password != secondPassword){
+        if (password != secondPassword) {
             errors += "\nPasswords do not match";
             canSignUp = false;
         }
 
-        if(canSignUp){
-            const response = await fetch(`http://localhost:8080/sendStudentLogins`, {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ studentID, password })
-            });
-            if (await response.json()) {
-                window.alert("Student already signed up");
-                setIsLoading(false);
-            }
-            else {
-                var studentsID = studentID;
-                const response = await fetch(`http://localhost:8080/updateStudent`, {
+        if (!imageVerified) {
+            errors += "\nImage not verified";
+            canSignUp = false;
+        }
+
+        if (canSignUp) {
+            try{
+                const response = await fetch(`http://localhost:8080/sendStudentLogins`, {
                     method: "PUT",
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ studentsID, username, email, phone_number, password })
+                    body: JSON.stringify({ studentID, password })
                 });
-                const data = await response.text();
-                console.log(data);
-                window.location.href = "/home";
+                if (await response.json()) {
+                    window.alert("Student already signed up");
+                    setIsLoading(false);
+                }
+                else {
+                    var studentsID = studentID;
+                    const response = await fetch(`http://localhost:8080/updateStudent`, {
+                        method: "PUT",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ studentsID, username, email, phone_number, password })
+                    });
+                    const data = await response.text();
+                    console.log(data);
+                    window.location.href = "/home";
+                }
+            }
+            catch (exception) {
+                window.alert("Connection error: " + exception.message);
+                setIsLoading(false);
             }
         }
-        else{
+        else {
             window.alert(errors);
             setIsLoading(false);
         }
 
     }
 
-  // Handle the file upload
-  const handleFileUpload = (event) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Logic to handle the uploaded file (e.g., save it or preview it)
-
-      // Set success message
-      setSuccessMessage("Image added successfully!");
-
-      // Optional: Reset success message after a few seconds (e.g., 3 seconds)
-     /*setTimeout(() => setSuccessMessage(null), 3000);*/
-    }
-  };
+    // Handle the file upload
+    const handleFileUpload = (event) => {
+        setImageStatus(true);
+        setImageVerified(false);
+        const file = event.target.files?.[0];
+        if (file) {
+            imageProcessMethods.processStudentImage(setImageVerified, file, setSuccessMessage, setImageStatus,studentID);
+        }
+        else {
+            setImageStatus(false);
+            setSuccessMessage("");
+        }
+    };
 
     return (
         <>
@@ -161,7 +176,7 @@ const SignUp = () => {
                                     color: { xs: '#D4790E', sm: '#D4790E', md: '#D4790E', lg: '#002147FF' }, fontFamily: 'inter', textAlign: 'center',
                                     fontSize: { xs: '16px', sm: '20px', md: '20px', lg: '24px' },
                                     mt: { xs: 3, sm: 3, md: 5, lg: 4 },
-                                    
+
                                 }}>
                                 Create an Account for
                             </Typography>
@@ -169,7 +184,7 @@ const SignUp = () => {
                             <Typography sx={{
                                 color: '#002147FF', fontFamily: 'inter', textAlign: 'center',
                                 fontSize: { xs: '18px', sm: '30px', md: '30px', lg: '32px' },
-                                mb: 0,  fontWeight: '800'
+                                mb: 0, fontWeight: '800'
                             }}>
                                 CINEC SHUTTLE SERVICES
                             </Typography>
@@ -278,29 +293,29 @@ const SignUp = () => {
                                         mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                                     }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 }} noValidate autoComplete="off">
-                                <TextField id="outlined-basic" label="" variant="outlined" type={showPassword ? "text" : "Password"} placeholder="Password" 
-                                onChange={
-                                    (e) => setPassword(e.target.value)}
-                                        InputProps={{
+                                <TextField id="outlined-basic" label="" variant="outlined" type={showPassword ? "text" : "Password"} placeholder="Password"
+                                    onChange={
+                                        (e) => setPassword(e.target.value)}
+                                    InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                            <LockIcon />
+                                                <LockIcon />
                                             </InputAdornment>
                                         ),
                                         endAdornment: (
                                             <InputAdornment position="end">
-                                            <IconButton
-                                                 onClick={(e) => {
-                                                    e.preventDefault(); // Prevent default action
-                                                    setShowPassword((prev) => !prev); // Toggle password visibility
-                                                  }}
-                                                  edge="end"
-                                            >
-                                                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                                            </IconButton>
+                                                <IconButton
+                                                    onClick={(e) => {
+                                                        e.preventDefault(); // Prevent default action
+                                                        setShowPassword((prev) => !prev); // Toggle password visibility
+                                                    }}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                                </IconButton>
                                             </InputAdornment>
                                         ),
-                                        }}
+                                    }}
                                     sx={{
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                                         '& .MuiOutlinedInput-root': {
@@ -322,29 +337,29 @@ const SignUp = () => {
                                         mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                                     }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 }} noValidate autoComplete="off">
-                                <TextField id="outlined-basic" label="" variant="outlined" type={showsecondPassword? "text" : "password"} placeholder="Conform password" 
-                                onChange={
-                                    (e) => setSecondPassword(e.target.value)}
-                                        InputProps={{
+                                <TextField id="outlined-basic" label="" variant="outlined" type={showsecondPassword ? "text" : "password"} placeholder="Conform password"
+                                    onChange={
+                                        (e) => setSecondPassword(e.target.value)}
+                                    InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                            <LockIcon />
+                                                <LockIcon />
                                             </InputAdornment>
                                         ),
                                         endAdornment: (
                                             <InputAdornment position="end">
-                                            <IconButton
-                                                 onClick={(e) => {
-                                                    e.preventDefault(); // Prevent default action
-                                                    setShowsecondPassword((prev) => !prev); // Toggle password visibility
-                                                  }}
-                                                  edge="end"
-                                            >
-                                                {showsecondPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                                            </IconButton>
+                                                <IconButton
+                                                    onClick={(e) => {
+                                                        e.preventDefault(); // Prevent default action
+                                                        setShowsecondPassword((prev) => !prev); // Toggle password visibility
+                                                    }}
+                                                    edge="end"
+                                                >
+                                                    {showsecondPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                                </IconButton>
                                             </InputAdornment>
                                         ),
-                                        }}
+                                    }}
                                     sx={{
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                                         '& .MuiOutlinedInput-root': {
@@ -355,8 +370,8 @@ const SignUp = () => {
                                         '& input': { padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%', },
                                     }} />
                             </Box>
-                                    
-                                                   
+
+
                         </Box>
 
 
@@ -365,7 +380,7 @@ const SignUp = () => {
                     <Grid2 container size={{ xs: 4 }}>
                         <Box container size={{ xs: 4 }}
                             sx={{
-                                mt:{xs:'-25%', sm:'-10%', md:'-1%'},
+                                mt: { xs: '-25%', sm: '-10%', md: '-1%' },
                                 width: { xs: '84%', sm: '600px', md: '36%', lg: '36%' },
                                 height: { xs: '300px', sm: '300px', md: '615px', lg: '630px' },
                                 borderTopRightRadius: { xs: 0, sm: 0, md: 10, lg: 10 },
@@ -432,144 +447,145 @@ const SignUp = () => {
                                     <Typography sx={{ fontSize: { xs: '14px', sm: '15px', md: '22px', lg: '24px' }, fontWeight: 600, color: '#ffffff', mt: { xs: 0, sm: 0, md: 8, lg: 18 } }}>ACCOUNT</Typography>
                                     <Typography sx={{ fontSize: { xs: '14px', sm: '15px', md: '22px', lg: '24px' }, fontWeight: 600, color: '#ffffff', mb: 1 }}>VERIFICATION</Typography>
 
-                                   {/* Hidden file input */}
-            <input
-              accept="image/*"
-              id="upload-photo"
-              type="file"
-              style={{ display: "none" }}
-              onChange={handleFileUpload}
-            />
+                                    {/* Hidden file input */}
+                                    <input
+                                        accept="image/*"
+                                        id="upload-photo"
+                                        type="file"
+                                        style={{ display: "none" }}
+                                        onChange={handleFileUpload}
+                                        disabled={imageStatus}
+                                    />
 
-            {/* Custom Button for File Upload */}
-            <label htmlFor="upload-photo">
-              <Button
-                variant="outlined"
-                
-                component="span"
-                sx={{
-                  color:'primary.main',
-                  bgcolor:'white',
-                  fontWeight: 600,
-                  padding: "5px",
-                  fontSize: { xs: "14px", sm: "18px", md: "16px", lg: "18px" },
-                  width: {
-                    xs: "170px",
-                    sm: "190px",
-                    md: "190px",
-                    lg: "190px",
-                  },
-                  height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
-                  borderRadius: "10px",
-                  mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
-                  mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
-                  "&:hover": {
-                    bgcolor: "white",
-                    color: "secondary.main",
-                  },
-                  boxShadow: 3,
-                }}
-              >
-                Upload Photo
-              </Button>
-            </label>
+                                    {/* Custom Button for File Upload */}
+                                    <label htmlFor="upload-photo">
+                                        <Button
+                                            variant="outlined"
 
-            {/* Success message */}
-            {successMessage && (
-              <Typography
-                sx={{
-                  color: "primary.main",
-                  fontFamily: "inter",
-                  textAlign: "center",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  mt: 3,
-                }}
-              >
-                {successMessage}
-              </Typography>
-            )}
+                                            component="span"
+                                            sx={{
+                                                color: 'primary.main',
+                                                bgcolor: 'white',
+                                                fontWeight: 600,
+                                                padding: "5px",
+                                                fontSize: { xs: "14px", sm: "18px", md: "16px", lg: "18px" },
+                                                width: {
+                                                    xs: "170px",
+                                                    sm: "190px",
+                                                    md: "190px",
+                                                    lg: "190px",
+                                                },
+                                                height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
+                                                borderRadius: "10px",
+                                                mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+                                                mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+                                                "&:hover": {
+                                                    bgcolor: "white",
+                                                    color: "secondary.main",
+                                                },
+                                                boxShadow: 3,
+                                            }}
+                                            disabled={imageStatus}
+                                        >
+                                            {imageStatus?<CircularProgress color="primary" size={20} /> : "Upload Photo"}
+                                        </Button>
+                                    </label>
 
-            {/* submit button*/}
+                                    {/* Success message */}
+                                    {successMessage && (
+                                        <Typography
+                                            sx={{
+                                                color: "primary.main",
+                                                fontFamily: "inter",
+                                                textAlign: "center",
+                                                fontSize: { xs: "14px", md: "16px" },
+                                                fontWeight: 500,
+                                                mt: 3,
+                                            }}
+                                        >
+                                            {successMessage}
+                                        </Typography>
+                                    )}
 
-            <Box //Box of Button that used to center the box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    justifyItems: "center",
-                    display: "flex",
-                    fontWeight: 800,
-                    bgcolor: "#002147",
-                    padding: "5px",
-                    fontSize: {
-                      xs: "14px",
-                      sm: "18px",
-                      md: "16px",
-                      lg: "18px",
-                    },
-                    width: {
-                      xs: "170px",
-                      sm: "290px",
-                      md: "310px",
-                      lg: "370px",
-                    },
-                    height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
-                    borderRadius: "30px",
-                    mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
-                    mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
-                    "&:hover": {
-                      bgcolor: "rgba(70, 108, 148, 0.8)",
-                    },
-                  }}
-                onClick={handleSignUp}
-                disabled={isLoading}
-                >
-                {isLoading? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
-                </Button>
-            </Box>
+                                    {/* submit button*/}
 
-            {/* "Already have an account?" Section */}
-            <Typography
-              sx={{
-                color: "#ffff",
-                fontFamily: "inter",
-                textAlign: "center",
-                fontSize: { xs: "12px", md: "16px" },
-                fontWeight: 300,
-              }}
-            >
-              Already have an account?
-            </Typography>
-            <Link to="/signin" style={{ textDecoration: "none" }}>
-              <Button
-                variant="text"
-                sx={{
-                  color: "#D4790E",
-                  fontWeight: 800,
-                  "&:hover": { color: "#000000" },
-                }}
-              >
-                Sign In
-              </Button>
-            </Link>
-          </Box>
-        </Box>
-        </Box>
-        </Grid2>
-        </Grid2>
-        </Grid2>
-        
-    </>
-  );
+                                    <Box //Box of Button that used to center the box
+                                        sx={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            sx={{
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                justifyItems: "center",
+                                                display: "flex",
+                                                fontWeight: 800,
+                                                bgcolor: "#002147",
+                                                padding: "5px",
+                                                fontSize: {
+                                                    xs: "14px",
+                                                    sm: "18px",
+                                                    md: "16px",
+                                                    lg: "18px",
+                                                },
+                                                width: {
+                                                    xs: "170px",
+                                                    sm: "290px",
+                                                    md: "310px",
+                                                    lg: "370px",
+                                                },
+                                                height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
+                                                borderRadius: "30px",
+                                                mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+                                                mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+                                                "&:hover": {
+                                                    bgcolor: "rgba(70, 108, 148, 0.8)",
+                                                },
+                                            }}
+                                            onClick={handleSignUp}
+                                            disabled={isLoading || !imageVerified}
+                                        >
+                                            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
+                                        </Button>
+                                    </Box>
+
+                                    {/* "Already have an account?" Section */}
+                                    <Typography
+                                        sx={{
+                                            color: "#ffff",
+                                            fontFamily: "inter",
+                                            textAlign: "center",
+                                            fontSize: { xs: "12px", md: "16px" },
+                                            fontWeight: 300,
+                                        }}
+                                    >
+                                        Already have an account?
+                                    </Typography>
+                                    <Link to="/signin" style={{ textDecoration: "none" }}>
+                                        <Button
+                                            variant="text"
+                                            sx={{
+                                                color: "#D4790E",
+                                                fontWeight: 800,
+                                                "&:hover": { color: "#000000" },
+                                            }}
+                                        >
+                                            Sign In
+                                        </Button>
+                                    </Link>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </Grid2>
+                </Grid2>
+            </Grid2>
+        </>
+    );
 };
 
 export default SignUp

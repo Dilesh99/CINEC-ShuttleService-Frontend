@@ -20,8 +20,13 @@ import St1 from "../assets/St1.jpg"; // Update with your actual image path
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
+import {imageProcessMethods} from "../backend/imageProcess"
+
 const SignUp2 = () => {
   const [isLoading, setIsLoading] = useState(false);
+
+  const [imageVerified, setImageVerified] = useState(false);
+  const [imageStatus, setImageStatus] = useState(false);
   
   const [username, setUsername] = useState("");
   const [staffID, setStaffID] = useState("");
@@ -37,17 +42,19 @@ const SignUp2 = () => {
   const [successMessage, setSuccessMessage] = useState(""); // State for success message
   const [isSubmitted, setIsSubmitted] = useState(false); // State to track submission
 
+  var [fileimg, setFileImg] = useState(null);
   const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setFileName(file.name);
-
-      // Generate a preview of the image
+    setImageStatus(true);
+    setImageVerified(false);
+    setFileImg(event.target.files[0]);
+    imageProcessMethods.processStaffImage(setImageVerified,event.target.files[0],setSuccessMessage,setImageStatus,staffID);
+    if (fileimg) {
+      //setFileName(fileimg.name);
       const reader = new FileReader();
       reader.onload = () => {
-        setPhotoPreview(reader.result);
+        //setPhotoPreview(reader.result);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(fileimg);
     }
   };
 
@@ -60,12 +67,11 @@ const SignUp2 = () => {
   };
 
   const handleSubmit = () => {
-    if (!photoPreview) return;
+    /*if (!photoPreview) return;
 
-    // Perform your submission logic here
     console.log("Photo submitted:", fileName);
     setSuccessMessage("Submit Successful!");
-    setIsSubmitted(true); // Set submission state to true
+    setIsSubmitted(true);*/
   };
 
   const handleSignUp = async () => {
@@ -546,6 +552,7 @@ const SignUp2 = () => {
               type="file"
               style={{ display: "none" }}
               onChange={handleFileUpload}
+              disabled={imageStatus}
             />
 
             {/* Custom Button for File Upload */}
@@ -575,8 +582,9 @@ const SignUp2 = () => {
                   },
                   boxShadow: 3,
                 }}
+                disabled = {imageStatus}
               >
-                Upload Photo
+                {imageStatus? <CircularProgress color="inherit" size={20}/> : "Upload Photo"}
               </Button>
             </label>
 
@@ -717,7 +725,7 @@ const SignUp2 = () => {
                     },
                   }}
                   onClick={handleSignUp}
-                  disabled={isLoading}
+                  disabled={isLoading || !imageVerified}
                 >
                   {isLoading? <CircularProgress size={24} color="inherit"/> : "Sign Up"}
                 </Button>
