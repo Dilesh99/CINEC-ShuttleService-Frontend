@@ -92,7 +92,7 @@ const SignUp2 = () => {
     }
 
     if (canSignUp) {
-      const response = await fetch(`http://localhost:8080/sendStaffLogins`, {
+      const response = await fetch(`http://5.181.217.67/sendStaffLogins`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ const SignUp2 = () => {
         window.alert("Staff member already signed up");
         setIsLoading(false);
       } else {
-        const response = await fetch(`http://localhost:8080/updateStaff`, {
+        const response = await fetch(`http://5.181.217.67/updateStaff`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

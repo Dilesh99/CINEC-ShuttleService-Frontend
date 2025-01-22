@@ -17,7 +17,7 @@ export const LocationMethods = {
 
           console.log(location);
 
-          fetch(`http://localhost:8080/updateLocation`, {
+          fetch(`http://5.181.217.67/updateLocation`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export const LocationMethods = {
   fetchLocation: async function (shuttleID, setLocation) {
     try {
       const response = await fetch(
-        `http://localhost:8080/getLocation?shuttleID=${shuttleID}`
+        `http://5.181.217.67/getLocation?shuttleID=${shuttleID}`
       );
       if (!response.ok) {
         throw new Error(`Error fetching location: ${response.statusText}`);

@@ -64,7 +64,7 @@ const SignUp = () => {
 
         if (canSignUp) {
             try{
-                const response = await fetch(`http://localhost:8080/sendStudentLogins`, {
+                const response = await fetch(`http://5.181.217.67/sendStudentLogins`, {
                     method: "PUT",
                     headers: {
                         'Content-Type': 'application/json'
@@ -77,7 +77,7 @@ const SignUp = () => {
                 }
                 else {
                     var studentsID = studentID;
-                    const response = await fetch(`http://localhost:8080/updateStudent`, {
+                    const response = await fetch(`http://5.181.217.67/updateStudent`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'

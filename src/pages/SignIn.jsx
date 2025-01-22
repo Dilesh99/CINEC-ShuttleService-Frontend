@@ -54,7 +54,7 @@ const SignIn = () => {
             switch (person) {
                 case 'Staff':
                     var staffID = ID;
-                    response = await fetch(`http://localhost:8080/sendStaffLogins`, {
+                    response = await fetch(`http://5.181.217.67/sendStaffLogins`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
@@ -64,7 +64,7 @@ const SignIn = () => {
                     break;
                 case 'Student':
                     var studentID = ID;
-                    response = await fetch(`http://localhost:8080/sendStudentLogins`, {
+                    response = await fetch(`http://5.181.217.67/sendStudentLogins`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
@@ -74,7 +74,7 @@ const SignIn = () => {
                     break;
                 case 'Driver':
                     var driverID = ID;
-                    response = await fetch(`http://localhost:8080/sendDriverLogins`, {
+                    response = await fetch(`http://5.181.217.67/sendDriverLogins`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'

@@ -39,6 +39,7 @@ export default function Location() {
 
   const [center, setCenter] = useState({ lat: 0, lng: 0 });
 
+  const apiKey = "AIzaSyDHSsPvUNS84N5jUnEyt5xxzGYkkynf6TU";
 
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
