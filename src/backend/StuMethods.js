@@ -27,8 +27,7 @@ export const StuMethods = {
     getAllStudents: async function () {
         const response = await fetch(`${backEndURL}/getAllStudents`, { method: "GET" });
         const students = await response.json();
-        console.log(students);
-
+        return students;
     },
 
     deleteStudent: async function (studentID) {

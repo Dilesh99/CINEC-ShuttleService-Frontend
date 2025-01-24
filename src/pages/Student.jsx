@@ -1,20 +1,32 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery,Box } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery, Box } from '@mui/material';
 import { Menu, Search, People, DirectionsBus, AccountBalanceWallet, Help, Settings, Person, Notifications } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'; // Import the hook
 
+import { StuMethods } from '../backend/StuMethods';
+import backEndURL from '../backend/backEndApi';
+
 
 const St = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const [allStudents, setAllStudents] = useState();
+
+  async function fetchStudents() {
+    const response = await fetch(`${backEndURL}/getAllStudents`, { method: "GET" });
+    const students = await response.json();
+    await setAllStudents(students);
+  }
+  fetchStudents();
+  
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
- 
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
@@ -89,7 +101,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ padding: 5 }}>
         <Button
-        href='/admin'
+          href='/admin'
           variant="contained"
           fullWidth
           sx={{
@@ -200,12 +212,12 @@ const Header = ({ handleDrawerToggle }) => {
 const MainContent = () => {
   return (
     <div style={{ padding: '16px' }}>
-      
+
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
         <Grid item xs={12} md={12}>
           <RecentPayments />
         </Grid>
-        
+
       </Grid>
     </div>
   );
@@ -214,10 +226,10 @@ const MainContent = () => {
 
 
 const RecentPayments = () => {
-  const payments = Array(10).fill({ name: 'John Doe', email: 'abs@gmail.com', phone:'071 123 4567', sid:'123456', shuttle: 'Gampaha I', lpdate: '20.11.2024' });
+  const payments = Array(10).fill({ name: 'John Doe', email: 'abs@gmail.com', phone: '071 123 4567', sid: '123456', shuttle: 'Gampaha I', lpdate: '20.11.2024' });
 
   return (
-    <Paper sx={{ padding: '16px',boxShadow:'3' }}>
+    <Paper sx={{ padding: '16px', boxShadow: '3' }}>
       <Typography variant="h6">Students</Typography>
       <TableContainer>
         <Table>
