@@ -1,10 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment } from '@mui/material'
 import LockIcon from '@mui/icons-material/Lock';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import { Password } from '@mui/icons-material';
 
 
 const AdminLogin = () => {
+
+    const[username,setUsername]=useState('');
+    const[password,setPassword]=useState('');
+    const[errorMessage,setErrorMessage]=useState('');
+
+    const handleLogin=()=>async(e)=>{
+        e.preventDefault();
+        try{
+            const response=await fetch('http://5.181.217.67/adminLogins',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username,password})
+            });
+        }catch(error){
+            setErrorMessage(error.response?.data?.message || "Login faild,please try again");
+            
+        }
+    }
+
   return (
     <>
     <CssBaseline />
@@ -73,7 +95,10 @@ const AdminLogin = () => {
 
             
             <Box //Text field 1
-                    component="form"
+
+            component="form"
+            onSubmit={handleLogin}
+                
                     sx={{'& > :not(style)': {m: { xs: 0, sm: 1, md: 1, lg: 1 },
                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                         mt: { xs: 1, sm: 1, md: 1, lg: 2 },
@@ -81,12 +106,15 @@ const AdminLogin = () => {
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
                 <TextField id="outlined-basic" label="" variant="outlined" placeholder="Username"
+                value={username}
+                onChange={(e)=>setUsername(e.target.value}
                     InputProps={{startAdornment: (<InputAdornment position="start"><AccountCircleOutlinedIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
                         '& fieldset': {borderColor: '#000000',},
                         '&:hover fieldset': {borderColor: '#002147FF', },},
                     '& input': {padding: '0 5px', fontSize: '12px', color: '#002147FF', height: '100%',},}}/>
+                    
             </Box>
 
         <Box //Text field 5
@@ -98,6 +126,8 @@ const AdminLogin = () => {
                         },display: 'flex',flexDirection: 'column',alignItems: 'center',justifyContent: 'center',
                     }}noValidate autoComplete="off">
                 <TextField id="outlined-basic" label="" variant="outlined" type='password' placeholder="Password"
+                value={Password}
+                onChange={(e)=>setPassword(e.target.value)}
                     InputProps={{startAdornment: (<InputAdornment position="start"><LockIcon /></InputAdornment>),}}
                     sx={{width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
                     '& .MuiOutlinedInput-root': {height: { xs: '34px', sm: '40px', md: '45px', lg: '50px' }, borderRadius: '30px', 
