@@ -1,8 +1,10 @@
+import backEndURL from "./backEndApi";
+
 export const StuMethods = {
     getStudent: async function (studentID) {
         try {
             console.log("Accessed the method");
-            const response = await fetch(`http://5.181.217.67/getStudent?studentID=${studentID}`, {
+            const response = await fetch(`${backEndURL}/getStudent?studentID=${studentID}`, {
                 method: "GET"
             });
             const data = await response.json();
@@ -23,7 +25,7 @@ export const StuMethods = {
     },
 
     getAllStudents: async function () {
-        const response = await fetch(`http://5.181.217.67/getAllStudents`, { method: "GET" });
+        const response = await fetch(`${backEndURL}/getAllStudents`, { method: "GET" });
         const students = await response.json();
         console.log(students);
 
@@ -32,7 +34,7 @@ export const StuMethods = {
     deleteStudent: async function (studentID) {
         const res = await this.getStudent(studentID);
         if(res != null){
-            const response = await fetch(`http://5.181.217.67/deleteStudent?studentID=${studentID}`, {
+            const response = await fetch(`${backEndURL}/deleteStudent?studentID=${studentID}`, {
                 method: "PUT"
             });
             const data = await response.text();
@@ -46,7 +48,7 @@ export const StuMethods = {
     updateStudent: async function (studentsID, username, email, phone_number, password) {
         const res = await this.getStudent(studentsID);
         if (res == null) {
-            const response = await fetch(`http://5.181.217.67/updateStudent`, {
+            const response = await fetch(`${backEndURL}/updateStudent`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json'

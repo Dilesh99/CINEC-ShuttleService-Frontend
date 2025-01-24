@@ -1,4 +1,5 @@
 import { useState } from "react";
+import backEndURL from "./backEndApi";
 
 let watchId = null;
 
@@ -17,7 +18,7 @@ export const LocationMethods = {
 
           console.log(location);
 
-          fetch(`http://5.181.217.67/updateLocation`, {
+          fetch(`${backEndURL}/updateLocation`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -58,7 +59,7 @@ export const LocationMethods = {
   fetchLocation: async function (shuttleID, setLocation) {
     try {
       const response = await fetch(
-        `http://5.181.217.67/getLocation?shuttleID=${shuttleID}`
+        `${backEndURL}/getLocation?shuttleID=${shuttleID}`
       );
       if (!response.ok) {
         throw new Error(`Error fetching location: ${response.statusText}`);

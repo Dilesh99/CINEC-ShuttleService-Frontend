@@ -9,6 +9,8 @@ import { Link } from 'react-router-dom';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
+import backEndURL from '../backend/backEndApi'
+
 
 
 const SignIn = () => {
@@ -54,7 +56,7 @@ const SignIn = () => {
             switch (person) {
                 case 'Staff':
                     var staffID = ID;
-                    response = await fetch(`http://5.181.217.67/sendStaffLogins`, {
+                    response = await fetch(`${backEndURL}/sendStaffLogins`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
@@ -64,7 +66,7 @@ const SignIn = () => {
                     break;
                 case 'Student':
                     var studentID = ID;
-                    response = await fetch(`http://5.181.217.67/sendStudentLogins`, {
+                    response = await fetch(`${backEndURL}/sendStudentLogins`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
@@ -74,7 +76,7 @@ const SignIn = () => {
                     break;
                 case 'Driver':
                     var driverID = ID;
-                    response = await fetch(`http://5.181.217.67/sendDriverLogins`, {
+                    response = await fetch(`${backEndURL}/sendDriverLogins`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
