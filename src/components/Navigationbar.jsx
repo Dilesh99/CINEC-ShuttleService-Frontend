@@ -39,7 +39,7 @@ const Navigationbar = () => {
 
   // Example logic to disable specific buttons
   const isBookingDisabled = true; // Set to true to disable the "BOOKING" button
-  const isPaymentDisabled = true; // Set to true to disable the "PAYMENT" button
+  const isPaymentDisabled = false; // Set to true to disable the "PAYMENT" button
 
   return (
     <AppBar position="fixed" sx={{ backgroundColor: 'primary.light', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
