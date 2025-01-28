@@ -1,7 +1,9 @@
+import backEndURL from "./backEndApi";
+
 export const StaffMethods = {
     getStaff: async function (staffID) {
         try {
-            const response = await fetch(`http://5.181.217.67/getStaff?staffID=${staffID}`, {
+            const response = await fetch(`${backEndURL}/getStaff?staffID=${staffID}`, {
                 method: "GET"
             });
             const data = await response.json();
@@ -22,7 +24,7 @@ export const StaffMethods = {
     },
 
     getAllStaff: async function () {
-        const response = await fetch(`http://5.181.217.67/getAllStaff`, { method: "GET" });
+        const response = await fetch(`${backEndURL}/getAllStaff`, { method: "GET" });
         const staff = await response.json();
         console.log(staff);
 
@@ -31,7 +33,7 @@ export const StaffMethods = {
     deleteStaff: async function (staffID) {
         const res = await this.getStaff(staffID);
         if(res != null){
-            const response = await fetch(`http://5.181.217.67/deleteStaff?staffID=${staffID}`, {
+            const response = await fetch(`${backEndURL}/deleteStaff?staffID=${staffID}`, {
                 method: "PUT"
             });
             const data = await response.text();
@@ -45,7 +47,7 @@ export const StaffMethods = {
     updateStaff: async function (staffID, username, email, phone_number, password) {
         const res = await this.getStaff(staffID);
         if (res == null) {
-            const response = await fetch(`http://5.181.217.67/updateStaff`, {
+            const response = await fetch(`${backEndURL}/updateStaff`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json'

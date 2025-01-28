@@ -20,6 +20,8 @@ import St1 from "../assets/St1.jpg"; // Update with your actual image path
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
+import backEndURL from "../backend/backEndApi";
+
 import {imageProcessMethods} from "../backend/imageProcess"
 
 const SignUp2 = () => {
@@ -92,7 +94,7 @@ const SignUp2 = () => {
     }
 
     if (canSignUp) {
-      const response = await fetch(`http://5.181.217.67/sendStaffLogins`, {
+      const response = await fetch(`${backEndURL}/sendStaffLogins`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +105,7 @@ const SignUp2 = () => {
         window.alert("Staff member already signed up");
         setIsLoading(false);
       } else {
-        const response = await fetch(`http://5.181.217.67/updateStaff`, {
+        const response = await fetch(`${backEndURL}/updateStaff`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

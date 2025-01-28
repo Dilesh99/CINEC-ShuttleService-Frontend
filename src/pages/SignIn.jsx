@@ -9,31 +9,91 @@ import { Link } from 'react-router-dom';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
+import backEndURL from '../backend/backEndApi'
+
 
 
 const SignIn = () => {
 
-    var person = '';
     var response = null;
     useEffect(() => {
-        // Disable scrolling on mount
         document.body.style.overflow = 'hidden';
         return () => {
-            // Restore scrolling on unmount
             document.body.style.overflow = '';
         };
     }, []);
 
+    const [isResettingPassword, setIsResettingPassword] = useState(false);
     const [isLoading, setIsloading] = useState(false);
     const [ID, setID] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [isTyping, setIsTyping] = useState(false); // Tracks if the user is typing in the password field
-    const [error, setError] = useState(''); // Error message state
+    const [isTyping, setIsTyping] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSignIn = async () => {
-        setError(''); // Clear any previous errors
-        setIsloading(true);
+    let person;
+
+    const handleResetPassword = async () =>{
+        selectPerson();
+        console.log(person);
+        setIsResettingPassword(true);
+        setError('');
+        if(ID == ""){
+            setIsResettingPassword(false);
+            return setError('Please Enter ID');
+        }
+        if(person == "Student"){
+            try{
+                const response = await fetch(`${backEndURL}/studentResetEmail`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ studentID: ID, password: "" })
+                });
+                const data = await response.json();
+                if(!data.success){
+                    throw new Error("Student not found");
+                }
+                setIsResettingPassword(false);
+                window.alert("Password reset code sent via email");
+            }
+            catch(e){
+                window.alert(e.message);
+                setIsResettingPassword(false);
+            }
+        }
+
+        else if(person == "Staff"){
+            try{
+                const response = await fetch(`${backEndURL}/staffResetEmail`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ staffID: ID, password: "" })
+                });
+                const data = await response.json();
+                if(!data.success){
+                    throw new Error("User not found");
+                }
+                setIsResettingPassword(false);
+                window.alert("Password reset code sent via email");
+            }
+            catch(e){
+                window.alert(e.message);
+                setIsResettingPassword(false);
+            }
+        }
+
+        else{
+            setError("Invalid login");
+            setIsResettingPassword(false);
+        }
+    }
+
+    const selectPerson = () =>{
+        console.log(ID);
         if (ID.length == 6) {
             person = 'Staff';
         }
@@ -44,17 +104,19 @@ const SignIn = () => {
             person = 'Driver';
         }
         else {
-            setError('Incorrect Login')
-            person = '';
-            setIsloading(false);
-            return;
+            person = 'Invalid';
         }
-
+    }
+    const handleSignIn = async () => {
+        setError('');
+        selectPerson();
+        console.log(person);
+        setIsloading(true);
         try {
             switch (person) {
                 case 'Staff':
                     var staffID = ID;
-                    response = await fetch(`http://5.181.217.67/sendStaffLogins`, {
+                    response = await fetch(`${backEndURL}/sendStaffLogins`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
@@ -64,7 +126,7 @@ const SignIn = () => {
                     break;
                 case 'Student':
                     var studentID = ID;
-                    response = await fetch(`http://5.181.217.67/sendStudentLogins`, {
+                    response = await fetch(`${backEndURL}/sendStudentLogins`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
@@ -74,7 +136,7 @@ const SignIn = () => {
                     break;
                 case 'Driver':
                     var driverID = ID;
-                    response = await fetch(`http://5.181.217.67/sendDriverLogins`, {
+                    response = await fetch(`${backEndURL}/sendDriverLogins`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
@@ -83,7 +145,7 @@ const SignIn = () => {
                     });
                     break;
                 default:
-
+                    setError("Incorrect Login");
                     break;
             }
             if (response.ok && await response.json()) {
@@ -215,7 +277,8 @@ const SignIn = () => {
                                         mb: { xs: 0.5, sm: 1, md: 1.5, lg: 1.5 },
                                     }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 }} noValidate autoComplete="off">
-                                <TextField id="outlined-basic" label="" variant="outlined" placeholder="ID" onChange={(e) => setID(e.target.value)}
+                                <TextField id="outlined-basic" label="" variant="outlined" placeholder="ID" onChange={(e) => {setID(e.target.value)}}
+
                                     InputProps={{ startAdornment: (<InputAdornment position="start" ><AccountCircleOutlinedIcon /></InputAdornment>), }}
                                     sx={{
                                         width: { xs: '180px', sm: '300px', md: '320px', lg: '380px' },
@@ -272,17 +335,16 @@ const SignIn = () => {
                             </Box>
 
 
-                            <Button href=" " sx={{
+                            <Button sx={{
                                 alignItems: 'center', justifyContent: 'center', justifyItems: 'center', display: 'flex', color: '#002147CC', fontFamily: 'inter',
                                 marginLeft: { xs: '80px', sm: '150px', md: '200px', lg: '200px' },
                                 fontSize: { xs: '9px', sm: '12px', md: '15px', lg: '15px' }, fontWeight: 300,
                                 mb: 1,
                                 mt: 0
-                            }}>
-                                Forgot Password?
+                            }} onClick={handleResetPassword} disabled={isResettingPassword}>
+                                {isResettingPassword ? 'Resetting Password...' : 'Forgot Password? '}
                             </Button>
 
-                            
                             
                             {error  &&  (
                             <Typography sx={{ color: "red", fontSize: "12px", marginBottom: "16px", textAlign:'center', marginRight:{xs:'8%',md:'0'}, marginLeft:{xs:'8%', md:'0'}}}>

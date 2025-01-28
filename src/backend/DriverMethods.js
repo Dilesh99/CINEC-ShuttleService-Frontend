@@ -1,7 +1,9 @@
+import backEndURL from "./backEndApi";
+
 export const DriverMethods = {
     getDriver: async function (driverID) {
         try {
-            const response = await fetch(`http://5.181.217.67/getDriver?driverID=${driverID}`, {
+            const response = await fetch(`${backEndURL}/getDriver?driverID=${driverID}`, {
                 method: "GET"
             });
             const data = await response.json();
@@ -22,7 +24,7 @@ export const DriverMethods = {
     },
 
     getAllDriver: async function () {
-        const response = await fetch(`http://5.181.217.67/getAllDriver`, { method: "GET" });
+        const response = await fetch(`${backEndURL}/getAllDriver`, { method: "GET" });
         const driver = await response.json();
         console.log(driver);
 
@@ -31,7 +33,7 @@ export const DriverMethods = {
     deleteDriver: async function (driverID) {
         const res = await this.getDriver(driverID);
         if(res != null){
-            const response = await fetch(`http://5.181.217.67/deleteDriver?driverID=${driverID}`, {
+            const response = await fetch(`${backEndURL}/deleteDriver?driverID=${driverID}`, {
                 method: "PUT"
             });
             const data = await response.text();
@@ -45,7 +47,7 @@ export const DriverMethods = {
     updateDriver: async function (driverID, username, email, phone_number, password) {
         const res = await this.getDriver(driverID);
         if (res == null) {
-            const response = await fetch(`http://5.181.217.67/updateDriver`, {
+            const response = await fetch(`${backEndURL}/updateDriver`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json'

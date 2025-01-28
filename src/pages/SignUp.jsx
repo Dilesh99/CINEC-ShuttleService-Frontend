@@ -12,6 +12,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { imageProcessMethods } from '../backend/imageProcess';
 
+import backEndURL from '../backend/backEndApi';
+
 import { Link } from 'react-router-dom';
 
 
@@ -64,7 +66,7 @@ const SignUp = () => {
 
         if (canSignUp) {
             try{
-                const response = await fetch(`http://5.181.217.67/sendStudentLogins`, {
+                const response = await fetch(`${backEndURL}/sendStudentLogins`, {
                     method: "PUT",
                     headers: {
                         'Content-Type': 'application/json'
@@ -77,7 +79,7 @@ const SignUp = () => {
                 }
                 else {
                     var studentsID = studentID;
-                    const response = await fetch(`http://5.181.217.67/updateStudent`, {
+                    const response = await fetch(`${backEndURL}/updateStudent`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
