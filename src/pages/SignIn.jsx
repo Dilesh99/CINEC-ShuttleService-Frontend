@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment ,IconButton, CircularProgress } from '@mui/material'
+import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment ,IconButton, CircularProgress, Checkbox } from '@mui/material'
 import BG from "../assets/bg5.jpg"
 import IM1 from "../assets/IM1.png"
 import L1 from "../assets/Logo2.png"
@@ -10,6 +10,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import backEndURL from '../backend/backEndApi'
+
 
 
 
@@ -30,6 +31,7 @@ const SignIn = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const [error, setError] = useState('');
+    const [rememberMe, setRememberMe] = useState('');
 
     let person;
 
@@ -337,13 +339,21 @@ const SignIn = () => {
 
                             <Button sx={{
                                 alignItems: 'center', justifyContent: 'center', justifyItems: 'center', display: 'flex', color: '#002147CC', fontFamily: 'inter',
-                                marginLeft: { xs: '80px', sm: '150px', md: '200px', lg: '200px' },
+                                marginLeft: { xs: '160px', sm: '280px', md: '480px', lg: '480px' },
                                 fontSize: { xs: '9px', sm: '12px', md: '15px', lg: '15px' }, fontWeight: 300,
                                 mb: 1,
                                 mt: 0
                             }} onClick={handleResetPassword} disabled={isResettingPassword}>
                                 {isResettingPassword ? 'Resetting Password...' : 'Forgot Password? '}
                             </Button>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+    <Checkbox
+        checked={rememberMe} 
+        onChange={(e) => setRememberMe(e.target.checked)} 
+        sx={{ color: '#002147CC',transform: 'scale(0.8)' }} 
+    />
+    <Typography sx={{fontSize: { xs: '10px', sm: '12px', md: '15px', lg: '15px' }, fontWeight: 200, color: '#002147CC' }}>Remember Me</Typography>
+</Box>
 
                             
                             {error  &&  (
