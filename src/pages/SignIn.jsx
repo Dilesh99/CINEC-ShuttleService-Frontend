@@ -46,6 +46,7 @@ const SignIn = () => {
             try{
                 const response = await fetch(`${backEndURL}/studentResetEmail`, {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -103,6 +104,9 @@ const SignIn = () => {
         else if (ID[0] == 'D') {
             person = 'Driver';
         }
+        else if(ID[0] == "a"){
+            person = 'Admin';
+        }
         else {
             person = 'Invalid';
         }
@@ -117,31 +121,42 @@ const SignIn = () => {
                 case 'Staff':
                     var staffID = ID;
                     response = await fetch(`${backEndURL}/sendStaffLogins`, {
-                        method: "PUT",
+                        method: "POST",
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ staffID, password })
+                        body: JSON.stringify({ staffID, password, role: "Staff" })
                     });
                     break;
                 case 'Student':
                     var studentID = ID;
                     response = await fetch(`${backEndURL}/sendStudentLogins`, {
-                        method: "PUT",
+                        method: "POST",
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ studentID, password })
+                        body: JSON.stringify({ studentID, password, role: "Student"})
                     });
                     break;
                 case 'Driver':
                     var driverID = ID;
                     response = await fetch(`${backEndURL}/sendDriverLogins`, {
-                        method: "PUT",
+                        method: "POST",
+                        credentials: "include",
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ driverID, password })
+                        body: JSON.stringify({ driverID, password, role:"Driver"})
+                    });
+                    break;
+                case 'Admin':
+                    var adminID = ID;
+                    response = await fetch(`${backEndURL}/sendAdminLogins`, {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ adminID, password, role: "Admin"})
                     });
                     break;
                 default:
@@ -151,7 +166,7 @@ const SignIn = () => {
             if (response.ok && await response.json()) {
                 window.alert("login successfull");
                 if(person == "Student" || person == "Staff"){
-                    window.location.href = "/home";
+                    //window.location.href = "/home";
                 }
                 else if(person == "Driver"){
                     window.location.href= `/shuttleService/${driverID}`
