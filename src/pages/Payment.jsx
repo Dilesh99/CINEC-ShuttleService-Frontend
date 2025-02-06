@@ -1,9 +1,42 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button, Box } from "@mui/material";
 
 import CINEClogo from "./../assets/cinec.png"; // Adjust the path based on your project structure
 
+import { useNavigate } from "react-router-dom";
+import { authMethods } from "../backend/authMethods";
+
 export default function Payment() {
+  const navigate = useNavigate();
+  let ID = null;
+  const hasRun = useRef(false);
+  useEffect(() => {
+    if (!hasRun.current) {
+      hasRun.current = true;
+      try {
+        handleAuth();
+      } catch {
+        return null;
+      }
+    }
+
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  const handleAuth = async () => {
+    const res = await authMethods.refreshToken();
+    if (res && res.accessToken && res.ID) {
+      ID = res.ID;
+    }
+    else {
+      navigate("/");
+    }
+  }
+
+
   const canvasRef = useRef(null);
   const [passDetails] = useState({
     userName: "John Anderson",
@@ -49,22 +82,22 @@ export default function Payment() {
       ctx.globalAlpha = 0.15; // Set opacity for the watermark
 
       // Normal Logo (Positioned normally and rotated clockwise)
-  const logoSize = 100; // Size of the logo for the watermark
-  const normalLogoX = 10; // X position of the normal logo
-  const normalLogoY = 98; // Y position of the normal logo
-  ctx.save(); // Save the canvas state again for the normal logo
-  ctx.translate(normalLogoX + logoSize / 2, normalLogoY + logoSize / 2); // Move the origin to the center of the logo
-  ctx.rotate(Math.PI / 4); // Rotate 45 degrees clockwise
-  ctx.drawImage(logo, -logoSize / 2, -logoSize / 2, logoSize, logoSize); // Draw the logo centered around the origin
-  ctx.restore(); // Restore the canvas state for the normal logo
+      const logoSize = 100; // Size of the logo for the watermark
+      const normalLogoX = 10; // X position of the normal logo
+      const normalLogoY = 98; // Y position of the normal logo
+      ctx.save(); // Save the canvas state again for the normal logo
+      ctx.translate(normalLogoX + logoSize / 2, normalLogoY + logoSize / 2); // Move the origin to the center of the logo
+      ctx.rotate(Math.PI / 4); // Rotate 45 degrees clockwise
+      ctx.drawImage(logo, -logoSize / 2, -logoSize / 2, logoSize, logoSize); // Draw the logo centered around the origin
+      ctx.restore(); // Restore the canvas state for the normal logo
 
       // Rotated Logo (Positioned rotated)
       ctx.translate(canvas.width / 2, canvas.height / 2); // Move the origin to the center
       ctx.rotate(-Math.PI / 4); // Rotate 45 degrees (diagonal)
 
       const rotatedLogoX = 50; // X position of the rotated logo
-  const rotatedLogoY = 40; // Y position of the rotated logo
-  ctx.drawImage(logo, rotatedLogoX, rotatedLogoY, logoSize, logoSize);
+      const rotatedLogoY = 40; // Y position of the rotated logo
+      ctx.drawImage(logo, rotatedLogoX, rotatedLogoY, logoSize, logoSize);
       ctx.restore(); // Restore the canvas state
     };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
@@ -6,9 +6,38 @@ import BackgroundImage from "/src/assets/bg5.jpg";
 import InnerBackgroundImage from "/src/assets/image 6.png";
 import { useNavigate } from "react-router-dom";
 
+import { authMethods } from "../backend/authMethods";
+
 const Schedule = () => {
   const location = useLocation();
   const navigate = useNavigate();
+    let ID = null;
+    const hasRun = useRef(false);
+    useEffect(() => {
+      if (!hasRun.current) {
+        hasRun.current = true;
+        try {
+          handleAuth();
+        } catch {
+          return null;
+        }
+      }
+  
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }, []);
+  
+    const handleAuth = async () => {
+      const res = await authMethods.refreshToken();
+      if (res && res.accessToken && res.ID) {
+        ID = res.ID;
+      }
+      else {
+        navigate("/");
+      }
+    }
   const routeName = new URLSearchParams(location.search).get("route");
 
   const handleRouteClick = (routeName) => {

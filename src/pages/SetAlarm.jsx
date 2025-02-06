@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {
   Box,
   Button,
@@ -15,6 +15,8 @@ import { Link } from 'react-router-dom';
 import Layout from "../components/Layout";
 import BackgroundImage from "/src/assets/bg5.jpg";
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import { authMethods } from '../backend/authMethods';
 
 const ContentContainer = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -223,6 +225,33 @@ const SetAlarmSection = ({ navigateBack }) => (
 const AlarmForm = () => {
 
   const navigate = useNavigate();
+    let ID = null;
+    const hasRun = useRef(false);
+    useEffect(() => {
+      if (!hasRun.current) {
+        hasRun.current = true;
+        try {
+          handleAuth();
+        } catch {
+          return null;
+        }
+      }
+  
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }, []);
+  
+    const handleAuth = async () => {
+      const res = await authMethods.refreshToken();
+      if (res && res.accessToken && res.ID) {
+        ID = res.ID;
+      }
+      else {
+        navigate("/");
+      }
+    }
   const activeDays = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
 
   // Function to navigate back to the previous page

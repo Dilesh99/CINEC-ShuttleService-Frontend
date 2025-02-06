@@ -1,9 +1,41 @@
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {AppBar,Toolbar,Typography,Grid,TextField,Button,Box} from '@mui/material';
 import Layout from "../components/Layout";
 
+import { useNavigate } from 'react-router-dom';
+import { authMethods } from '../backend/authMethods';
+
 const TransportBookingForm = () => {
+
+  const navigate = useNavigate();
+    let ID = null;
+    const hasRun = useRef(false);
+    useEffect(() => {
+      if (!hasRun.current) {
+        hasRun.current = true;
+        try {
+          handleAuth();
+        } catch {
+          return null;
+        }
+      }
+  
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }, []);
+  
+    const handleAuth = async () => {
+      const res = await authMethods.refreshToken();
+      if (res && res.accessToken && res.ID) {
+        ID = res.ID;
+      }
+      else {
+        navigate("/");
+      }
+    }
 
   const textFieldStyles = {
     InputLabelProps: {

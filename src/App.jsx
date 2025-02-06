@@ -81,14 +81,9 @@ function App() {
         <Route path='/staff' element={<Sta/>} ></Route>
         <Route path='/shuttles' element={<Shu/>} ></Route>
         <Route path='/income' element={<Inco/>} ></Route>
-        <Route path='/driver' element={<Dri/>} ></Route> 
-        <Route path='/admin' element={<AdminLogin/>} ></Route>         
+        <Route path='/driver' element={<Dri/>} ></Route>     
         </Routes>
       </BrowserRouter>
-
-      
-
-      
      </ThemeProvider>
      </div>
      </>

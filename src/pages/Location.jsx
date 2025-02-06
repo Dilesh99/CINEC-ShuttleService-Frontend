@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -13,11 +13,39 @@ import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import busIcon from "../assets/busIconMap.png";
 
 import { LocationMethods } from "../backend/LocationMethods";
+import { authMethods } from "../backend/authMethods";
 
 export default function Location() {
-  // Get the query parameter 'route' from the URL
   const location = useLocation();
+
   const navigate = useNavigate();
+  let ID = null;
+  const hasRun = useRef(false);
+  useEffect(() => {
+    if (!hasRun.current) {
+      hasRun.current = true;
+      try {
+        handleAuth();
+      } catch {
+        return null;
+      }
+    }
+
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  const handleAuth = async () => {
+    const res = await authMethods.refreshToken();
+    if (res && res.accessToken && res.ID) {
+      ID = res.ID;
+    }
+    else {
+      navigate("/");
+    }
+  }
   const routeName = new URLSearchParams(location.search).get("route"); // Extract route name from the query string
 
   const handleRouteClick = (routeName) => {

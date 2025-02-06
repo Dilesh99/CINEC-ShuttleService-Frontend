@@ -1,10 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CssBaseline,Avatar, Box, Button, TextField, Typography, IconButton } from '@mui/material';
 import Layout from "../components/Layout";
 import EditIcon from '@mui/icons-material/Edit';
 import InnerBackgroundImage from "/src/assets/bg5.jpg";
 
+import { useNavigate } from 'react-router-dom';
+import { authMethods } from '../backend/authMethods';
+
 const ProfileCard = () => {
+  const navigate = useNavigate();
+    let ID = null;
+    const hasRun = useRef(false);
+    useEffect(() => {
+      if (!hasRun.current) {
+        hasRun.current = true;
+        try {
+          handleAuth();
+        } catch {
+          return null;
+        }
+      }
+  
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }, []);
+  
+    const handleAuth = async () => {
+      const res = await authMethods.refreshToken();
+      if (res && res.accessToken && res.ID) {
+        ID = res.ID;
+      }
+      else {
+        navigate("/");
+      }
+    }
+  
   const [formData, setFormData] = useState({
     idNo: '',
     faculty: '',

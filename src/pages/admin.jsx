@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery,Box } from '@mui/material';
 import { Menu, Search, People, DirectionsBus, AccountBalanceWallet, Help, Settings, Person, Notifications } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom'; // Import the hook
+
+import { authMethods } from '../backend/authMethods';
+import { useNavigate } from 'react-router-dom';
 
 const Admin = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -12,6 +14,35 @@ const Admin = () => {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  const navigate = useNavigate();
+    let ID = null;
+    const hasRun = useRef(false);
+    useEffect(() => {
+      if (!hasRun.current) {
+        hasRun.current = true;
+        try {
+          handleAuth();
+        } catch {
+          return null;
+        }
+      }
+  
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }, []);
+  
+    const handleAuth = async () => {
+      const res = await authMethods.refreshToken();
+      if (res && res.accessToken && res.ID) {
+        ID = res.ID;
+      }
+      else {
+        navigate("/");
+      }
+    }
 
  
   return (
@@ -28,8 +59,7 @@ const Admin = () => {
 const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const navigate = useNavigate(); // Initialize the hook
+  const [selectedIndex, setSelectedIndex] = useState(0);// Initialize the hook
 
   const handleListItemClick = (index, route) => {
     setSelectedIndex(index);

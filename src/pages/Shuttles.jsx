@@ -1,19 +1,51 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery,Box } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery, Box } from '@mui/material';
 import { Menu, Search, People, DirectionsBus, AccountBalanceWallet, Help, Settings, Person, Notifications } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'; // Import the hook
 
+import { authMethods } from '../backend/authMethods';
+
 const Shu = () => {
+
+  const navigate = useNavigate();
+  let ID = null;
+  const hasRun = useRef(false);
+  useEffect(() => {
+    if (!hasRun.current) {
+      hasRun.current = true;
+      try {
+        handleAuth();
+      } catch {
+        return null;
+      }
+    }
+
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  const handleAuth = async () => {
+    const res = await authMethods.refreshToken();
+    if (res && res.accessToken && res.ID) {
+      ID = res.ID;
+    }
+    else {
+      navigate("/");
+    }
+  }
+
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
- 
+
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
@@ -88,7 +120,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ padding: 5 }}>
         <Button
-        href='/admin'
+          href='/admin'
           variant="contained"
           fullWidth
           sx={{
@@ -199,12 +231,12 @@ const Header = ({ handleDrawerToggle }) => {
 const MainContent = () => {
   return (
     <div style={{ padding: '16px' }}>
-      
+
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
         <Grid item xs={12} md={12}>
           <RecentPayments />
         </Grid>
-        
+
       </Grid>
     </div>
   );
@@ -213,10 +245,10 @@ const MainContent = () => {
 
 
 const RecentPayments = () => {
-  const payments = Array(8).fill({ name: 'Gampaha I', shid: '123456', vno:'KV-123', rou:'Cinec Campus-Gampaha'});
+  const payments = Array(8).fill({ name: 'Gampaha I', shid: '123456', vno: 'KV-123', rou: 'Cinec Campus-Gampaha' });
 
   return (
-    <Paper sx={{ padding: '16px',boxShadow:'3' }}>
+    <Paper sx={{ padding: '16px', boxShadow: '3' }}>
       <Typography variant="h6">Shuttles</Typography>
       <TableContainer>
         <Table>
@@ -238,15 +270,21 @@ const RecentPayments = () => {
                 <TableCell>{payment.shid}</TableCell>
                 <TableCell>{payment.vno}</TableCell>
                 <TableCell>{payment.rou}</TableCell>
-                <TableCell><Button href='/driver'  sx={{color:'secondary.light','&:hover': {
-                    color:'secondary.light2',
-                    },}}>View</Button></TableCell>
-                <TableCell><Button sx={{color:'secondary.light','&:hover': {
-                    color:'secondary.light2',
-                    },}}>View</Button></TableCell>
-                <TableCell><Button sx={{color:'secondary.light','&:hover': {
-                    color:'secondary.light2',
-                    },}}>View</Button></TableCell>
+                <TableCell><Button href='/driver' sx={{
+                  color: 'secondary.light', '&:hover': {
+                    color: 'secondary.light2',
+                  },
+                }}>View</Button></TableCell>
+                <TableCell><Button sx={{
+                  color: 'secondary.light', '&:hover': {
+                    color: 'secondary.light2',
+                  },
+                }}>View</Button></TableCell>
+                <TableCell><Button sx={{
+                  color: 'secondary.light', '&:hover': {
+                    color: 'secondary.light2',
+                  },
+                }}>View</Button></TableCell>
               </TableRow>
             ))}
           </TableBody>

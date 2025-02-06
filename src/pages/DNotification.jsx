@@ -1,11 +1,12 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // for capturing the dynamic ID from the URL
 import { CssBaseline, Button, Typography, Box, CardContent, Checkbox, FormControlLabel, TextField, Paper, CircularProgress } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EditIcon from '@mui/icons-material/Edit';
 
 import { LocationMethods } from '../backend/LocationMethods';
+import { authMethods } from '../backend/authMethods';
 
 
 function ShuttleService() {
@@ -14,6 +15,33 @@ function ShuttleService() {
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [busDetails, setBusDetails] = useState(null); // To store dynamic bus details
   const navigate = useNavigate();
+    let ID = null;
+    const hasRun = useRef(false);
+    useEffect(() => {
+      if (!hasRun.current) {
+        hasRun.current = true;
+        try {
+          handleAuth();
+        } catch {
+          return null;
+        }
+      }
+  
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }, []);
+  
+    const handleAuth = async () => {
+      const res = await authMethods.refreshToken();
+      if (res && res.accessToken && res.ID) {
+        ID = res.ID;
+      }
+      else {
+        navigate("/");
+      }
+    }
 
   const [isTracking, setIsTracking] = useState('TURN ON');
 

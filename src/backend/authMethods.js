@@ -23,6 +23,21 @@ export const authMethods = {
             return null;
         }
     },
+
+    deleteToken: async function (){
+        try{
+            const response = await fetch(`${backEndURL}/logoutStudent`, {
+                method: "POST",
+                credentials: "include"
+            });
+
+            const data = await response.json();
+            console.log(data);
+        }
+        catch{
+
+        }
+    }
 };
 
 async function loopRefreshToken() {

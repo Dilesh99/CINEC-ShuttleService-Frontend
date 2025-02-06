@@ -1,8 +1,10 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CssBaseline, Button, Typography, Box, Checkbox, FormControlLabel, TextField, Paper } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+
+import { authMethods } from '../backend/authMethods';
 
 
   
@@ -11,6 +13,33 @@ function ShuttleService2() {
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [shuttleDetails, setShuttleDetails] = useState(null);
   const navigate = useNavigate();
+    let ID = null;
+    const hasRun = useRef(false);
+    useEffect(() => {
+      if (!hasRun.current) {
+        hasRun.current = true;
+        try {
+          handleAuth();
+        } catch {
+          return null;
+        }
+      }
+  
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }, []);
+  
+    const handleAuth = async () => {
+      const res = await authMethods.refreshToken();
+      if (res && res.accessToken && res.ID) {
+        ID = res.ID;
+      }
+      else {
+        navigate("/");
+      }
+    }
  
   useEffect(() => {
     // Simulating fetching bus data based on driverID (mock data)

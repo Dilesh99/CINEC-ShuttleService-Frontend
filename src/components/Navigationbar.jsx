@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,20 +13,11 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { Link } from 'react-router-dom';
 
-const pages = [
-  { name: 'HOME', path: '/home' },
-  { name: 'BOOKING', path: '/booking' },
-  { name: 'PAYMENT', path: '/payment' },
-  { name: 'NOTIFICATION', path: '/notification' }
-];
-const settings = [
-  { name: 'Profile', path: '/profile' },
-  { name: 'Logout', path: '/SignIn' }
-];
+import { authMethods } from '../backend/authMethods';
 
 const Navigationbar = () => {
+
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   
@@ -37,9 +28,15 @@ const Navigationbar = () => {
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
   const handleCloseUserMenu = () => setAnchorElUser(null);
 
+  const logUserOut = async() => {
+    const res = await authMethods.deleteToken();
+    console.log(res);
+  }
+
   // Example logic to disable specific buttons
   const isBookingDisabled = true; // Set to true to disable the "BOOKING" button
   const isPaymentDisabled = false; // Set to true to disable the "PAYMENT" button
+  const isProfileDisabled = true; // Set to true to disable the "Profile" button
 
   return (
     <AppBar position="fixed" sx={{ backgroundColor: 'primary.light', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -67,59 +64,135 @@ const Navigationbar = () => {
               onClose={handleCloseNavMenu}
               disableScrollLock={true} // Allow scrolling while the menu is open
             >
-              {pages.map((page) => (
-                <MenuItem
-                  key={page.name}
-                  component={Link}
-                  to={page.path}
-                  onClick={handleCloseNavMenu}
-                  disabled={page.name === 'BOOKING' && isBookingDisabled || page.name === 'PAYMENT' && isPaymentDisabled}
+              <MenuItem
+                component={Link}
+                to="/home"
+                onClick={handleCloseNavMenu}
+              >
+                <Typography
+                  textAlign="center"
+                  color="secondary"
+                  sx={{
+                    borderBottom: location.pathname === '/home' ? '2px solid #D4790E' : 'none',
+                  }}
                 >
-                  <Typography
-                    textAlign="center"
-                    color="secondary"
-                    sx={{
-                      borderBottom:
-                        (location.pathname === page.path || (page.name === 'HOME' && location.pathname === '/'))
-                          ? '2px solid #D4790E'
-                          : 'none' // Underline for active page
-                    }}
-                  >
-                    {page.name}
-                  </Typography>
-                </MenuItem>
-              ))}
+                  HOME
+                </Typography>
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/booking"
+                onClick={handleCloseNavMenu}
+                disabled={isBookingDisabled}
+              >
+                <Typography
+                  textAlign="center"
+                  color="secondary"
+                  sx={{
+                    borderBottom: location.pathname === '/booking' ? '2px solid #D4790E' : 'none',
+                  }}
+                >
+                  BOOKING
+                </Typography>
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/payment"
+                onClick={handleCloseNavMenu}
+                disabled={isPaymentDisabled}
+              >
+                <Typography
+                  textAlign="center"
+                  color="secondary"
+                  sx={{
+                    borderBottom: location.pathname === '/payment' ? '2px solid #D4790E' : 'none',
+                  }}
+                >
+                  PAYMENT
+                </Typography>
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/notification"
+                onClick={handleCloseNavMenu}
+              >
+                <Typography
+                  textAlign="center"
+                  color="secondary"
+                  sx={{
+                    borderBottom: location.pathname === '/notification' ? '2px solid #D4790E' : 'none',
+                  }}
+                >
+                  NOTIFICATION
+                </Typography>
+              </MenuItem>
             </Menu>
           </Box>
 
           {/* Desktop Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
-            {pages.map((page) => (
-              <Button
-                key={page.name}
-                component={Link}
-                to={page.path}
-                onClick={handleCloseNavMenu}
-                sx={{
-                  my: 2,
-                  color: 'secondary.main',
-                  display: 'block',
-                  fontSize: '1rem',
-                  textTransform: 'none',
-                  mx: 2,
-                  borderBottom:
-                    (location.pathname === page.path || (page.name === 'HOME' && location.pathname === '/'))
-                      ? '2px solid #F5A623'
-                      : 'none', // Underline for active page or root for HOME
-                }}
-                disabled={
-                  (page.name === 'BOOKING' && isBookingDisabled) ||
-                  (page.name === 'PAYMENT' && isPaymentDisabled)
-                } // Disable condition
-              >
-                {page.name}
-              </Button>
-            ))}
+            <Button
+              component={Link}
+              to="/home"
+              sx={{
+                my: 2,
+                color: 'secondary.main',
+                display: 'block',
+                fontSize: '1rem',
+                textTransform: 'none',
+                mx: 2,
+                borderBottom: location.pathname === '/home' ? '2px solid #F5A623' : 'none',
+              }}
+            >
+              HOME
+            </Button>
+            <Button
+              component={Link}
+              to="/booking"
+              sx={{
+                my: 2,
+                color: 'secondary.main',
+                display: 'block',
+                fontSize: '1rem',
+                textTransform: 'none',
+                mx: 2,
+                borderBottom: location.pathname === '/booking' ? '2px solid #F5A623' : 'none',
+              }}
+              disabled={isBookingDisabled}
+            >
+              BOOKING
+            </Button>
+            <Button
+              component={Link}
+              to="/payment"
+              sx={{
+                my: 2,
+                color: 'secondary.main',
+                display: 'block',
+                fontSize: '1rem',
+                textTransform: 'none',
+                mx: 2,
+                borderBottom: location.pathname === '/payment' ? '2px solid #F5A623' : 'none',
+              }}
+              disabled={isPaymentDisabled}
+            >
+              PAYMENT
+            </Button>
+            <Button
+              component={Link}
+              to="/notification"
+              sx={{
+                my: 2,
+                color: 'secondary.main',
+                display: 'block',
+                fontSize: '1rem',
+                textTransform: 'none',
+                mx: 2,
+                borderBottom: location.pathname === '/notification' ? '2px solid #F5A623' : 'none',
+              }}
+            >
+              NOTIFICATION
+            </Button>
           </Box>
 
           {/* User Avatar and Settings Menu */}
@@ -140,16 +213,21 @@ const Navigationbar = () => {
               onClose={handleCloseUserMenu}
               disableScrollLock={true} // Allow scrolling while the menu is open
             >
-              {settings.map((setting) => (
-                <MenuItem
-                  key={setting.name}
-                  component={Link}
-                  to={setting.path}
-                  onClick={handleCloseUserMenu}
-                >
-                  <Typography textAlign="center" color="secondary.main">{setting.name}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem
+                component={Link}
+                to="/profile"
+                onClick={handleCloseUserMenu}
+                disabled={isProfileDisabled}
+              >
+                <Typography textAlign="center" color="secondary.main">
+                  Profile
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={logUserOut}>
+                <Typography textAlign="center" color="secondary.main">
+                  Logout
+                </Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
@@ -159,4 +237,3 @@ const Navigationbar = () => {
 };
 
 export default Navigationbar;
-
