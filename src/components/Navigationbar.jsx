@@ -42,7 +42,7 @@ const Navigationbar = () => {
   }
 
   // Example logic to disable specific buttons
-  const isBookingDisabled = true; // Set to true to disable the "BOOKING" button
+  const isBookingDisabled = false; // Set to true to disable the "BOOKING" button
   const isPaymentDisabled = false; // Set to true to disable the "PAYMENT" button
   const isProfileDisabled = true; // Set to true to disable the "Profile" button
 

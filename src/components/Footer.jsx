@@ -107,29 +107,29 @@ const Footer = () => {
                 HOME
               </Link>
               <Link
-                href="#"
+                href="/booking"
                 sx={{
                   display: 'block',
                   color: '#ffffff',
                   fontSize: { xs: '12px', sm: '12px' },
                   textDecoration: 'none',
                   mb: 1,
-                  cursor: 'not-allowed', // Disable pointer interaction
-                  opacity: 0.5, // Reduced visibility
+                  '&:hover': { color: '#D4790E' },
+                  
                 }}
               >
                 BOOKING
               </Link>
               <Link
-                href="#"
+                href="/payment"
                 sx={{
                   display: 'block',
                   color: '#ffffff',
                   fontSize: { xs: '12px', sm: '12px' },
                   textDecoration: 'none',
                   mb: 1,
-                  cursor: 'not-allowed',
-                  opacity: 0.5,
+                  '&:hover': { color: '#D4790E' },
+                  
                 }}
               >
                 PAYMENT

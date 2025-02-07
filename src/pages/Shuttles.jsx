@@ -72,8 +72,8 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
         height: '100%',
       }}
     >
-      <div style={{ padding: '16px', marginLeft: '18px' }}>
-        <img src={cinecLogo} alt="logo" width={100} height={50} />
+      <div style={{ padding: '16px', alignSelf: 'center' }}>
+        <img src={cinecLogo} alt="logo" width={60} height={60} />
       </div>
       <List>
         {[
@@ -81,7 +81,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
           { text: 'Shuttles', route: '/shuttles' },
-          { text: 'Income', route: '/income' },
+          
         ].map((item, index) => (
           <ListItem
             button
@@ -166,6 +166,7 @@ const SearchBar = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
     width: '50%',
+    borderRadius: '25px',
   },
 }));
 
@@ -213,12 +214,7 @@ const Header = ({ handleDrawerToggle }) => {
           }}>
             Add New
           </Button>
-          <IconButton color="inherit" sx={{ marginLeft: '16px' }}>
-            <Notifications />
-          </IconButton>
-          <IconButton color="inherit" sx={{ marginLeft: '8px' }}>
-            <Avatar alt="User" src="https://via.placeholder.com/150" />
-          </IconButton>
+          
         </div>
       </Toolbar>
     </AppBar>
@@ -241,8 +237,7 @@ const MainContent = () => {
 
 
 const RecentPayments = () => {
-  const payments = Array(8).fill({ name: 'Gampaha I', shid: '123456', vno: 'KV-123', rou: 'Cinec Campus-Gampaha' });
-
+  
   return (
     <Paper sx={{ padding: '16px', boxShadow: '3' }}>
       <Typography variant="h6">Shuttles</Typography>
@@ -251,38 +246,31 @@ const RecentPayments = () => {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Shuttle ID</TableCell>
               <TableCell>Vehicle No.</TableCell>
+              <TableCell>Driver's Phone number</TableCell>
               <TableCell>Route</TableCell>
-              <TableCell>Driver</TableCell>
-              <TableCell>Current Location</TableCell>
-              <TableCell>Schedule</TableCell>
+
             </TableRow>
           </TableHead>
           <TableBody>
-            {payments.map((payment, index) => (
-              <TableRow key={index}>
-                <TableCell>{payment.name}</TableCell>
-                <TableCell>{payment.shid}</TableCell>
-                <TableCell>{payment.vno}</TableCell>
-                <TableCell>{payment.rou}</TableCell>
-                <TableCell><Button href='/driver' sx={{
-                  color: 'secondary.light', '&:hover': {
-                    color: 'secondary.light2',
-                  },
-                }}>View</Button></TableCell>
-                <TableCell><Button sx={{
-                  color: 'secondary.light', '&:hover': {
-                    color: 'secondary.light2',
-                  },
-                }}>View</Button></TableCell>
-                <TableCell><Button sx={{
-                  color: 'secondary.light', '&:hover': {
-                    color: 'secondary.light2',
-                  },
-                }}>View</Button></TableCell>
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableCell>Gampaha 1</TableCell>
+              <TableCell>123</TableCell>
+              <TableCell>071 123 4567</TableCell>
+              <TableCell>Colombo - Gampaha</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Gampaha 2</TableCell>
+              <TableCell>456</TableCell>
+              <TableCell>071 123 4567</TableCell>
+              <TableCell>Colombo - Gampaha</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Mabale</TableCell>
+              <TableCell>789</TableCell>
+              <TableCell>071 123 4567</TableCell>
+              <TableCell>Colombo - Gampaha</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>

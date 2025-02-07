@@ -72,8 +72,8 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
         height: '100%',
       }}
     >
-      <div style={{ padding: '16px', marginLeft: '18px' }}>
-        <img src={cinecLogo} alt="logo" width={100} height={50} />
+      <div style={{ padding: '16px', alignSelf: 'center' }}>
+        <img src={cinecLogo} alt="logo" width={60} height={60} />
       </div>
       <List>
         {[
@@ -81,7 +81,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
           { text: 'Shuttles', route: '/shuttles' },
-          { text: 'Income', route: '/income' },
+          
         ].map((item, index) => (
           <ListItem
             button
@@ -162,11 +162,12 @@ const SearchBar = styled('div')(({ theme }) => ({
     backgroundColor: alpha(theme.palette.common.black, 0.25),
   },
   marginRight: theme.spacing(2),
-  marginLeft: theme.spacing(2),
+  marginLeft: "auto",
   width: '100%',
   [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: '50%',
+    marginLeft: "auto",
+    width: '30%',
+    borderRadius: '25px',
   },
 }));
 
@@ -205,21 +206,6 @@ const Header = ({ handleDrawerToggle }) => {
           />
         </SearchBar>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Button variant="contained" sx={{
-            color: 'white',
-            backgroundColor: 'secondary.light',
-            '&:hover': {
-              backgroundColor: 'secondary.light2',
-            },
-          }}>
-            Add New
-          </Button>
-          <IconButton color="inherit" sx={{ marginLeft: '16px' }}>
-            <Notifications />
-          </IconButton>
-          <IconButton color="inherit" sx={{ marginLeft: '8px' }}>
-            <Avatar alt="User" src="https://via.placeholder.com/150" />
-          </IconButton>
         </div>
       </Toolbar>
     </AppBar>
@@ -246,12 +232,12 @@ const DashboardStats = () => {
   const stats = [
     { label: 'Students', value: 115, icon: <People /> },
     { label: 'Staff', value: 24, icon: <People /> },
-    { label: 'Shuttles', value: 6, icon: <DirectionsBus /> },
-    { label: 'Income', value: 'Rs. 64000', icon: <AccountBalanceWallet /> }
+    { label: 'Shuttles', value: 6, icon: <DirectionsBus /> }
+   
   ];
 
   return (
-    <Grid container spacing={4}>
+    <Grid container spacing={4} justifyContent="center">
       {stats.map((stat) => (
         <Grid item xs={3} key={stat.label}>
           <Paper
@@ -275,7 +261,6 @@ const DashboardStats = () => {
 
 
 const RecentPayments = () => {
-  const payments = Array(5).fill({ name: 'John Doe', email: 'abs@gmail.com', phone:'071 123 4567', sid:'123456', shuttle: 'Gampaha I', lpdate: '20.11.2024' });
 
   return (
     <Paper sx={{ padding: '16px', boxShadow:'3' }}>
@@ -296,16 +281,30 @@ const RecentPayments = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {payments.map((payment, index) => (
-              <TableRow key={index}>
-                <TableCell>{payment.name}</TableCell>
-                <TableCell>{payment.email}</TableCell>
-                <TableCell>{payment.phone}</TableCell>
-                <TableCell>{payment.sid}</TableCell>
-                <TableCell>{payment.shuttle}</TableCell>
-                <TableCell>{payment.lpdate}</TableCell>
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableCell>John Doe</TableCell>
+              <TableCell>abs@gmail.com</TableCell>
+              <TableCell>071 123 4567</TableCell>
+              <TableCell>123456</TableCell>
+              <TableCell>Gampaha I</TableCell>
+              <TableCell>20.11.2024</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>John Doe</TableCell>
+              <TableCell>abs@gmail.com</TableCell>
+              <TableCell>071 123 4567</TableCell>
+              <TableCell>123456</TableCell>
+              <TableCell>Gampaha I</TableCell>
+              <TableCell>20.11.2024</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>John Doe</TableCell>
+              <TableCell>abs@gmail.com</TableCell>
+              <TableCell>071 123 4567</TableCell>
+              <TableCell>123456</TableCell>
+              <TableCell>Gampaha I</TableCell>
+              <TableCell>20.11.2024</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
@@ -314,16 +313,10 @@ const RecentPayments = () => {
 };
 
 const NewShuttles = () => {
-  const shuttles = [
-    { profile: 'Gampaha I', icon: <Avatar>G</Avatar> },
-    { profile: 'Gampaha II', icon: <Avatar>G</Avatar> },
-    { profile: 'Wattala', icon: <Avatar>W</Avatar> },
-    { profile: 'Negombo', icon: <Avatar>N</Avatar> }
-  ];
 
   return (
     <Paper sx={{ padding: '16px',boxShadow:'3'  }}>
-      <Typography variant="h6">New Shuttles</Typography>
+      <Typography variant="h6">Shuttles</Typography>
      <Link to="/Shuttles"> <Button variant="contained" sx={{ float: 'right', marginBottom: '8px',backgroundColor:'secondary.light','&:hover': {
            backgroundColor:'secondary.light2',
            }, }}>View All</Button></Link>
@@ -331,20 +324,28 @@ const NewShuttles = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Profile</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Option</TableCell>
+              <TableCell>Shuttle name</TableCell>
+              <TableCell>Driver name</TableCell>
+              <TableCell>Phone number</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {shuttles.map((shuttle, index) => (
-              <TableRow key={index}>
-                <TableCell>{shuttle.icon}</TableCell>
-                <TableCell>{shuttle.profile}</TableCell>
-                <TableCell><Button sx={{color:'secondary.light','&:hover': { color:'secondary.light2'
-           },}} >View</Button></TableCell>
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableCell>Gampaha 1</TableCell>
+              <TableCell>Sumane</TableCell>
+              <TableCell>071 123 4567</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Gampaha 2</TableCell>
+              <TableCell>Deshan</TableCell>
+              <TableCell>071 123 4567</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Mabale</TableCell>
+              <TableCell>Wickramasinghe</TableCell>
+              <TableCell>071 123 4567</TableCell>
+            </TableRow>
+    
           </TableBody>
         </Table>
       </TableContainer>

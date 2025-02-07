@@ -1,10 +1,13 @@
 import { useRef, useState, useEffect } from "react";
-import { Button, Box } from "@mui/material";
+import { Button, Box, CssBaseline } from "@mui/material";
 
 import CINEClogo from "./../assets/cinec.png"; // Adjust the path based on your project structure
+import BackgroundImage from "/src/assets/bg5.jpg";
+import InnerBackgroundImage from "/src/assets/home img.jpg";
 
 import { useNavigate } from "react-router-dom";
 import { authMethods } from "../backend/authMethods";
+import Layout from "../components/Layout";
 
 export default function Payment() {
   const navigate = useNavigate();
@@ -25,12 +28,10 @@ export default function Payment() {
     const res = await authMethods.refreshToken();
     if (res && res.accessToken && res.ID) {
       ID = res.ID;
-    }
-    else {
+    } else {
       navigate("/");
     }
-  }
-
+  };
 
   const canvasRef = useRef(null);
   const [passDetails] = useState({
@@ -156,46 +157,70 @@ export default function Payment() {
   };
 
   return (
-    <Box
-      sx={{
-        textAlign: "center",
-        marginTop: 4,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Box
-        sx={{
-          width: "90%",
-          maxWidth: 400,
-          overflow: "hidden",
-          border: "1px solid #ccc",
-          borderRadius: "10px",
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-          marginBottom: 2,
-          backgroundColor: "#fff",
-        }}
-      >
-        <canvas
-          ref={canvasRef}
-          width={400}
-          height={300}
-          style={{
-            width: "100%",
-            height: "auto",
+    <>
+      <Layout>
+        <CssBaseline />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white",
+            minHeight: "100vh",
+            width: "100vw", // Ensures full viewport width
+            backgroundImage: `url(${BackgroundImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            margin: 0,
+            padding: 0,
+            overflow: "hidden", // Prevent scrollbars if content overflows
           }}
-        />
-      </Box>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={drawPass}
-        sx={{ maxWidth: "300px", width: "90%" }}
-      >
-        Generate Monthly Pass
-      </Button>
-    </Box>
+        >
+          <Box
+            sx={{
+              textAlign: "center",
+              marginTop: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Box
+              sx={{
+                width: "90%",
+                maxWidth: 400,
+                overflow: "hidden",
+                border: "1px solid #ccc",
+                borderRadius: "10px",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                marginBottom: 2,
+                backgroundColor: "#fff",
+              }}
+            >
+              <canvas
+                ref={canvasRef}
+                width={400}
+                height={300}
+                style={{
+                  width: "100%",
+                  height: "auto",
+                }}
+              />
+            </Box>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={drawPass}
+              sx={{ maxWidth: "300px", width: "90%" }}
+            >
+              Generate Monthly Pass
+            </Button>
+          </Box>
+        </Box>
+      </Layout>
+    </>
   );
 }

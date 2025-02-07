@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery,Box } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery,Box,Checkbox } from '@mui/material';
 import { Menu, Search, People, DirectionsBus, AccountBalanceWallet, Help, Settings, Person, Notifications } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
@@ -72,8 +72,8 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
         height: '100%',
       }}
     >
-      <div style={{ padding: '16px', marginLeft: '18px' }}>
-        <img src={cinecLogo} alt="logo" width={100} height={50} />
+      <div style={{ padding: '16px', alignSelf: 'center' }}>
+        <img src={cinecLogo} alt="logo" width={60} height={60} />
       </div>
       <List>
         {[
@@ -81,7 +81,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
           { text: 'Shuttles', route: '/shuttles' },
-          { text: 'Income', route: '/income' },
+         
         ].map((item, index) => (
           <ListItem
             button
@@ -167,6 +167,7 @@ const SearchBar = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
     width: '50%',
+    borderRadius: '25px',
   },
 }));
 
@@ -214,12 +215,7 @@ const Header = ({ handleDrawerToggle }) => {
           }}>
             Add New
           </Button>
-          <IconButton color="inherit" sx={{ marginLeft: '16px' }}>
-            <Notifications />
-          </IconButton>
-          <IconButton color="inherit" sx={{ marginLeft: '8px' }}>
-            <Avatar alt="User" src="https://via.placeholder.com/150" />
-          </IconButton>
+          
         </div>
       </Toolbar>
     </AppBar>
@@ -242,11 +238,23 @@ const MainContent = () => {
 
 
 const RecentPayments = () => {
-  const payments = Array(10).fill({ name: 'John Doe', email: 'abs@gmail.com', phone:'071 123 4567', sid:'123456', shuttle: 'Gampaha I', lpdate: '20.11.2024' });
+  // Initial state using an object to store payment status
+  const [paymentStatus, setPaymentStatus] = useState({
+    1: true, // John Doe
+    2: false, // Jane Smith
+    3: true, // Michael Lee
+  });
+
+  const handlePaymentToggle = (id) => {
+    setPaymentStatus((prevStatus) => ({
+      ...prevStatus,
+      [id]: !prevStatus[id], // Toggle the specific student's payment status
+    }));
+  };
 
   return (
-    <Paper sx={{ padding: '16px' ,boxShadow:'3' }}>
-      <Typography variant="h6">Staff</Typography>
+    <Paper sx={{ padding: "16px", boxShadow: 3 }}>
+      <Typography variant="h6">Students</Typography>
       <TableContainer>
         <Table>
           <TableHead>
@@ -254,22 +262,70 @@ const RecentPayments = () => {
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Phone No.</TableCell>
-              <TableCell>StudentID</TableCell>
-              <TableCell>Shuttle</TableCell>
-              <TableCell>Last Payment Date</TableCell>
+              <TableCell>StaffID	</TableCell>
+              <TableCell>Paid</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {payments.map((payment, index) => (
-              <TableRow key={index}>
-                <TableCell>{payment.name}</TableCell>
-                <TableCell>{payment.email}</TableCell>
-                <TableCell>{payment.phone}</TableCell>
-                <TableCell>{payment.sid}</TableCell>
-                <TableCell>{payment.shuttle}</TableCell>
-                <TableCell>{payment.lpdate}</TableCell>
-              </TableRow>
-            ))}
+            <TableRow>
+              <TableCell>John Doe</TableCell>
+              <TableCell>abs@gmail.com</TableCell>
+              <TableCell>071 123 4567</TableCell>
+              <TableCell>123456</TableCell>
+              <TableCell>
+                <Checkbox
+                  checked={paymentStatus[1] || false}
+                  onChange={() => handlePaymentToggle(1)}
+                  color="primary"
+                />
+                {paymentStatus[1] ? "Paid" : "Not Paid"}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell>Jane Smith</TableCell>
+              <TableCell>jane@gmail.com</TableCell>
+              <TableCell>072 987 6543</TableCell>
+              <TableCell>654321</TableCell>
+              <TableCell>
+                <Checkbox
+                  checked={paymentStatus[2] || false}
+                  onChange={() => handlePaymentToggle(2)}
+                  color="primary"
+                />
+                {paymentStatus[2] ? "Paid" : "Not Paid"}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell>Michael Lee</TableCell>
+              <TableCell>michael@gmail.com</TableCell>
+              <TableCell>073 555 8888</TableCell>
+              <TableCell>789012</TableCell>
+              <TableCell>
+                <Checkbox
+                  checked={paymentStatus[3] || false}
+                  onChange={() => handlePaymentToggle(3)}
+                  color="primary"
+                />
+                {paymentStatus[3] ? "Paid" : "Not Paid"}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Michael Lee</TableCell>
+              <TableCell>michael@gmail.com</TableCell>
+              <TableCell>073 555 8888</TableCell>
+              <TableCell>789012</TableCell>
+              <TableCell>
+                <Checkbox
+                  checked={paymentStatus[4] || false}
+                  onChange={() => handlePaymentToggle(3)}
+                  color="primary"
+                />
+                {paymentStatus[4] ? "Paid" : "Not Paid"}
+              </TableCell>
+            </TableRow>
+
           </TableBody>
         </Table>
       </TableContainer>
