@@ -4,6 +4,7 @@ import { Menu, Search, People, DirectionsBus, AccountBalanceWallet, Help, Settin
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import cinecLogo from "/src/assets/cinec.png";
 import { useNavigate } from 'react-router-dom'; // Import the hook
 
 import { StuMethods } from '../backend/StuMethods';
@@ -30,7 +31,7 @@ const St = () => {
   
     const handleAuth = async () => {
       const res = await authMethods.refreshToken();
-      if (res && res.accessToken && res.ID) {
+      if (res && res.accessToken && res.ID && res.role == "Admin") {
         ID = res.ID;
       }
       else {
@@ -85,7 +86,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
       }}
     >
       <div style={{ padding: '16px', marginLeft: '18px' }}>
-        <img src="/src/assets/cinec.png" alt="logo" width={100} height={50} />
+        <img src={cinecLogo} alt="logo" width={100} height={50} />
       </div>
       <List>
         {[
@@ -128,7 +129,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ padding: 5 }}>
         <Button
-          href='/admin'
+          onClick={() => authMethods.deleteToken().then(() => navigate('/'))}
           variant="contained"
           fullWidth
           sx={{

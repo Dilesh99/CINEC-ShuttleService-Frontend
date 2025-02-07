@@ -72,7 +72,6 @@ const SignIn = () => {
 
     const handleResetPassword = async () => {
         selectPerson();
-        console.log(person);
         setIsResettingPassword(true);
         setError('');
         if (ID == "") {
@@ -131,7 +130,6 @@ const SignIn = () => {
     }
 
     const selectPerson = () => {
-        console.log(ID);
         if (ID.length == 6) {
             person = 'Staff';
         }
@@ -151,7 +149,6 @@ const SignIn = () => {
     const handleSignIn = async () => {
         setError('');
         selectPerson();
-        console.log(person);
         setIsloading(true);
         try {
             switch (person) {
@@ -205,8 +202,6 @@ const SignIn = () => {
             const accessToken = data.accessToken;
             const role = data.role;
             const retrievedID = data.id;
-
-            console.log(accessToken, role, retrievedID);
 
             if (response.ok && accessToken && role && retrievedID) {
                 window.alert("login successfull");

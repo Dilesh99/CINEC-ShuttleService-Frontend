@@ -4,6 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom'; // for capturing the 
 import { CssBaseline, Button, Typography, Box, CardContent, Checkbox, FormControlLabel, TextField, Paper, CircularProgress } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EditIcon from '@mui/icons-material/Edit';
+import cinecLogo from "/src/assets/W-PNG.png";
+import busImage from "/src/assets/images.png";
 
 import { LocationMethods } from '../backend/LocationMethods';
 import { authMethods } from '../backend/authMethods';
@@ -30,7 +32,7 @@ function ShuttleService() {
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID) {
+    if (res && res.accessToken && res.ID && res.role == "Driver") {
       ID = res.ID;
     }
     else {
@@ -135,7 +137,7 @@ function ShuttleService() {
       <Box display="flex" justifyContent="center" sx={{ mt: '-2%', backgroundColor: '#47758C', p: { xs: 2, sm: 4, md: 5.9 } }}>
         <Box sx={{ width: '100%', maxWidth: '1440px' }}>
           {/* Logo */}
-          <Box component="img" src="/src/assets/W-PNG.png" alt="CINEC Logo" sx={{ height: { xs: '35px', sm: '40px', md: '40px', lg: '40px' } }} />
+          <Box component="img" src={cinecLogo} alt="CINEC Logo" sx={{ height: { xs: '35px', sm: '40px', md: '40px', lg: '40px' } }} />
 
           {/* Title */}
           <Typography variant="h5" sx={{
@@ -185,7 +187,7 @@ function ShuttleService() {
                   </Box>
 
                   <Box display="flex" justifyContent="center" mb={2}>
-                    <Box component="img" src="/src/assets/images.png" alt="CINECBus" sx={{
+                    <Box component="img" src={busImage} alt="CINECBus" sx={{
                       height: { xs: '100px', sm: '140px', md: '150px', lg: '180px' },
                     }} />
                   </Box>

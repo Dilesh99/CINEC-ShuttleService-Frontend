@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery,Box } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery, Box } from '@mui/material';
 import { Menu, Search, People, DirectionsBus, AccountBalanceWallet, Help, Settings, Person, Notifications } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import cinecLogo from "/src/assets/cinec.png";
 import { useNavigate } from 'react-router-dom'; // Import the hook
 
 import { authMethods } from '../backend/authMethods';
@@ -11,7 +12,7 @@ import { authMethods } from '../backend/authMethods';
 
 const Dri = () => {
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
   let ID = null;
   const hasRun = useRef(false);
   useEffect(() => {
@@ -27,7 +28,7 @@ const navigate = useNavigate();
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID) {
+    if (res && res.accessToken && res.ID && res.role == "Admin") {
       ID = res.ID;
     }
     else {
@@ -41,7 +42,7 @@ const navigate = useNavigate();
     setMobileOpen(!mobileOpen);
   };
 
- 
+
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
@@ -73,7 +74,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
       }}
     >
       <div style={{ padding: '16px', marginLeft: '18px' }}>
-        <img src="/src/assets/cinec.png" alt="logo" width={100} height={50} />
+        <img src={cinecLogo} alt="logo" width={100} height={50} />
       </div>
       <List>
         {[
@@ -116,6 +117,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ padding: 5 }}>
         <Button
+          onClick={() => authMethods.deleteToken().then(() => navigate('/'))}
           variant="contained"
           fullWidth
           sx={{
@@ -227,12 +229,12 @@ const Header = ({ handleDrawerToggle }) => {
 const MainContent = () => {
   return (
     <div style={{ padding: '16px' }}>
-      
+
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
         <Grid item xs={12} md={12}>
-         <NewShuttles/>
+          <NewShuttles />
         </Grid>
-        
+
       </Grid>
     </div>
   );
@@ -242,17 +244,19 @@ const MainContent = () => {
 
 const NewShuttles = () => {
   const shuttles = [
-    { profile: 'Gamini Perera', icon: <Avatar>G</Avatar>, cno:'071 123 4567', age:'47', jdate: '12.12.2022' },
-    { profile: 'W. Wickramasinghe', icon: <Avatar>G</Avatar>, cno:'071 123 4567', age:'47', jdate: '12.12.2022'  },
-    { profile: 'S.Perera', icon: <Avatar>W</Avatar>, cno:'071 123 4567', age:'47', jdate: '12.12.2022'  },
+    { profile: 'Gamini Perera', icon: <Avatar>G</Avatar>, cno: '071 123 4567', age: '47', jdate: '12.12.2022' },
+    { profile: 'W. Wickramasinghe', icon: <Avatar>G</Avatar>, cno: '071 123 4567', age: '47', jdate: '12.12.2022' },
+    { profile: 'S.Perera', icon: <Avatar>W</Avatar>, cno: '071 123 4567', age: '47', jdate: '12.12.2022' },
   ];
 
   return (
-    <Paper sx={{ padding: '16px',boxShadow:'3' }}>
+    <Paper sx={{ padding: '16px', boxShadow: '3' }}>
       <Typography variant="h6">Gampaha I - Driver's Details</Typography>
-      <Button href='/shuttles' variant="contained" sx={{ float: 'right', marginBottom: '10px',marginRight:'20px',marginTop:'-20px',backgroundColor:'secondary.light','&:hover': {
-           backgroundColor:'secondary.light2',
-           }, }}>Back</Button>
+      <Button href='/shuttles' variant="contained" sx={{
+        float: 'right', marginBottom: '10px', marginRight: '20px', marginTop: '-20px', backgroundColor: 'secondary.light', '&:hover': {
+          backgroundColor: 'secondary.light2',
+        },
+      }}>Back</Button>
       <TableContainer>
         <Table>
           <TableHead>

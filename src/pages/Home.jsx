@@ -22,7 +22,7 @@ function RouteSelection() {
   const navigate = useNavigate();
   let ID = null;
   const hasRun = useRef(false);
-  /*useEffect(() => {
+  useEffect(() => {
     if (!hasRun.current) {
       hasRun.current = true;
       try {
@@ -31,11 +31,11 @@ function RouteSelection() {
         return null;
       }
     }
-  }, []);*/
+  }, []);
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID) {
+    if (res && res.accessToken && res.ID && (res.role == "Student" || res.role == "Staff")) {
       ID = res.ID;
     }
     else {

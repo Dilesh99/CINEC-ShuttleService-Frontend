@@ -8,6 +8,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Layout from "../components/Layout";
 import InnerBackgroundImage from "/src/assets/bg5.jpg";
+import secondBGImage from "/src/assets/secondBg.png";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 
 import { authMethods } from '../backend/authMethods';
@@ -31,7 +32,7 @@ export default function Notification() {
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID) {
+    if (res && res.accessToken && res.ID && (res.role == "Student" || res.role == "Staff")) {
       ID = res.ID;
     }
     else {
@@ -68,7 +69,7 @@ export default function Notification() {
 
               width: { xs: "90%", sm: "80%", md: "60%", lg: "70%" }
               , overflow: 'hidden',
-              backgroundImage: `url('src/assets/secondBg.png')`,
+              backgroundImage: `url(${secondBGImage})`,
               backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", position: 'relative',
               marginTop: { xs: "30%", sm: "13%", md: "8%", lg: "8%" },
               borderRadius: 6,

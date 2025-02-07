@@ -7,10 +7,11 @@ import { useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
 import { Link } from "react-router-dom";
 import BackgroundImage from "/src/assets/bg5.jpg";
+import busIconMap from "/src/assets/busIconMap.png";
+import busIcon from "/src/assets/busIcon.png";
 import { useNavigate } from "react-router-dom";
 
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import busIcon from "../assets/busIconMap.png";
 
 import { LocationMethods } from "../backend/LocationMethods";
 import { authMethods } from "../backend/authMethods";
@@ -34,7 +35,7 @@ export default function Location() {
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID) {
+    if (res && res.accessToken && res.ID && (res.role == "Student" || res.role == "Staff")) {
       ID = res.ID;
     }
     else {
@@ -242,7 +243,7 @@ export default function Location() {
                             sx={{
                               width: "45px",
                               height: "45px",
-                              backgroundImage: `url('/src/assets/busicon.png')`,
+                              backgroundImage: `url(${busIcon})`, // Bus Image
                               backgroundSize: "cover",
                               backgroundPosition: "center",
                               backgroundRepeat: "no-repeat",
@@ -345,7 +346,7 @@ export default function Location() {
                               lng: shuttleLocation.longitude,
                             }}
                             icon={{
-                              url: busIcon,
+                              url: busIconMap,
                               scaledSize: new window.google.maps.Size(40, 40),
                             }}
                             label={{
