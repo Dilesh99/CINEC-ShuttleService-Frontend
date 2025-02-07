@@ -7,40 +7,35 @@ import EditIcon from '@mui/icons-material/Edit';
 import { authMethods } from '../backend/authMethods';
 
 
-  
+
 function ShuttleService2() {
   const { driverID } = useParams();  // Fetch the shuttleId from the URL
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [shuttleDetails, setShuttleDetails] = useState(null);
   const navigate = useNavigate();
-    let ID = null;
-    const hasRun = useRef(false);
-    useEffect(() => {
-      if (!hasRun.current) {
-        hasRun.current = true;
-        try {
-          handleAuth();
-        } catch {
-          return null;
-        }
-      }
-  
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = '';
-      };
-    }, []);
-  
-    const handleAuth = async () => {
-      const res = await authMethods.refreshToken();
-      if (res && res.accessToken && res.ID) {
-        ID = res.ID;
-      }
-      else {
-        navigate("/");
+  let ID = null;
+  const hasRun = useRef(false);
+  useEffect(() => {
+    if (!hasRun.current) {
+      hasRun.current = true;
+      try {
+        handleAuth();
+      } catch {
+        return null;
       }
     }
- 
+  }, []);
+
+  const handleAuth = async () => {
+    const res = await authMethods.refreshToken();
+    if (res && res.accessToken && res.ID) {
+      ID = res.ID;
+    }
+    else {
+      navigate("/");
+    }
+  }
+
   useEffect(() => {
     // Simulating fetching bus data based on driverID (mock data)
     const fetchBusDetails = async () => {
@@ -96,12 +91,12 @@ function ShuttleService2() {
         },
       };
 
-     // Get bus data based on the driverID from the URL
-     const busInfo = busData[driverID] || null;
+      // Get bus data based on the driverID from the URL
+      const busInfo = busData[driverID] || null;
 
-     setShuttleDetails(busInfo);
-   };
-   fetchBusDetails();
+      setShuttleDetails(busInfo);
+    };
+    fetchBusDetails();
   }, [driverID]); // Fetch new data when the driverID changes
 
   if (!shuttleDetails) {
@@ -121,146 +116,147 @@ function ShuttleService2() {
 
   return (
     <>
-    <CssBaseline />
-    
-   <Box display="flex" justifyContent="center" sx={{ mt: '-2%', backgroundColor: '#47758C', p: { xs: 2, sm: 4, md: 5.9} }}>
-           <Box sx={{ width: '100%', maxWidth: '1440px' }}>
-             {/* Logo */}
-             <Box component="img" src="/src/assets/W-PNG.png" alt="CINEC Logo" sx={{ height: { xs: '35px', sm: '40px', md: '40px', lg: '40px' } }} />
-{/* Title */}
+      <CssBaseline />
+
+      <Box display="flex" justifyContent="center" sx={{ mt: '-2%', backgroundColor: '#47758C', p: { xs: 2, sm: 4, md: 5.9 } }}>
+        <Box sx={{ width: '100%', maxWidth: '1440px' }}>
+          {/* Logo */}
+          <Box component="img" src="/src/assets/W-PNG.png" alt="CINEC Logo" sx={{ height: { xs: '35px', sm: '40px', md: '40px', lg: '40px' } }} />
+          {/* Title */}
           <Typography variant="h5" sx={{
             textAlign: 'center', fontSize: { xs: '16px', sm: '22px', md: '23px', lg: '2.5rem' }, color: '#ffffff',
             mt: { xs: '14px', sm: '2px', md: '0px', lg: '0px' }, mb: 1.5
           }}>
-          SHUTTLE - {shuttleDetails.route}
-        </Typography>
+            SHUTTLE - {shuttleDetails.route}
+          </Typography>
 
-        <Box display="flex" justifyContent="center" sx={{ backgroundColor: '#47758C' }}>
-          <Paper elevation={3} sx={{ width: '100%', maxWidth: '1500px', borderRadius: '10px' }}>
-            <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
-              {/* Left Section */}
-              <Box
-                sx={{
-                  borderTopLeftRadius:10,
-                  borderBottomLeftRadius:10,
-                  flex: 1.4,
-                  backgroundColor: '#022E61',
-                  color: '#fff',
-                
-                  textAlign: { xs: 'center', md: 'left' },
-                }}
-              >
-
+          <Box display="flex" justifyContent="center" sx={{ backgroundColor: '#47758C' }}>
+            <Paper elevation={3} sx={{ width: '100%', maxWidth: '1500px', borderRadius: '10px' }}>
+              <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
+                {/* Left Section */}
                 <Box
                   sx={{
-                    borderTopLeftRadius:10,
-                    borderBottomLeftRadius:10,
-                    position: 'relative',
-                    width: '100%',
-                    height: '535px',
-                    overflow: 'hidden',
-                    
-                  
+                    borderTopLeftRadius: 10,
+                    borderBottomLeftRadius: 10,
+                    flex: 1.4,
+                    backgroundColor: '#022E61',
+                    color: '#fff',
+
+                    textAlign: { xs: 'center', md: 'left' },
                   }}
                 >
-                   <Button
-                   onClick={toggleLocation}
-        variant="contained"
-        sx={{
-          position: 'absolute', // Position it relative to the map container
-          top: '10px', // Offset from the bottom edge
-          left: '10px', // Offset from the right edge
-          backgroundColor: '#022E61', // Button styling
-          color: '#ffffff',
-          fontWeight: 'bold',
-          borderRadius:'20px',
-          '&:hover': { backgroundColor: '#d9d9d9' },
-        }}
-      >
-       Turn off
-      </Button>
-                
-                  
-                  <iframe
-                    src= {shuttleDetails.mapUrl}  // Dynamically load the map based on driverID
-                    width="100%"
-                    height="300%"
-                    style={{ border: 0 }}
-                    allowFullScreen=""
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  > </iframe>
-               
-                  
-               
-                  </Box>
-                 
-              </Box>
 
-              {/* Right Section */}
-              <Box sx={{
-                borderTopRightRadius:10,
-                borderBottomRightRadius:10,
-                flex: 1,
-                backgroundColor: '#ffffff', 
-                p: 4 }}>
-                <Typography variant="h6" gutterBottom>
-                  <EditIcon /> Add a note
-                </Typography>
-
-                <Box mb={2}>
-                  {[
-                    'The shuttle will depart from Malabe in 10 mins',
-                    'Just started the journey',
-                    'The bus will be a little late due to reasonable cause',
-                    'The bus will be delayed due to an emergency',
-                    'The shuttle schedule is cancelled due to an inconvenient reason',
-                    'The bus is packed, so try the next turn',
-                    'Other',
-                  ].map((reason, index) => (
-                    <FormControlLabel
-                      key={index}
-                      control={
-                        <Checkbox
-                          checked={selectedReasons.includes(reason)}
-                          onChange={() => handleCheckboxChange(reason)}
-                        />
-                      }
-                      label={reason}
-                    />
-                  ))}
-                </Box>
-
-                <TextField
-                  variant="outlined"
-                  label="Other reasons"
-                  fullWidth
-                  multiline
-                  minRows={3}
-                  sx={{ mb: 2 }}
-                />
-
-                <Box display="flex" justifyContent="center">
-                  <Button
-                    variant="contained"
+                  <Box
                     sx={{
-                      bgcolor: '#022e61',
-                      color: '#fff',
-                      fontWeight: 'bold',
-                      width: { xs: '100%', sm: '50%' },
-                      borderRadius: '10px',
-                      '&:hover': { bgcolor: '#001f42' },
+                      borderTopLeftRadius: 10,
+                      borderBottomLeftRadius: 10,
+                      position: 'relative',
+                      width: '100%',
+                      height: '535px',
+                      overflow: 'hidden',
+
+
                     }}
                   >
-                    SUBMIT
-                  </Button>
+                    <Button
+                      onClick={toggleLocation}
+                      variant="contained"
+                      sx={{
+                        position: 'absolute', // Position it relative to the map container
+                        top: '10px', // Offset from the bottom edge
+                        left: '10px', // Offset from the right edge
+                        backgroundColor: '#022E61', // Button styling
+                        color: '#ffffff',
+                        fontWeight: 'bold',
+                        borderRadius: '20px',
+                        '&:hover': { backgroundColor: '#d9d9d9' },
+                      }}
+                    >
+                      Turn off
+                    </Button>
+
+
+                    <iframe
+                      src={shuttleDetails.mapUrl}  // Dynamically load the map based on driverID
+                      width="100%"
+                      height="300%"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    > </iframe>
+
+
+
+                  </Box>
+
+                </Box>
+
+                {/* Right Section */}
+                <Box sx={{
+                  borderTopRightRadius: 10,
+                  borderBottomRightRadius: 10,
+                  flex: 1,
+                  backgroundColor: '#ffffff',
+                  p: 4
+                }}>
+                  <Typography variant="h6" gutterBottom>
+                    <EditIcon /> Add a note
+                  </Typography>
+
+                  <Box mb={2}>
+                    {[
+                      'The shuttle will depart from Malabe in 10 mins',
+                      'Just started the journey',
+                      'The bus will be a little late due to reasonable cause',
+                      'The bus will be delayed due to an emergency',
+                      'The shuttle schedule is cancelled due to an inconvenient reason',
+                      'The bus is packed, so try the next turn',
+                      'Other',
+                    ].map((reason, index) => (
+                      <FormControlLabel
+                        key={index}
+                        control={
+                          <Checkbox
+                            checked={selectedReasons.includes(reason)}
+                            onChange={() => handleCheckboxChange(reason)}
+                          />
+                        }
+                        label={reason}
+                      />
+                    ))}
+                  </Box>
+
+                  <TextField
+                    variant="outlined"
+                    label="Other reasons"
+                    fullWidth
+                    multiline
+                    minRows={3}
+                    sx={{ mb: 2 }}
+                  />
+
+                  <Box display="flex" justifyContent="center">
+                    <Button
+                      variant="contained"
+                      sx={{
+                        bgcolor: '#022e61',
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        width: { xs: '100%', sm: '50%' },
+                        borderRadius: '10px',
+                        '&:hover': { bgcolor: '#001f42' },
+                      }}
+                    >
+                      SUBMIT
+                    </Button>
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-          </Paper>
+            </Paper>
+          </Box>
         </Box>
       </Box>
-    </Box>
     </>
   );
 }

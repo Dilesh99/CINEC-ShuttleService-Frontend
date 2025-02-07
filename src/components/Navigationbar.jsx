@@ -20,7 +20,7 @@ const Navigationbar = () => {
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  
+
   const location = useLocation(); // Hook to access current path
 
   const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
@@ -28,9 +28,17 @@ const Navigationbar = () => {
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
   const handleCloseUserMenu = () => setAnchorElUser(null);
 
-  const logUserOut = async() => {
-    const res = await authMethods.deleteToken();
-    console.log(res);
+  const logUserOut = async () => {
+    try {
+      const res = await authMethods.deleteToken();
+      if(res){
+        console.log(res);
+        window.location.href = '/';
+      }
+    }
+    catch {
+
+    }
   }
 
   // Example logic to disable specific buttons

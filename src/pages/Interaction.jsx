@@ -10,35 +10,7 @@ import { authMethods } from '../backend/authMethods';
 import { useNavigate } from 'react-router-dom';
 
 function Interaction() {
-  const navigate = useNavigate();
-  let ID = null;
-  const hasRun = useRef(false);
-  useEffect(() => {
-    if (!hasRun.current) {
-      hasRun.current = true;
-      try {
-        handleAuth();
-      } catch {
-        return null;
-      }
-    }
-
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, []);
-
-  const handleAuth = async () => {
-    const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID) {
-      ID = res.ID;
-    }
-    else {
-      navigate("/");
-    }
-  }
-
+  
   return (
     <>
       <CssBaseline />

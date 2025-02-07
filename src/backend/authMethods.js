@@ -24,18 +24,31 @@ export const authMethods = {
         }
     },
 
-    deleteToken: async function (){
-        try{
-            const response = await fetch(`${backEndURL}/logoutStudent`, {
-                method: "POST",
-                credentials: "include"
-            });
+    deleteToken: async function () {
+        try {
+            const data = await authMethods.refreshToken();
+            if (data) {
+                const accessToken = data.accessToken;
+                const role = data.role;
+                const response = await fetch(`${backEndURL}/logout${role}`, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                })
 
-            const data = await response.json();
-            console.log(data);
+                if (response.ok) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+            }
         }
-        catch{
-
+        catch {
         }
     }
 };

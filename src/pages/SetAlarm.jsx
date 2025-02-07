@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, {useRef, useEffect, useState} from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -50,9 +50,9 @@ const ContentContainer = styled(Box)(({ theme }) => ({
     marginRight: '10px',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop:"30%",
-    marginBottom:"5%"
-   
+    marginTop: "30%",
+    marginBottom: "5%"
+
   },
 }));
 
@@ -77,9 +77,9 @@ const Sidebar = styled(Box)(({ theme }) => ({
     marginBottom: theme.spacing(0),
     borderTopLeftRadius: '20px',
     borderTopRightRadius: '20px',
-    
-     borderBottomLeftRadius: '0',
-    
+
+    borderBottomLeftRadius: '0',
+
   },
   [theme.breakpoints.down('sm')]: {
     width: '90%',
@@ -87,9 +87,9 @@ const Sidebar = styled(Box)(({ theme }) => ({
     marginBottom: theme.spacing(0),
     borderTopLeftRadius: '20px',
     borderTopRightRadius: '20px',
-    
-     borderBottomLeftRadius: '0',
-    
+
+    borderBottomLeftRadius: '0',
+
   },
 }));
 
@@ -102,27 +102,27 @@ const FormSection = styled(Box)(({ theme }) => ({
   color: '#fff',
   display: 'flex',
   borderTopRightRadius: '20px',
-    borderBottomRightRadius: '20px',
+  borderBottomRightRadius: '20px',
   flexDirection: 'column',
   justifyContent: 'space-between',
   [theme.breakpoints.down('lg')]: {
     width: '100%',
     padding: theme.spacing(3),
-    
+
   },
   [theme.breakpoints.down('md')]: {
     width: '100%',
     padding: theme.spacing(2),
     borderBottomLeftRadius: '20px',
     borderTopRightRadius: '0px',
-    marginBottom:'5%'
+    marginBottom: '5%'
   },
   [theme.breakpoints.down('sm')]: {
     width: '90%',
     padding: theme.spacing(1),
     borderBottomLeftRadius: '20px',
     borderTopRightRadius: '0px',
-    marginBottom:'10%'
+    marginBottom: '10%'
   },
 }));
 
@@ -204,54 +204,49 @@ const SetAlarmSection = ({ navigateBack }) => (
       university <br />
       life.
     </Typography>
-    
-      <Button
-        onClick={navigateBack}
-        variant="contained"
-        sx={{
-          mt: 4,
-          backgroundColor: '#f59e0b',
-          borderRadius: '20px',
-          color: '#fff',
-          width: 'auto',
-        }}
-      >
-        BACK
-      </Button>
-    
+
+    <Button
+      onClick={navigateBack}
+      variant="contained"
+      sx={{
+        mt: 4,
+        backgroundColor: '#f59e0b',
+        borderRadius: '20px',
+        color: '#fff',
+        width: 'auto',
+      }}
+    >
+      BACK
+    </Button>
+
   </Sidebar>
 );
 
 const AlarmForm = () => {
 
   const navigate = useNavigate();
-    let ID = null;
-    const hasRun = useRef(false);
-    useEffect(() => {
-      if (!hasRun.current) {
-        hasRun.current = true;
-        try {
-          handleAuth();
-        } catch {
-          return null;
-        }
-      }
-  
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = '';
-      };
-    }, []);
-  
-    const handleAuth = async () => {
-      const res = await authMethods.refreshToken();
-      if (res && res.accessToken && res.ID) {
-        ID = res.ID;
-      }
-      else {
-        navigate("/");
+  let ID = null;
+  const hasRun = useRef(false);
+  useEffect(() => {
+    if (!hasRun.current) {
+      hasRun.current = true;
+      try {
+        handleAuth();
+      } catch {
+        return null;
       }
     }
+  }, []);
+
+  const handleAuth = async () => {
+    const res = await authMethods.refreshToken();
+    if (res && res.accessToken && res.ID) {
+      ID = res.ID;
+    }
+    else {
+      navigate("/");
+    }
+  }
   const activeDays = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
 
   // Function to navigate back to the previous page
@@ -277,17 +272,17 @@ const AlarmForm = () => {
           margin: 0,
           padding: 0,
           overflow: "hidden",
-          
+
         }}
       >
         <ContentContainer>
           <SetAlarmSection navigateBack={navigateBack} />
           <FormSection>
             <Box display="flex" flexDirection="column" gap={4}>
-            <Box display="flex" alignItems="center">
+              <Box display="flex" alignItems="center">
                 <Typography
                   variant="h6"
-                  sx={{ width: { xs: "45%", md: "30%" }, fontSize: "18px",mt:{xs:'15%',md:'0%'} }}
+                  sx={{ width: { xs: "45%", md: "30%" }, fontSize: "18px", mt: { xs: '15%', md: '0%' } }}
                 >
                   Alarm name:
                 </Typography>
@@ -303,7 +298,7 @@ const AlarmForm = () => {
                     },
                   }}
                   sx={{
-                    mt:{xs:'15%',md:'0%'},
+                    mt: { xs: '15%', md: '0%' },
                     maxWidth: "250px",
                   }}
                 />
@@ -311,7 +306,7 @@ const AlarmForm = () => {
 
 
               <Box display="flex" alignItems="center">
-                <Typography variant="h6" sx={{ width: {xs:'45%',md:'35%'}, fontSize:'18px' }}>
+                <Typography variant="h6" sx={{ width: { xs: '45%', md: '35%' }, fontSize: '18px' }}>
                   Alarm on/off:
                 </Typography>
                 <RadioGroup row name="alarmOnOff" defaultValue="on">
@@ -320,12 +315,12 @@ const AlarmForm = () => {
                 </RadioGroup>
               </Box>
 
-               <Box display="flex" alignItems="center">
+              <Box display="flex" alignItems="center">
                 <Typography
                   variant="h6"
                   sx={{ width: { xs: "45%", md: "30%" }, fontSize: "18px" }}
                 >
-                   Radius:
+                  Radius:
                 </Typography>
                 <TextField
                   size="small"
@@ -339,13 +334,13 @@ const AlarmForm = () => {
                     },
                   }}
                   sx={{
-                    
+
                     maxWidth: "250px",
                   }}
                 />
               </Box>
               <Box display="flex" alignItems="center">
-                <Typography variant="h6" sx={{ width: {xs:'45%',md:'35%'}, fontSize:'18px'}}>
+                <Typography variant="h6" sx={{ width: { xs: '45%', md: '35%' }, fontSize: '18px' }}>
                   Repeat:
                 </Typography>
                 <RadioGroup row name="repeat" defaultValue="on">
@@ -354,34 +349,34 @@ const AlarmForm = () => {
                 </RadioGroup>
               </Box>
               <Box
-  display="flex"
-  flexDirection={{ xs: 'column', md: 'row' }} // Column for mobile, row for larger screens
-  alignItems={{ xs: 'flex-start', md: 'center' }} // Adjust alignment for mobile
->
-  <Typography
-    variant="h6"
-    sx={{
-      width: { xs: '100%', md: '22%'  }, // Full width for mobile, fixed width for larger screens
-      fontSize: '18px',
-      mb: { xs: 4, md: 0 , sm: 4 }, // Add margin below the label for mobile view
-    }}
-  >
-    Active days:
-  </Typography>
-  <Box
-    sx={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      justifyContent: { xs: 'center', md: 'center',sm:"center" }, // Align left on mobile, center on larger screens
-      gap: '10px',
-      width: '100%', // Ensure the buttons take full width in mobile view
-    }}
-  >
-    {activeDays.map((day) => (
-      <DayButton key={day}>{day}</DayButton>
-    ))}
-  </Box>
-</Box>
+                display="flex"
+                flexDirection={{ xs: 'column', md: 'row' }} // Column for mobile, row for larger screens
+                alignItems={{ xs: 'flex-start', md: 'center' }} // Adjust alignment for mobile
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    width: { xs: '100%', md: '22%' }, // Full width for mobile, fixed width for larger screens
+                    fontSize: '18px',
+                    mb: { xs: 4, md: 0, sm: 4 }, // Add margin below the label for mobile view
+                  }}
+                >
+                  Active days:
+                </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: { xs: 'center', md: 'center', sm: "center" }, // Align left on mobile, center on larger screens
+                    gap: '10px',
+                    width: '100%', // Ensure the buttons take full width in mobile view
+                  }}
+                >
+                  {activeDays.map((day) => (
+                    <DayButton key={day}>{day}</DayButton>
+                  ))}
+                </Box>
+              </Box>
 
             </Box>
             <SaveButton>Save</SaveButton>

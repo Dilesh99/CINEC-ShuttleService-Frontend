@@ -15,33 +15,33 @@ function ShuttleService() {
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [busDetails, setBusDetails] = useState(null); // To store dynamic bus details
   const navigate = useNavigate();
-    let ID = null;
-    const hasRun = useRef(false);
-    useEffect(() => {
-      if (!hasRun.current) {
-        hasRun.current = true;
-        try {
-          handleAuth();
-        } catch {
-          return null;
-        }
-      }
-  
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = '';
-      };
-    }, []);
-  
-    const handleAuth = async () => {
-      const res = await authMethods.refreshToken();
-      if (res && res.accessToken && res.ID) {
-        ID = res.ID;
-      }
-      else {
-        navigate("/");
+  let ID = null;
+  const hasRun = useRef(false);
+  useEffect(() => {
+    if (!hasRun.current) {
+      hasRun.current = true;
+      try {
+        handleAuth();
+      } catch {
+        return null;
       }
     }
+  }, []);
+
+  const handleAuth = async () => {
+    const res = await authMethods.refreshToken();
+    if (res && res.accessToken && res.ID) {
+      ID = res.ID;
+    }
+    else {
+      navigate("/");
+    }
+  }
+
+  const handleLogout = async () => {
+    authMethods.deleteToken().then(() => navigate('/'));
+  };
+
 
   const [isTracking, setIsTracking] = useState('TURN ON');
 
@@ -132,7 +132,7 @@ function ShuttleService() {
   return (
     <>
       <CssBaseline />
-      <Box display="flex" justifyContent="center" sx={{ mt: '-2%', backgroundColor: '#47758C', p: { xs: 2, sm: 4, md: 5.9} }}>
+      <Box display="flex" justifyContent="center" sx={{ mt: '-2%', backgroundColor: '#47758C', p: { xs: 2, sm: 4, md: 5.9 } }}>
         <Box sx={{ width: '100%', maxWidth: '1440px' }}>
           {/* Logo */}
           <Box component="img" src="/src/assets/W-PNG.png" alt="CINEC Logo" sx={{ height: { xs: '35px', sm: '40px', md: '40px', lg: '40px' } }} />
@@ -146,6 +146,7 @@ function ShuttleService() {
           </Typography>
 
           <Box display="flex" justifyContent="center" sx={{ backgroundColor: '#47758C' }}>
+
             <Paper elevation={3} sx={{ width: '100%', maxWidth: '1500px', borderRadius: '10px' }}>
               <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
                 {/* Left Section */}
@@ -159,7 +160,7 @@ function ShuttleService() {
                   </Typography><br />
 
                   <Box display="flex" justifyContent="center" gap={2} mb={3}>
-                    <Button 
+                    <Button
                       variant="contained"
                       color={locationOn ? 'primary' : 'default'}
                       onClick={startTracking}
@@ -238,16 +239,35 @@ function ShuttleService() {
                     sx={{ mb: 2 }}
                   />
 
-                  <Box display="flex" justifyContent="center">
-                    <Button
-                      variant="contained"
-                      sx={{
-                        bgcolor: '#022e61', color: '#fff', fontWeight: 'bold', width: { xs: '100%', sm: '50%' },
-                        borderRadius: '10px', '&:hover': { bgcolor: '#001f42' },
-                      }}
-                    >
-                      SUBMIT
-                    </Button>
+<Box display="flex" flexDirection="column">
+                    <Box display="flex" justifyContent="center">
+                      <Button
+                        variant="contained"
+                        sx={{
+                          bgcolor: '#022e61',
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          width: { xs: '100%', sm: '50%' },
+                          borderRadius: '10px',
+                          '&:hover': { bgcolor: '#001f42' },
+                        }}
+                      >
+                        SUBMIT
+                      </Button>
+                    </Box>
+                    <Box display="flex" justifyContent="center" mt={2}>
+                      <Button
+                        variant="contained"
+                        onClick={handleLogout}
+                        sx={{
+                          backgroundColor: '#ffffff',
+                          color: '#022e61',
+                          '&:hover': { backgroundColor: '#cccccc' },
+                        }}
+                      >
+                        Logout
+                      </Button>
+                    </Box>
                   </Box>
                 </Box>
               </Box>

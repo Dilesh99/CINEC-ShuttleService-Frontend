@@ -27,11 +27,6 @@ const Admin = () => {
           return null;
         }
       }
-  
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = '';
-      };
     }, []);
   
     const handleAuth = async () => {
@@ -60,6 +55,8 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
   const [selectedIndex, setSelectedIndex] = useState(0);// Initialize the hook
+
+  const navigate = useNavigate();
 
   const handleListItemClick = (index, route) => {
     setSelectedIndex(index);
@@ -118,7 +115,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ padding: 5 }}>
         <Button
-          href='/admin'
+          onClick={() => authMethods.deleteToken().then(() => navigate('/'))}
           variant="contained"
           fullWidth
           sx={{

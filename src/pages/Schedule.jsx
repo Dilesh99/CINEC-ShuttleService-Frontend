@@ -11,33 +11,28 @@ import { authMethods } from "../backend/authMethods";
 const Schedule = () => {
   const location = useLocation();
   const navigate = useNavigate();
-    let ID = null;
-    const hasRun = useRef(false);
-    useEffect(() => {
-      if (!hasRun.current) {
-        hasRun.current = true;
-        try {
-          handleAuth();
-        } catch {
-          return null;
-        }
-      }
-  
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = '';
-      };
-    }, []);
-  
-    const handleAuth = async () => {
-      const res = await authMethods.refreshToken();
-      if (res && res.accessToken && res.ID) {
-        ID = res.ID;
-      }
-      else {
-        navigate("/");
+  let ID = null;
+  const hasRun = useRef(false);
+  useEffect(() => {
+    if (!hasRun.current) {
+      hasRun.current = true;
+      try {
+        handleAuth();
+      } catch {
+        return null;
       }
     }
+  }, []);
+
+  const handleAuth = async () => {
+    const res = await authMethods.refreshToken();
+    if (res && res.accessToken && res.ID) {
+      ID = res.ID;
+    }
+    else {
+      navigate("/");
+    }
+  }
   const routeName = new URLSearchParams(location.search).get("route");
 
   const handleRouteClick = (routeName) => {
@@ -144,11 +139,11 @@ const Schedule = () => {
             borderRadius: 5,
             width: { xs: "90%", sm: "80%", md: "60%", lg: "70%" },
             marginTop: { xs: "15%", sm: "13%", md: "7%", lg: "7%" },
-            
+
             height: "85%",
             zIndex: 2,
             marginBottom: { xs: "10%", sm: "0", md: "5%", lg: "5%" },
-            
+
           }}
         >
           <Typography
@@ -180,30 +175,30 @@ const Schedule = () => {
                   sx={{ color: "white", marginBottom: 2 }}
                 >
                   {capitalizeRouteName(routeName)} to Campus
-                 </Typography>
-              {scheduleData.length > 0 ? (
-                scheduleData.map((schedule, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: 'flex',
-                      justifyContent: "space-between",
-                      color: 'white',
-                      paddingX: { xs: '10%', md: '20%' },
-                      marginBottom: 1,
-                    }}
-                  >
-                    <Typography variant="body1" >
-                      {schedule.time}
-                    </Typography>
-                    <Typography variant="body1">{schedule.route}</Typography>
-                  </Box>
-                ))
-              ) : (
-                <Typography variant="body2" align="center" sx={{ color: 'white' }}>
-                  No schedules available.
                 </Typography>
-              )}
+                {scheduleData.length > 0 ? (
+                  scheduleData.map((schedule, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: "space-between",
+                        color: 'white',
+                        paddingX: { xs: '10%', md: '20%' },
+                        marginBottom: 1,
+                      }}
+                    >
+                      <Typography variant="body1" >
+                        {schedule.time}
+                      </Typography>
+                      <Typography variant="body1">{schedule.route}</Typography>
+                    </Box>
+                  ))
+                ) : (
+                  <Typography variant="body2" align="center" sx={{ color: 'white' }}>
+                    No schedules available.
+                  </Typography>
+                )}
               </Grid>
 
               {/* Return Schedules */}
@@ -216,30 +211,30 @@ const Schedule = () => {
                   sx={{ color: "white", marginBottom: 2 }}
                 >
                   Campus to {capitalizeRouteName(routeName)}
-                  </Typography>
-              {returnScheduleData.length > 0 ? (
-                returnScheduleData.map((schedule, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      color: 'white',
-                      paddingX: { xs: '10%', md: '20%' },
-                      marginBottom: 1,
-                    }}
-                  >
-                    <Typography variant="body1">
-                      {schedule.time}
-                    </Typography>
-                    <Typography variant="body1">{schedule.route}</Typography>
-                  </Box>
-                ))
-              ) : (
-                <Typography variant="body2" align="center" sx={{ color: 'white' }}>
-                  No return schedules available.
                 </Typography>
-              )}
+                {returnScheduleData.length > 0 ? (
+                  returnScheduleData.map((schedule, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        color: 'white',
+                        paddingX: { xs: '10%', md: '20%' },
+                        marginBottom: 1,
+                      }}
+                    >
+                      <Typography variant="body1">
+                        {schedule.time}
+                      </Typography>
+                      <Typography variant="body1">{schedule.route}</Typography>
+                    </Box>
+                  ))
+                ) : (
+                  <Typography variant="body2" align="center" sx={{ color: 'white' }}>
+                    No return schedules available.
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           )}
@@ -247,7 +242,7 @@ const Schedule = () => {
           {/* Back Button */}
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}>
             <Button
-               onClick={() => handleRouteClick(routeName)} // Navigate on location according to specific route
+              onClick={() => handleRouteClick(routeName)} // Navigate on location according to specific route
               variant="contained"
               sx={{
                 backgroundColor: "#ffab00",

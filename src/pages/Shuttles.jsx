@@ -22,11 +22,6 @@ const Shu = () => {
         return null;
       }
     }
-
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
   }, []);
 
   const handleAuth = async () => {

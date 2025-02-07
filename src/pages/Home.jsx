@@ -22,7 +22,7 @@ function RouteSelection() {
   const navigate = useNavigate();
   let ID = null;
   const hasRun = useRef(false);
-  useEffect(() => {
+  /*useEffect(() => {
     if (!hasRun.current) {
       hasRun.current = true;
       try {
@@ -31,12 +31,7 @@ function RouteSelection() {
         return null;
       }
     }
-
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, []);
+  }, []);*/
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();

@@ -28,11 +28,6 @@ const SignIn = () => {
                 return null;
             }
         }
-    
-        document.body.style.overflow = 'hidden';
-        return () => {
-            document.body.style.overflow = '';
-        };
     }, []);
 
     const [isResettingPassword, setIsResettingPassword] = useState(false);
@@ -58,7 +53,7 @@ const SignIn = () => {
                     window.location.href = "/home"
                     break;
                 case "Admin":
-                    window.location.href = "/adminDashboard"
+                    window.location.href = "/admindashboard"
                     break;
                 case "Driver":
                     window.location.href = `/shuttleService/${res.ID}`;
@@ -222,7 +217,7 @@ const SignIn = () => {
                     window.location.href = `/shuttleService/${driverID}`
                 }
                 else if (person == "Admin") {
-                    window.location.href = "/adminDashboard";
+                    window.location.href = "/admindashboard";
                 }
                 else {
                     setError("Error log in");
