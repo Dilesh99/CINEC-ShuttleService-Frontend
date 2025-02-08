@@ -4,8 +4,16 @@ import { authMethods } from "./authMethods";
 export const StaffMethods = {
     getStaff: async function (staffID) {
         try {
+            const retrievedData = await authMethods.refreshToken();
+            const accessToken = retrievedData.accessToken;
+            console.log("Fetching staff data...");
+
             const response = await fetch(`${backEndURL}/getStaff?staffID=${staffID}`, {
-                method: "GET"
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
             });
 
             if (!response.ok) {
@@ -19,7 +27,8 @@ export const StaffMethods = {
                 username: data.username,
                 email: data.email,
                 password: data.password,
-                phone_number: data.phone_number
+                phone_number: data.phone_number,
+                paymentStatus: data.paymentStatus
             };
 
             return staff;
@@ -40,6 +49,7 @@ export const StaffMethods = {
             const accessToken = data.accessToken;
             const response = await fetch(`${backEndURL}/getAllStaff`, {
                 method: "GET",
+                credentials: "include",
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
@@ -50,8 +60,8 @@ export const StaffMethods = {
                 return null;
             }
 
-            const staffList = await response.json();
-            return staffList;
+            const staff = await response.json();
+            return staff;
         } catch (error) {
             console.error("Error fetching all staff:", error);
             return null;
@@ -60,6 +70,8 @@ export const StaffMethods = {
 
     deleteStaff: async function (staffID) {
         try {
+            const retrievedData = await authMethods.refreshToken();
+            const accessToken = retrievedData.accessToken;
             const staff = await this.getStaff(staffID);
             if (!staff) {
                 console.warn("Staff not found, cannot delete.");
@@ -67,7 +79,11 @@ export const StaffMethods = {
             }
 
             const response = await fetch(`${backEndURL}/deleteStaff?staffID=${staffID}`, {
-                method: "PUT"
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
             });
 
             if (!response.ok) {
@@ -86,18 +102,72 @@ export const StaffMethods = {
 
     updateStaff: async function (staffID, username, email, phone_number, password) {
         try {
-            const staff = await this.getStaff(staffID);
-            if (staff) {
-                console.warn("Staff already exists, update skipped.");
+            const retrievedData = await authMethods.refreshToken();
+            const accessToken = retrievedData.accessToken;
+            const response = await fetch(`${backEndURL}/updateStaff`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({ staffID, username, email, phone_number, password })
+            });
+
+            if (!response.ok) {
+                console.error(`Error updating staff (status: ${response.status})`);
                 return null;
             }
 
-            const response = await fetch(`${backEndURL}/updateStaff`, {
+            const data = await response.text();
+            console.log("Staff updated:", data);
+            return data;
+        } catch (error) {
+            console.error("Error updating staff:", error);
+            return null;
+        }
+    },
+
+    makeStaffUnpaid: async function (staffID) {
+        try {
+            const retrievedData = await authMethods.refreshToken();
+            const accessToken = retrievedData.accessToken;
+            const response = await fetch(`${backEndURL}/makeStaffUnpaid?staffID=${staffID}`, {
                 method: "PUT",
+                credentials: "include",
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
                 },
-                body: JSON.stringify({ staffID, username, email, phone_number, password })
+                
+            });
+
+            if (!response.ok) {
+                console.error(`Error updating staff (status: ${response.status})`);
+                return null;
+            }
+
+            const data = await response.text();
+            console.log("Staff updated:", data);
+            return data;
+        } catch (error) {
+            console.error("Error updating staff:", error);
+            return null;
+        }
+    },
+
+    makeStaffPaid: async function (staffID) {
+        try {
+            const retrievedData = await authMethods.refreshToken();
+            const accessToken = retrievedData.accessToken;
+            const response = await fetch(`${backEndURL}/makeStaffPaid?staffID=${staffID}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                
             });
 
             if (!response.ok) {

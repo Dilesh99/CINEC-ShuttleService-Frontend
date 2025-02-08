@@ -1,5 +1,6 @@
 import { useState } from "react";
 import backEndURL from "./backEndApi";
+import {authMethods} from "./authMethods";
 
 let watchId = null;
 
@@ -74,4 +75,58 @@ export const LocationMethods = {
       console.error(`Error retrieving location: ${err.message}`);
     }
   },
+
+  updateShuttle: async function (shuttleID, vehicleNumber) {
+    try {
+      const response = await fetch(`${backEndURL}/updateLocation`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ shuttleID, vehicleNumber })
+      });
+
+      if (!response.ok) {
+        console.error(`Error updating shuttle (status: ${response.status})`);
+        return null;
+      }
+
+      const data = await response.text();
+      console.log("Shuttle updated:", data);
+      return data;
+    } catch (error) {
+      console.error("Error updating shuttle:", error);
+      return null;
+    }
+  },
+
+  getAllShuttles: async function () {
+    try {
+        const data = await authMethods.refreshToken();
+        if (!data || data.role !== "Admin") {
+            console.error("Unauthorized access: Admin role required.");
+            return null;
+        }
+
+        const accessToken = data.accessToken;
+        const response = await fetch(`${backEndURL}/getAllLocations`, {
+            method: "GET",
+            headers:{
+              Authorization: `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            console.error(`Error fetching all shuttles (status: ${response.status})`);
+            return null;
+        }
+
+        const shuttles = await response.json();
+        return shuttles;
+    } catch (error) {
+        console.error("Error fetching all shuttles:", error);
+        return null;
+    }
+},
 };

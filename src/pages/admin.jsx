@@ -75,7 +75,7 @@ const Admin = () => {
   const fetchAllDrivers = async () => {
     setLoadingDrivers(true);
     try {
-      const drivers = await DriverMethods.getAllDriver();
+      const drivers = await DriverMethods.getAllDrivers();
       setAllDrivers(drivers);
     } catch (error) {
       console.error('Error fetching drivers:', error);

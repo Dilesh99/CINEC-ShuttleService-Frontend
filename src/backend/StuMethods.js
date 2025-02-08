@@ -27,7 +27,8 @@ export const StuMethods = {
                 username: data.username,
                 email: data.email,
                 password: data.password,
-                phone_number: data.phone_number
+                phone_number: data.phone_number,
+                paymentStatus: data.paymentStatus
             };
 
             return student;
