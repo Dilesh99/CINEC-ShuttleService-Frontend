@@ -1,52 +1,103 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery,Box } from '@mui/material';
-import { Menu, Search, People, DirectionsBus, AccountBalanceWallet, Help, Settings, Person, Notifications } from '@mui/icons-material';
+import {
+  AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText,
+  Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery, Box
+} from '@mui/material';
+import { Menu, Search, People, DirectionsBus, Person } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import cinecLogo from "/src/assets/cinec.png";
-
 import { authMethods } from '../backend/authMethods';
-import { useNavigate } from 'react-router-dom';
+import { StuMethods } from '../backend/StuMethods';
+import { StaffMethods } from '../backend/StaffMethods';
+import { DriverMethods } from '../backend/DriverMethods';
 
 const Admin = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [allStudents, setAllStudents] = useState([]);
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [allStaff, setAllStaff] = useState([]);
+  const [loadingStaff, setLoadingStaff] = useState(false);
+  const [allDrivers, setAllDrivers] = useState([]);
+  const [loadingDrivers, setLoadingDrivers] = useState(false);
+  const navigate = useNavigate();
+  const hasRun = useRef(false);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
+  useEffect(() => {
+    if (!hasRun.current) {
+      hasRun.current = true;
+      handleAuth();
+      fetchAllStudents();
+      fetchAllStaff();
+      fetchAllDrivers();
+    }
+  }, []);
+
+  const handleAuth = async () => {
+    try {
+      const res = await authMethods.refreshToken();
+      if (!res || !res.accessToken || !res.ID || res.role !== "Admin") {
+        throw new Error("Unauthorized access");
+      }
+    } catch (error) {
+      console.error("Authentication error:", error);
+      navigate("/");
+    }
   };
 
-  const navigate = useNavigate();
-    let ID = null;
-    const hasRun = useRef(false);
-    useEffect(() => {
-      if (!hasRun.current) {
-        hasRun.current = true;
-        try {
-          handleAuth();
-        } catch {
-          return null;
-        }
-      }
-    }, []);
-  
-    const handleAuth = async () => {
-      const res = await authMethods.refreshToken();
-      if (res && res.accessToken && res.ID && res.role == "Admin") {
-        ID = res.ID;
-      }
-      else {
-        navigate("/");
-      }
+  const fetchAllStudents = async () => {
+    setLoadingStudents(true);
+    try {
+      const students = await StuMethods.getAllStudents();
+      setAllStudents(students);
+    } catch (error) {
+      console.error('Error fetching students:', error);
+      setAllStudents([]);
+    } finally {
+      setLoadingStudents(false);
     }
+  };
 
- 
+  const fetchAllStaff = async () => {
+    setLoadingStaff(true);
+    try {
+      const staff = await StaffMethods.getAllStaff();
+      setAllStaff(staff);
+    } catch (error) {
+      console.error('Error fetching staff:', error);
+      setAllStaff([]);
+    } finally {
+      setLoadingStaff(false);
+    }
+  };
+
+  const fetchAllDrivers = async () => {
+    setLoadingDrivers(true);
+    try {
+      const drivers = await DriverMethods.getAllDriver();
+      setAllDrivers(drivers);
+    } catch (error) {
+      console.error('Error fetching drivers:', error);
+      setAllDrivers([]);
+    } finally {
+      setLoadingDrivers(false);
+    }
+  };
+
   return (
     <div style={{ display: 'flex' }}>
-      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
+      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={() => setMobileOpen(!mobileOpen)} />
       <div style={{ flexGrow: 1 }}>
-        <Header handleDrawerToggle={handleDrawerToggle} />
-        <MainContent />
+        <Header handleDrawerToggle={() => setMobileOpen(!mobileOpen)} />
+        <MainContent 
+          allStudents={allStudents} 
+          loadingStudents={loadingStudents}
+          allStaff={allStaff}
+          loadingStaff={loadingStaff}
+          allDrivers={allDrivers}
+          loadingDrivers={loadingDrivers}
+        />
       </div>
     </div>
   );
@@ -55,13 +106,12 @@ const Admin = () => {
 const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedIndex, setSelectedIndex] = useState(0);// Initialize the hook
-
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const navigate = useNavigate();
 
   const handleListItemClick = (index, route) => {
     setSelectedIndex(index);
-    navigate(route); // Navigate to the specified route
+    navigate(route);
   };
 
   const drawerContent = (
@@ -80,8 +130,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Dashboard', route: '/admindashboard' },
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
-          { text: 'Shuttles', route: '/shuttles' },
-          
+          { text: 'Shuttles & Drivers', route: '/shuttles' },
         ].map((item, index) => (
           <ListItem
             button
@@ -134,23 +183,21 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
   );
 
   return (
-    <>
-      <Drawer
-        variant={isSmDown ? 'temporary' : 'permanent'}
-        open={isSmDown ? mobileOpen : true}
-        onClose={handleDrawerToggle}
-        anchor="left"
-        sx={{
+    <Drawer
+      variant={isSmDown ? 'temporary' : 'permanent'}
+      open={isSmDown ? mobileOpen : true}
+      onClose={handleDrawerToggle}
+      anchor="left"
+      sx={{
+        width: 240,
+        '& .MuiDrawer-paper': {
           width: 240,
-          '& .MuiDrawer-paper': {
-            width: 240,
-            backgroundColor: 'secondary.light',
-          },
-        }}
-      >
-        {drawerContent}
-      </Drawer>
-    </>
+          backgroundColor: 'secondary.light',
+        },
+      }}
+    >
+      {drawerContent}
+    </Drawer>
   );
 };
 
@@ -205,35 +252,49 @@ const Header = ({ handleDrawerToggle }) => {
             startAdornment={<Search sx={{ position: 'absolute', left: '10px' }} />}
           />
         </SearchBar>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-        </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}></div>
       </Toolbar>
     </AppBar>
   );
 };
 
-const MainContent = () => {
+// MainContent now receives all three data sets and their loading flags
+const MainContent = ({
+  allStudents,
+  loadingStudents,
+  allStaff,
+  loadingStaff,
+  allDrivers,
+  loadingDrivers
+}) => {
   return (
     <div style={{ padding: '16px' }}>
-      <DashboardStats />
+      {/* DashboardStats now uses the counts from fetched data */}
+      <DashboardStats 
+        studentCount={(allStudents ?? []).length}
+        staffCount={(allStaff ?? []).length}
+        driverCount={(allDrivers ?? []).length}
+      />
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
+        {/* Left column: Students table */}
         <Grid item xs={12} md={8}>
-          <RecentPayments />
+          <RecentStudents allStudents={allStudents} loadingStudents={loadingStudents} />
         </Grid>
+        {/* Right column: Drivers table */}
         <Grid item xs={12} md={4}>
-          <NewShuttles />
+          <DriverDetails allDrivers={allDrivers} loadingDrivers={loadingDrivers} />
         </Grid>
       </Grid>
     </div>
   );
 };
 
-const DashboardStats = () => {
+// DashboardStats uses passed counts to display cards
+const DashboardStats = ({ studentCount, staffCount, driverCount }) => {
   const stats = [
-    { label: 'Students', value: 115, icon: <People /> },
-    { label: 'Staff', value: 24, icon: <People /> },
-    { label: 'Shuttles', value: 6, icon: <DirectionsBus /> }
-   
+    { label: 'Students', value: studentCount, icon: <People /> },
+    { label: 'Staff', value: staffCount, icon: <People /> },
+    { label: 'Shuttles', value: driverCount, icon: <DirectionsBus /> },
   ];
 
   return (
@@ -244,9 +305,8 @@ const DashboardStats = () => {
             style={{
               padding: '18px',
               textAlign: 'center',
-              boxShadow: '1px 0px 10px 4px rgba(0, 0, 0, 0.1)', // Adds a 3D-like shadow effect
-              borderRadius: '8px', // Rounds the corners slightly for a polished look
-             
+              boxShadow: '1px 0px 10px 4px rgba(0, 0, 0, 0.1)',
+              borderRadius: '8px',
             }}
           >
             {stat.icon}
@@ -259,52 +319,57 @@ const DashboardStats = () => {
   );
 };
 
-
-const RecentPayments = () => {
-
+// Table for displaying student data (unchanged from your original RecentPayments)
+const RecentStudents = ({ allStudents, loadingStudents }) => {
   return (
-    <Paper sx={{ padding: '16px', boxShadow:'3' }}>
+    <Paper sx={{ padding: '16px', boxShadow: 3 }}>
       <Typography variant="h6">Students</Typography>
-     <Link to="/students"> <Button variant="contained" sx={{ float: 'right', marginBottom: '8px', backgroundColor:'secondary.light','&:hover': {
-           backgroundColor:'secondary.light2',
-           }, }}>View All</Button></Link>
+      <Link to="/students">
+        <Button
+          variant="contained"
+          sx={{
+            float: 'right',
+            marginBottom: '8px',
+            backgroundColor: 'secondary.light',
+            '&:hover': {
+              backgroundColor: 'secondary.light2',
+            },
+          }}
+        >
+          View All
+        </Button>
+      </Link>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone No.</TableCell>
-              <TableCell>StudentID</TableCell>
-              <TableCell>Shuttle</TableCell>
-              <TableCell>Last Payment Date</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Phone No.</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Student ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Payment Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell>John Doe</TableCell>
-              <TableCell>abs@gmail.com</TableCell>
-              <TableCell>071 123 4567</TableCell>
-              <TableCell>123456</TableCell>
-              <TableCell>Gampaha I</TableCell>
-              <TableCell>20.11.2024</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>John Doe</TableCell>
-              <TableCell>abs@gmail.com</TableCell>
-              <TableCell>071 123 4567</TableCell>
-              <TableCell>123456</TableCell>
-              <TableCell>Gampaha I</TableCell>
-              <TableCell>20.11.2024</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>John Doe</TableCell>
-              <TableCell>abs@gmail.com</TableCell>
-              <TableCell>071 123 4567</TableCell>
-              <TableCell>123456</TableCell>
-              <TableCell>Gampaha I</TableCell>
-              <TableCell>20.11.2024</TableCell>
-            </TableRow>
+            {loadingStudents ? (
+              <TableRow>
+                <TableCell colSpan={5}>Loading...</TableCell>
+              </TableRow>
+            ) : allStudents && allStudents.length > 0 ? (
+              allStudents.map((student, index) => (
+                <TableRow key={student.id || index}>
+                  <TableCell>{student.username}</TableCell>
+                  <TableCell>{student.email}</TableCell>
+                  <TableCell>{String(student.phone_number)}</TableCell>
+                  <TableCell>{student.studentsID}</TableCell>
+                  <TableCell>{student.paymentStatus ? "Paid" : "Not paid"}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5}>No students found</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -312,40 +377,53 @@ const RecentPayments = () => {
   );
 };
 
-const NewShuttles = () => {
-
+// DriverDetails displays a table of driver details (replacing the old NewShuttles component)
+const DriverDetails = ({ allDrivers, loadingDrivers }) => {
   return (
-    <Paper sx={{ padding: '16px',boxShadow:'3'  }}>
+    <Paper sx={{ padding: '16px', boxShadow: 3 }}>
       <Typography variant="h6">Shuttles</Typography>
-     <Link to="/Shuttles"> <Button variant="contained" sx={{ float: 'right', marginBottom: '8px',backgroundColor:'secondary.light','&:hover': {
-           backgroundColor:'secondary.light2',
-           }, }}>View All</Button></Link>
+      <Link to="/shuttles">
+        <Button
+          variant="contained"
+          sx={{
+            float: 'right',
+            marginBottom: '8px',
+            backgroundColor: 'secondary.light',
+            '&:hover': {
+              backgroundColor: 'secondary.light2',
+            },
+          }}
+        >
+          View All
+        </Button>
+      </Link>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Shuttle name</TableCell>
-              <TableCell>Driver name</TableCell>
-              <TableCell>Phone number</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Shuttle</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Driver</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Phone No.</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell>Gampaha 1</TableCell>
-              <TableCell>Sumane</TableCell>
-              <TableCell>071 123 4567</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Gampaha 2</TableCell>
-              <TableCell>Deshan</TableCell>
-              <TableCell>071 123 4567</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Mabale</TableCell>
-              <TableCell>Wickramasinghe</TableCell>
-              <TableCell>071 123 4567</TableCell>
-            </TableRow>
-    
+            {loadingDrivers ? (
+              <TableRow>
+                <TableCell colSpan={4}>Loading...</TableCell>
+              </TableRow>
+            ) : allDrivers && allDrivers.length > 0 ? (
+              allDrivers.map((driver, index) => (
+                <TableRow key={driver.id || index}>
+                  <TableCell>{driver.shuttleID}</TableCell>
+                  <TableCell>{driver.username}</TableCell>
+                  <TableCell>{String(driver.phone_number)}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4}>No drivers found</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -354,5 +432,3 @@ const NewShuttles = () => {
 };
 
 export default Admin;
-
-

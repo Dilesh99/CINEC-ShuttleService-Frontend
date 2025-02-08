@@ -1,56 +1,143 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery, Box, Checkbox } from '@mui/material';
-import { Menu, Search, People, DirectionsBus, AccountBalanceWallet, Help, Settings, Person, Notifications } from '@mui/icons-material';
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Button,
+  Paper,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  InputBase,
+  useMediaQuery,
+  Box,
+  Checkbox,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField
+} from '@mui/material';
+import {
+  Menu,
+  Search,
+  People,
+  DirectionsBus,
+  AccountBalanceWallet,
+  Person,
+  Edit,
+  Delete
+} from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
 import cinecLogo from "/src/assets/cinec.png";
-import { useNavigate } from 'react-router-dom'; // Import the hook
+import { useNavigate } from 'react-router-dom';
 
 import { StuMethods } from '../backend/StuMethods';
-import backEndURL from '../backend/backEndApi';
-
 import { authMethods } from '../backend/authMethods';
 
-
 const St = () => {
-
   const navigate = useNavigate();
-    let ID = null;
-    const hasRun = useRef(false);
-    useEffect(() => {
-      if (!hasRun.current) {
-        hasRun.current = true;
-        try {
-          handleAuth();
-        } catch {
-          return null;
-        }
-      }
-    }, []);
-  
-    const handleAuth = async () => {
-      const res = await authMethods.refreshToken();
-      if (res && res.accessToken && res.ID && res.role == "Admin") {
-        ID = res.ID;
-      }
-      else {
-        navigate("/");
-      }
+  let ID = null;
+  const hasRun = useRef(false);
+
+  // Store the students list here.
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    if (!hasRun.current) {
+      hasRun.current = true;
+      handleAuth();
+      fetchAllStudents();
     }
+  }, []);
+
+  // Check if the user is authenticated and has the Admin role.
+  const handleAuth = async () => {
+    const res = await authMethods.refreshToken();
+    if (res && res.accessToken && res.ID && res.role === "Admin") {
+      ID = res.ID;
+    } else {
+      navigate("/");
+    }
+  };
+
+  // Fetch all students from the backend and store them in state.
+  const fetchAllStudents = async () => {
+    try {
+      const studentsData = await StuMethods.getAllStudents();
+      // Assume studentsData is an array of student objects.
+      setStudents(studentsData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Delete a student, then remove that student from state.
+  const deleteStudent = async (studentsID) => {
+    try {
+      await StuMethods.deleteStudent(studentsID);
+      setStudents(prev => prev.filter(student => student.studentsID !== studentsID));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Update a student (note that studentsID is the primary key and is not changed).
+  const updateStudent = async (studentsID, username, email, phone_number, password) => {
+    try {
+      await StuMethods.updateStudent(studentsID, username, email, phone_number, password);
+      // Update the student’s data in state.
+      setStudents(prev =>
+        prev.map(student =>
+          student.studentsID === studentsID
+            ? { ...student, username, email, phone_number }
+            : student
+        )
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Toggle the student’s payment status.
+  const makeStudentPaid = async (studentsID) => {
+    try {
+      await StuMethods.makeStudentPaid(studentsID);
+      setStudents(prev =>
+        prev.map(student =>
+          student.studentsID === studentsID ? { ...student, paymentStatus: true } : student
+        )
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const makeStudentUnpaid = async (studentsID) => {
+    try {
+      await StuMethods.makeStudentUnpaid(studentsID);
+      setStudents(prev =>
+        prev.map(student =>
+          student.studentsID === studentsID ? { ...student, paymentStatus: false } : student
+        )
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const [allStudents, setAllStudents] = useState();
-
-  async function fetchStudents() {
-    const response = await fetch(`${backEndURL}/getAllStudents`, { method: "GET" });
-    const students = await response.json();
-    await setAllStudents(students);
-  }
-  fetchStudents();
-  
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -60,7 +147,14 @@ const St = () => {
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
       <div style={{ flexGrow: 1 }}>
         <Header handleDrawerToggle={handleDrawerToggle} />
-        <MainContent />
+        <MainContent
+          students={students}
+          updateStudent={updateStudent}
+          deleteStudent={deleteStudent}
+          makeStudentPaid={makeStudentPaid}
+          makeStudentUnpaid={makeStudentUnpaid}
+          refreshStudents={fetchAllStudents}
+        />
       </div>
     </div>
   );
@@ -70,11 +164,11 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
   const [selectedIndex, setSelectedIndex] = useState(1);
-  const navigate = useNavigate(); // Initialize the hook
+  const navigate = useNavigate();
 
   const handleListItemClick = (index, route) => {
     setSelectedIndex(index);
-    navigate(route); // Navigate to the specified route
+    navigate(route);
   };
 
   const drawerContent = (
@@ -93,8 +187,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Dashboard', route: '/admindashboard' },
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
-          { text: 'Shuttles', route: '/shuttles' },
-          
+          { text: 'Shuttles & Drivers', route: '/shuttles' },
         ].map((item, index) => (
           <ListItem
             button
@@ -207,9 +300,7 @@ const Header = ({ handleDrawerToggle }) => {
         >
           <Menu />
         </IconButton>
-        <Typography variant="h6">
-          Dashboard
-        </Typography>
+        <Typography variant="h6">Dashboard</Typography>
         <SearchBar>
           <StyledInputBase
             placeholder="Search…"
@@ -217,138 +308,217 @@ const Header = ({ handleDrawerToggle }) => {
             startAdornment={<Search sx={{ position: 'absolute', left: '10px' }} />}
           />
         </SearchBar>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Button variant="contained" sx={{
-            color: 'white',
-            backgroundColor: 'secondary.light',
-            '&:hover': {
-              backgroundColor: 'secondary.light2',
-            },
-          }}>
-            Add New
-          </Button>
-         
-        </div>
       </Toolbar>
     </AppBar>
   );
 };
-const MainContent = () => {
+
+const MainContent = ({
+  students,
+  updateStudent,
+  deleteStudent,
+  makeStudentPaid,
+  makeStudentUnpaid,
+  refreshStudents
+}) => {
   return (
     <div style={{ padding: '16px' }}>
-
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
         <Grid item xs={12} md={12}>
-          <RecentPayments />
+          <RecentPayments
+            students={students}
+            updateStudent={updateStudent}
+            deleteStudent={deleteStudent}
+            makeStudentPaid={makeStudentPaid}
+            makeStudentUnpaid={makeStudentUnpaid}
+            refreshStudents={refreshStudents}
+          />
         </Grid>
-
       </Grid>
     </div>
   );
 };
 
+const RecentPayments = ({
+  students,
+  updateStudent,
+  deleteStudent,
+  makeStudentPaid,
+  makeStudentUnpaid
+}) => {
+  // This state controls which student (if any) is being edited.
+  const [editingStudent, setEditingStudent] = useState(null);
 
+  const handlePaymentToggle = (student) => {
+    if (student.paymentStatus) {
+      makeStudentUnpaid(student.studentsID);
+    } else {
+      makeStudentPaid(student.studentsID);
+    }
+  };
 
-
-const RecentPayments = () => {
-  // Initial state using an object to store payment status
-  const [paymentStatus, setPaymentStatus] = useState({
-    1: true, // John Doe
-    2: false, // Jane Smith
-    3: true, // Michael Lee
-  });
-
-  const handlePaymentToggle = (id) => {
-    setPaymentStatus((prevStatus) => ({
-      ...prevStatus,
-      [id]: !prevStatus[id], // Toggle the specific student's payment status
-    }));
+  const handleDelete = (studentsID) => {
+    if (window.confirm("Are you sure you want to delete this student?")) {
+      deleteStudent(studentsID);
+    }
   };
 
   return (
     <Paper sx={{ padding: "16px", boxShadow: 3 }}>
-      <Typography variant="h6">Students</Typography>
+      <Typography variant="h6" sx={{ marginBottom: 2 }}>
+        Students
+      </Typography>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone No.</TableCell>
-              <TableCell>Student ID</TableCell>
-              <TableCell>Paid</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Phone No.</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Student ID</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Paid</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell>John Doe</TableCell>
-              <TableCell>abs@gmail.com</TableCell>
-              <TableCell>071 123 4567</TableCell>
-              <TableCell>123456</TableCell>
-              <TableCell>
-                <Checkbox
-                  checked={paymentStatus[1] || false}
-                  onChange={() => handlePaymentToggle(1)}
-                  color="primary"
-                />
-                {paymentStatus[1] ? "Paid" : "Not Paid"}
-              </TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell>Jane Smith</TableCell>
-              <TableCell>jane@gmail.com</TableCell>
-              <TableCell>072 987 6543</TableCell>
-              <TableCell>654321</TableCell>
-              <TableCell>
-                <Checkbox
-                  checked={paymentStatus[2] || false}
-                  onChange={() => handlePaymentToggle(2)}
-                  color="primary"
-                />
-                {paymentStatus[2] ? "Paid" : "Not Paid"}
-              </TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell>Michael Lee</TableCell>
-              <TableCell>michael@gmail.com</TableCell>
-              <TableCell>073 555 8888</TableCell>
-              <TableCell>789012</TableCell>
-              <TableCell>
-                <Checkbox
-                  checked={paymentStatus[3] || false}
-                  onChange={() => handlePaymentToggle(3)}
-                  color="primary"
-                />
-                {paymentStatus[3] ? "Paid" : "Not Paid"}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Michael Lee</TableCell>
-              <TableCell>michael@gmail.com</TableCell>
-              <TableCell>073 555 8888</TableCell>
-              <TableCell>789012</TableCell>
-              <TableCell>
-                <Checkbox
-                  checked={paymentStatus[4] || false}
-                  onChange={() => handlePaymentToggle(3)}
-                  color="primary"
-                />
-                {paymentStatus[4] ? "Paid" : "Not Paid"}
-              </TableCell>
-            </TableRow>
-
+            {students && students.length > 0 ? (
+              students.map(student => (
+                <TableRow key={student.studentsID}>
+                  <TableCell>{student.username}</TableCell>
+                  <TableCell>{student.email}</TableCell>
+                  <TableCell>{student.phone_number}</TableCell>
+                  <TableCell>{student.studentsID}</TableCell>
+                  <TableCell>
+                    <Checkbox
+                      checked={student.paymentStatus || false}
+                      onChange={() => handlePaymentToggle(student)}
+                      color="primary"
+                    />
+                    {student.paymentStatus ? "Paid" : "Not Paid"}
+                  </TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => setEditingStudent(student)}>
+                      <Edit />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(student.studentsID)}>
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  No students found
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
+      {/* Render the edit dialog if a student is being edited */}
+      {editingStudent && (
+        <EditStudentDialog
+          open={Boolean(editingStudent)}
+          student={editingStudent}
+          onClose={() => setEditingStudent(null)}
+          onSave={(data) => {
+            // Call the update function; note that the student ID is not editable.
+            updateStudent(
+              editingStudent.studentsID,
+              data.username,
+              data.email,
+              data.phone_number,
+              editingStudent.password
+            );
+            setEditingStudent(null);
+          }}
+        />
+      )}
     </Paper>
   );
 };
 
+const EditStudentDialog = ({ open, onClose, student, onSave }) => {
+  // Local state to hold the form values.
+  const [formData, setFormData] = useState({
+    username: student ? student.username : '',
+    email: student ? student.email : '',
+    phone_number: student ? student.phone_number : '',
+  });
 
+  // When the student prop changes (i.e. a new student is being edited),
+  // initialize the form data accordingly.
+  useEffect(() => {
+    if (student) {
+      setFormData({
+        username: student.username,
+        email: student.email,
+        phone_number: student.phone_number,
+      });
+    }
+  }, [student]);
 
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
+  const handleSave = () => {
+    // Remember: the student ID is not modifiable.
+    onSave(formData);
+  };
 
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Edit Student</DialogTitle>
+      <DialogContent>
+        <TextField
+          margin="dense"
+          label="Student ID"
+          value={student ? student.studentsID : ''}
+          fullWidth
+          disabled
+        />
+        <TextField
+          autoFocus
+          margin="dense"
+          name="username"
+          label="Name"
+          value={formData.username}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          name="email"
+          label="Email"
+          value={formData.email}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          name="phone_number"
+          label="Phone Number"
+          value={formData.phone_number}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          label="Password"
+          value={student ? student.password : ''}
+          fullWidth
+          disabled
+          type="password"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSave} variant="contained">Save</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default St;
