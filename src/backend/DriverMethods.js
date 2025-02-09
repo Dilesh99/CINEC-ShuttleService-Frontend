@@ -100,10 +100,24 @@ export const DriverMethods = {
         }
     },
 
-    updateDriver: async function (driversID, username, email, phone_number, password) {
+    updateDriver: async function (driverID, shuttleID, username, phone_number, password) {
         try {
             const retrievedData = await authMethods.refreshToken();
+            if (!retrievedData || !retrievedData.accessToken) {
+                console.error("Failed to retrieve access token.");
+                return null;
+            }
+
             const accessToken = retrievedData.accessToken;
+
+            const requestBody = {
+                "driverID": driverID,
+                "password": password,
+                "phone_number": phone_number,
+                "shuttleID": shuttleID,
+                "username": username
+            };
+
             const response = await fetch(`${backEndURL}/updateDriver`, {
                 method: "PUT",
                 credentials: "include",
@@ -111,72 +125,17 @@ export const DriverMethods = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`
                 },
-                body: JSON.stringify({ driversID, username, email, phone_number, password })
+                body: JSON.stringify(requestBody)
             });
 
             if (!response.ok) {
                 console.error(`Error updating driver (status: ${response.status})`);
+                const errorResponse = await response.text(); // Log the error response from the server
+                console.error("Error Response:", errorResponse);
                 return null;
             }
 
             const data = await response.text();
-            console.log("Driver updated:", data);
-            return data;
-        } catch (error) {
-            console.error("Error updating driver:", error);
-            return null;
-        }
-    },
-
-    makeDriverUnpaid: async function (driversID) {
-        try {
-            const retrievedData = await authMethods.refreshToken();
-            const accessToken = retrievedData.accessToken;
-            const response = await fetch(`${backEndURL}/makeDriverUnpaid?driverID=${driversID}`, {
-                method: "PUT",
-                credentials: "include",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`
-                },
-                
-            });
-
-            if (!response.ok) {
-                console.error(`Error updating driver (status: ${response.status})`);
-                return null;
-            }
-
-            const data = await response.text();
-            console.log("Driver updated:", data);
-            return data;
-        } catch (error) {
-            console.error("Error updating driver:", error);
-            return null;
-        }
-    },
-
-    makeDriverPaid: async function (driversID) {
-        try {
-            const retrievedData = await authMethods.refreshToken();
-            const accessToken = retrievedData.accessToken;
-            const response = await fetch(`${backEndURL}/makeDriverPaid?driverID=${driversID}`, {
-                method: "PUT",
-                credentials: "include",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`
-                },
-                
-            });
-
-            if (!response.ok) {
-                console.error(`Error updating driver (status: ${response.status})`);
-                return null;
-            }
-
-            const data = await response.text();
-            console.log("Driver updated:", data);
             return data;
         } catch (error) {
             console.error("Error updating driver:", error);

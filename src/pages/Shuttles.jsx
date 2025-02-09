@@ -148,9 +148,9 @@ const Shu = () => {
   };
 
   // Driver CRUD operations
-  const addDriver = async (shuttleID, username, phone_number) => {
+  const addDriver = async (driverID, shuttleID, username, phone_number, password) => {
     try {
-      await DriverMethods.addDriver(shuttleID, username, phone_number);
+      await DriverMethods.updateDriver(driverID, shuttleID, username, phone_number, password);
       fetchAllDrivers();
     } catch (error) {
       console.error(error);
@@ -158,9 +158,9 @@ const Shu = () => {
     }
   };
 
-  const updateDriver = async (driverID, shuttleID, username, phone_number) => {
+  const updateDriver = async (driverID, shuttleID, username, phone_number, password) => {
     try {
-      await DriverMethods.updateDriver(driverID, shuttleID, username, phone_number);
+      await DriverMethods.updateDriver(driverID, shuttleID, username, phone_number, password);
       fetchAllDrivers();
     } catch (error) {
       console.error(error);
@@ -531,8 +531,8 @@ const DriversTable = ({ drivers, shuttles, addDriver, updateDriver, deleteDriver
         open={addingDriver}
         shuttles={shuttles}
         onClose={() => setAddingDriver(false)}
-        onSave={(shuttleID, username, phone_number) => {
-          addDriver(shuttleID, username, phone_number);
+        onSave={(driverID, shuttleID, username, phone_number, password) => {
+          addDriver(driverID, shuttleID, username, phone_number, password);
           setAddingDriver(false);
         }}
       />
@@ -542,8 +542,8 @@ const DriversTable = ({ drivers, shuttles, addDriver, updateDriver, deleteDriver
           driver={editingDriver}
           shuttles={shuttles}
           onClose={() => setEditingDriver(null)}
-          onSave={(driverID, shuttleID, username, phone_number) => {
-            updateDriver(driverID, shuttleID, username, phone_number);
+          onSave={(driverID, shuttleID, username, phone_number, password) => {
+            updateDriver(driverID, shuttleID, username, phone_number, password);
             setEditingDriver(null);
           }}
         />
@@ -635,12 +635,16 @@ const EditShuttleDialog = ({ open, onClose, shuttle, onSave }) => {
 };
 
 const AddDriverDialog = ({ open, onClose, onSave, shuttles }) => {
+  const [driverID, setDriverID] = useState('');
+  const [password, setPassword] = useState('');
   const [shuttleID, setShuttleID] = useState('');
   const [username, setUsername] = useState('');
   const [phone_number, setPhoneNumber] = useState('');
 
   const handleSave = () => {
-    onSave(shuttleID, username, phone_number);
+    onSave(driverID, shuttleID, username, phone_number, password);
+    setDriverID('');
+    setPassword('');
     setShuttleID('');
     setUsername('');
     setPhoneNumber('');
@@ -668,6 +672,24 @@ const AddDriverDialog = ({ open, onClose, onSave, shuttles }) => {
             </MenuItem>
           ))}
         </Select>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="Driver ID"
+          fullWidth
+          required
+          value={driverID}
+          onChange={(e) => setDriverID(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Password"
+          type="password"
+          fullWidth
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <TextField
           margin="dense"
           label="Driver Name"
@@ -707,13 +729,32 @@ const EditDriverDialog = ({ open, onClose, driver, shuttles, onSave }) => {
   }, [driver]);
 
   const handleSave = () => {
-    onSave(driver.driverID, shuttleID, username, phone_number);
+    // Pass driverID, password (from the driver object), and other fields to onSave
+    onSave(driver.driverID, shuttleID, username, phone_number, driver.password);
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Edit Driver</DialogTitle>
       <DialogContent>
+        {/* Display Driver ID (non-editable) */}
+        <TextField
+          margin="dense"
+          label="Driver ID"
+          fullWidth
+          value={driver?.driverID || ''}
+          disabled
+        />
+        {/* Display Password (non-editable, masked) */}
+        <TextField
+          margin="dense"
+          label="Password"
+          type="password"
+          fullWidth
+          value="********" // Placeholder to indicate password is not editable
+          disabled
+        />
+        {/* Shuttle Selection */}
         <Select
           value={shuttleID}
           onChange={(e) => setShuttleID(e.target.value)}
@@ -726,6 +767,7 @@ const EditDriverDialog = ({ open, onClose, driver, shuttles, onSave }) => {
             </MenuItem>
           ))}
         </Select>
+        {/* Driver Name */}
         <TextField
           margin="dense"
           label="Driver Name"
@@ -733,6 +775,7 @@ const EditDriverDialog = ({ open, onClose, driver, shuttles, onSave }) => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
+        {/* Phone Number */}
         <TextField
           margin="dense"
           label="Phone Number"

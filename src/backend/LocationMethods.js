@@ -1,6 +1,6 @@
 import { useState } from "react";
 import backEndURL from "./backEndApi";
-import {authMethods} from "./authMethods";
+import { authMethods } from "./authMethods";
 
 let watchId = null;
 
@@ -11,30 +11,58 @@ export const LocationMethods = {
       return;
     }
 
+    // Fetch the vehicleNumber associated with the shuttleID
+    let vehicleNumber;
+    try {
+      const retrievedData = await authMethods.refreshToken();
+      const accessToken = retrievedData.accessToken;
+      const response = await fetch(`${backEndURL}/getLocation?shuttleID=${shuttleID}`, {
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch shuttle data: ${response.status}`);
+      }
+      const shuttleData = await response.json();
+      vehicleNumber = shuttleData.vehicleNumber; // Get the vehicleNumber from the response
+    } catch (error) {
+      console.error("Error fetching shuttle data:", error);
+      return;
+    }
+
     if ("geolocation" in navigator && watchId == null) {
       watchId = navigator.geolocation.watchPosition(
-        (position) => {
+        async (position) => {
           const { latitude, longitude } = position.coords;
           const location = { shuttleID, latitude, longitude };
 
-          console.log(location);
-
-          fetch(`${backEndURL}/updateLocation`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(location),
-          })
-            .then(() => {
-              console.log("Location updated successfully");
-            })
-            .catch((err) => {
-              console.log(`Error updating location: ${err.message}`);
+          try {
+            const response = await fetch(`${backEndURL}/updateLocation`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                shuttleID: shuttleID,
+                vehicleNumber: vehicleNumber,
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }),
             });
+
+            if (!response.ok) {
+              throw new Error(`Failed to update location: ${response.status}`);
+            }
+
+            console.log("Location updated successfully");
+          } catch (err) {
+            console.error(`Error updating location: ${err.message}`);
+          }
         },
         (error) => {
-          console.log(`Error obtaining location: ${error.message}`);
+          console.error(`Error obtaining location: ${error.message}`);
         },
         {
           enableHighAccuracy: true,
@@ -84,7 +112,7 @@ export const LocationMethods = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ shuttleID, vehicleNumber })
+        body: JSON.stringify({ shuttleID: shuttleID, vehicleNumber: vehicleNumber })
       });
 
       if (!response.ok) {
@@ -103,30 +131,30 @@ export const LocationMethods = {
 
   getAllShuttles: async function () {
     try {
-        const data = await authMethods.refreshToken();
-        if (!data || data.role !== "Admin") {
-            console.error("Unauthorized access: Admin role required.");
-            return null;
-        }
-
-        const accessToken = data.accessToken;
-        const response = await fetch(`${backEndURL}/getAllLocations`, {
-            method: "GET",
-            headers:{
-              Authorization: `Bearer ${accessToken}`
-            }
-        });
-
-        if (!response.ok) {
-            console.error(`Error fetching all shuttles (status: ${response.status})`);
-            return null;
-        }
-
-        const shuttles = await response.json();
-        return shuttles;
-    } catch (error) {
-        console.error("Error fetching all shuttles:", error);
+      const data = await authMethods.refreshToken();
+      if (!data || data.role !== "Admin") {
+        console.error("Unauthorized access: Admin role required.");
         return null;
+      }
+
+      const accessToken = data.accessToken;
+      const response = await fetch(`${backEndURL}/getAllLocations`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+
+      if (!response.ok) {
+        console.error(`Error fetching all shuttles (status: ${response.status})`);
+        return null;
+      }
+
+      const shuttles = await response.json();
+      return shuttles;
+    } catch (error) {
+      console.error("Error fetching all shuttles:", error);
+      return null;
     }
-},
+  },
 };

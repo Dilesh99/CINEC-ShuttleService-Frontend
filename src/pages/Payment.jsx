@@ -1,226 +1,176 @@
 import { useRef, useState, useEffect } from "react";
-import { Button, Box, CssBaseline } from "@mui/material";
-
-import CINEClogo from "./../assets/cinec.png"; // Adjust the path based on your project structure
+import { Box, CssBaseline } from "@mui/material";
+import CINEClogo from "./../assets/cinec.png";
 import BackgroundImage from "/src/assets/bg5.jpg";
-import InnerBackgroundImage from "/src/assets/home img.jpg";
-
 import { useNavigate } from "react-router-dom";
 import { authMethods } from "../backend/authMethods";
+import { StuMethods } from "../backend/StuMethods";
+import { StaffMethods } from "../backend/StaffMethods";
 import Layout from "../components/Layout";
 
 export default function Payment() {
   const navigate = useNavigate();
-  let ID = null;
+  const [ID, setID] = useState(null);
+  const [role, setRole] = useState("");
+  const [paid, setPaid] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [firstDay, setFirstDay] = useState("");
+  const [lastDay, setLastDay] = useState("");
   const hasRun = useRef(false);
+
+  // Get current month's first and last day
+  const getMonthDates = () => {
+    const date = new Date();
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    
+    return {
+      firstDay: firstDay.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+      lastDay: lastDay.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    };
+  };
+
   useEffect(() => {
     if (!hasRun.current) {
       hasRun.current = true;
-      try {
-        handleAuth();
-      } catch {
-        return null;
-      }
+      const initialize = async () => {
+        try {
+          const {authId, role} = await handleAuth(); // Get ID from handleAuth
+          if (!authId) return;
+      
+          const person = await getPerson(authId, role); // Pass authId directly
+          if (person?.paymentStatus) {
+            const { firstDay, lastDay } = getMonthDates();
+
+            setUserName(person.username);
+            setFirstDay(firstDay);
+            setLastDay(lastDay);
+            setPaid(true);
+            drawPass(person.username, firstDay, lastDay);
+          } else {
+            navigate("/home");
+          }
+        } catch (error) {
+          console.error("Initialization error:", error);
+        }
+      };
+      initialize();
     }
-  }, []);
+  }, [paid]);
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID) {
-      ID = res.ID;
+
+    console.log(res.accessToken);
+    console.log(res.ID);
+    console.log(res.role);
+
+    if (res?.accessToken && res.ID && res.role) {
+      setID(res.ID);
+      setRole(res.role);
+      return {authId: res.ID, role: res.role}; // Return the ID
     } else {
       navigate("/");
+      return null;
     }
   };
 
+  const getPerson = async (id, role) => {
+    let res = null;
+    if(role == "Student"){
+      res = await StuMethods.getStudent(id);
+    }
+    else if(role == "Staff"){
+      res = await StaffMethods.getStaff(id);
+    }
+    if (res) {
+      setUserName(res.username || "");
+      return res;
+    }
+    return null;
+  };
+
   const canvasRef = useRef(null);
-  const [passDetails] = useState({
-    userName: "John Anderson",
-    passId: "SP-2024-0123-4567",
-    validFrom: "01/01/2024",
-    validUntil: "31/12/2024",
-  });
 
-  const drawPass = async () => {
+  const drawPass = (username, firstDay, lastDay) => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    // Clear the canvas
+    // Clear and redraw canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Set canvas background
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Rounded rectangle helper function
-    const drawRoundedRect = (x, y, w, h, r) => {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      ctx.lineTo(x + r, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
-      ctx.closePath();
-    };
-
-    // Draw outer rounded border
-    ctx.fillStyle = "#ffffff";
-    drawRoundedRect(0, 0, canvas.width, canvas.height, 10);
-    ctx.fill();
-
-    // Watermark Drawing: create two logos - one normal, one rotated
-    const drawWatermark = (logo) => {
-      ctx.save(); // Save the current state of the canvas
-      ctx.globalAlpha = 0.15; // Set opacity for the watermark
-
-      // Normal Logo (Positioned normally and rotated clockwise)
-      const logoSize = 100; // Size of the logo for the watermark
-      const normalLogoX = 10; // X position of the normal logo
-      const normalLogoY = 98; // Y position of the normal logo
-      ctx.save(); // Save the canvas state again for the normal logo
-      ctx.translate(normalLogoX + logoSize / 2, normalLogoY + logoSize / 2); // Move the origin to the center of the logo
-      ctx.rotate(Math.PI / 4); // Rotate 45 degrees clockwise
-      ctx.drawImage(logo, -logoSize / 2, -logoSize / 2, logoSize, logoSize); // Draw the logo centered around the origin
-      ctx.restore(); // Restore the canvas state for the normal logo
-
-      // Rotated Logo (Positioned rotated)
-      ctx.translate(canvas.width / 2, canvas.height / 2); // Move the origin to the center
-      ctx.rotate(-Math.PI / 4); // Rotate 45 degrees (diagonal)
-
-      const rotatedLogoX = 50; // X position of the rotated logo
-      const rotatedLogoY = 40; // Y position of the rotated logo
-      ctx.drawImage(logo, rotatedLogoX, rotatedLogoY, logoSize, logoSize);
-      ctx.restore(); // Restore the canvas state
-    };
-
-    // Draw black header with logo
+    // Draw black header
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, 80);
 
-    // Draw logo
+    // Draw logo and text
     const logo = new Image();
     logo.src = CINEClogo;
     logo.onload = () => {
-      // Add watermark logos before the main content
-      drawWatermark(logo);
-
-      // Draw the logo in the header
       ctx.drawImage(logo, 20, 15, 50, 50);
-
-      // Add "Shuttle Pass" text in header
       ctx.fillStyle = "#ffffff";
       ctx.font = "bold 20px Arial";
       ctx.textAlign = "right";
       ctx.fillText("Shuttle Pass", canvas.width - 20, 50);
 
-      // Add passenger name and ID centered
+      // Passenger info
       ctx.textAlign = "center";
       ctx.fillStyle = "#666666";
       ctx.font = "14px Arial";
       ctx.fillText("Passenger Name", canvas.width / 2, 120);
-
       ctx.fillStyle = "#000000";
       ctx.font = "bold 18px Arial";
-      ctx.fillText(passDetails.userName, canvas.width / 2, 150);
+      ctx.fillText(username, canvas.width / 2, 150);
 
-      ctx.fillStyle = "#666666";
-      ctx.font = "14px Arial";
-      ctx.fillText("Pass ID", canvas.width / 2, 180);
-
-      ctx.fillStyle = "#000000";
-      ctx.font = "16px Arial";
-      ctx.fillText(passDetails.passId, canvas.width / 2, 210);
-
-      // Add validity period
+      // Validity dates
       ctx.textAlign = "left";
       ctx.fillStyle = "#666666";
-      ctx.font = "14px Arial";
       ctx.fillText("Valid From", 20, 240);
-
       ctx.fillStyle = "#000000";
-      ctx.font = "16px Arial";
-      ctx.fillText(passDetails.validFrom, 20, 270);
+      ctx.fillText(firstDay, 20, 270);
 
       ctx.textAlign = "right";
       ctx.fillStyle = "#666666";
-      ctx.font = "14px Arial";
       ctx.fillText("Valid Until", canvas.width - 20, 240);
-
       ctx.fillStyle = "#000000";
-      ctx.font = "16px Arial";
-      ctx.fillText(passDetails.validUntil, canvas.width - 20, 270);
+      ctx.fillText(lastDay, canvas.width - 20, 270);
     };
   };
 
   return (
-    <>
-      <Layout>
-        <CssBaseline />
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "white",
-            minHeight: "100vh",
-            width: "100vw", // Ensures full viewport width
-            backgroundImage: `url(${BackgroundImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            margin: 0,
-            padding: 0,
-            overflow: "hidden", // Prevent scrollbars if content overflows
-          }}
-        >
-          <Box
-            sx={{
-              textAlign: "center",
-              marginTop: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Box
-              sx={{
-                width: "90%",
-                maxWidth: 400,
-                overflow: "hidden",
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-                marginBottom: 2,
-                backgroundColor: "#fff",
-              }}
-            >
-              <canvas
-                ref={canvasRef}
-                width={400}
-                height={300}
-                style={{
-                  width: "100%",
-                  height: "auto",
-                }}
-              />
-            </Box>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={drawPass}
-              sx={{ maxWidth: "300px", width: "90%" }}
-            >
-              Generate Monthly Pass
-            </Button>
-          </Box>
+    <Layout>
+      <CssBaseline />
+      <Box sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        backgroundImage: `url(${BackgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}>
+        <Box sx={{
+          width: "90%",
+          maxWidth: 400,
+          backgroundColor: "#fff",
+          borderRadius: "10px",
+          boxShadow: 3,
+          p: 2
+        }}>
+          <canvas
+            ref={canvasRef}
+            width={400}
+            height={300}
+            style={{ width: "100%", height: "auto" }}
+          />
         </Box>
-      </Layout>
-    </>
+      </Box>
+    </Layout>
   );
 }
