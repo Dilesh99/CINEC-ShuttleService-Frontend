@@ -489,7 +489,7 @@ const SignUp = () => {
                                             }}
                                             disabled={imageStatus}
                                         >
-                                            {imageStatus?<CircularProgress color="primary" size={20} /> : "Upload Photo"}
+                                            {imageStatus?<CircularProgress color="primary" size={20} /> : "Upload Campus ID"}
                                         </Button>
                                     </label>
 

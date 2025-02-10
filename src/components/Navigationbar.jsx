@@ -116,22 +116,7 @@ const Navigationbar = () => {
                     borderBottom: location.pathname === '/payment' ? '2px solid #D4790E' : 'none',
                   }}
                 >
-                  PAYMENT
-                </Typography>
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/notification"
-                onClick={handleCloseNavMenu}
-              >
-                <Typography
-                  textAlign="center"
-                  color="secondary"
-                  sx={{
-                    borderBottom: location.pathname === '/notification' ? '2px solid #D4790E' : 'none',
-                  }}
-                >
-                  NOTIFICATION
+                  SHUTTLE PASS
                 </Typography>
               </MenuItem>
             </Menu>
@@ -184,22 +169,7 @@ const Navigationbar = () => {
               }}
               disabled={isPaymentDisabled}
             >
-              PAYMENT
-            </Button>
-            <Button
-              component={Link}
-              to="/notification"
-              sx={{
-                my: 2,
-                color: 'secondary.main',
-                display: 'block',
-                fontSize: '1rem',
-                textTransform: 'none',
-                mx: 2,
-                borderBottom: location.pathname === '/notification' ? '2px solid #F5A623' : 'none',
-              }}
-            >
-              NOTIFICATION
+              SHUTTLE PASS
             </Button>
           </Box>
 

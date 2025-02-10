@@ -270,7 +270,7 @@ const SearchBar = styled('div')(({ theme }) => ({
   width: '100%',
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
-    width: '50%',
+    width: '30%',
     borderRadius: '25px',
   },
 }));

@@ -48,7 +48,7 @@ export default function Payment() {
             setPaid(true);
             drawPass(person.username, firstDay, lastDay);
           } else {
-            navigate("/home");
+            drawPass(person.username, "-", "Expired");
           }
         } catch (error) {
           console.error("Initialization error:", error);
@@ -161,7 +161,7 @@ export default function Payment() {
           backgroundColor: "#fff",
           borderRadius: "10px",
           boxShadow: 3,
-          p: 2
+          p: 1
         }}>
           <canvas
             ref={canvasRef}

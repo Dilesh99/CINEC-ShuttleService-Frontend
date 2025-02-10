@@ -132,7 +132,7 @@ const Footer = () => {
                   
                 }}
               >
-                PAYMENT
+                SHUTTLE PASS
               </Link>
               <Link
                 href="/notification"
