@@ -13,6 +13,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { imageProcessMethods } from '../backend/imageProcess';
 
 import backEndURL from '../backend/backEndApi';
+import { StuMethods } from '../backend/StuMethods';
 
 import { Link } from 'react-router-dom';
 
@@ -65,51 +66,66 @@ const SignUp = () => {
         }
 
         if (canSignUp) {
-            try{
-                const response = await fetch(`${backEndURL}/sendStudentLogins`, {
-                    method: "PUT",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ studentID, password })
-                });
-                if (await response.json()) {
+            try {
+                const response = await fetch(`${backEndURL}/getStudent?studentID=${studentID}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const textData = await response.text(); // Read response as text first
+                const data = textData ? JSON.parse(textData) : {}; // Convert empty response to an empty object
+
+                console.log("Received Data:", data);
+
+                if (Object.keys(data).length > 0) {  // Check if the response is not empty
                     window.alert("Student already signed up");
                     setIsLoading(false);
-                }
-                else {
-                    var studentsID = studentID;
-                    const response = await fetch(`${backEndURL}/updateStudent`, {
+                } else {
+                    console.log("No student found. Continuing with sign-up.");
+
+                    const updateResponse = await fetch(`${backEndURL}/updateStudent`, {
                         method: "PUT",
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ studentsID, username, email, phone_number, password })
+                        body: JSON.stringify({ studentsID: studentID, username, email, phone_number, password, role: "Student", paymentStatus: false })
                     });
-                    const data = await response.text();
-                    console.log(data);
-                    window.location.href = "/home";
+
+                    const updateText = await updateResponse.text();
+                    console.log(updateText);
+
+                    const response2 = await fetch(`${backEndURL}/sendStudentLogins`, {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ studentID, password, role: "Student", keepLogged: false })
+                    });
+                    if (response2.ok) {
+                        setIsLoading(false);
+                        window.alert("Student signed up successfully");
+                        window.location.href = '/home';
+                    }
+
                 }
-            }
-            catch (exception) {
+            } catch (exception) {
                 window.alert("Connection error: " + exception.message);
                 setIsLoading(false);
             }
-        }
-        else {
+        } else {
             window.alert(errors);
             setIsLoading(false);
         }
 
     }
-
     // Handle the file upload
     const handleFileUpload = (event) => {
         setImageStatus(true);
         setImageVerified(false);
         const file = event.target.files?.[0];
         if (file) {
-            imageProcessMethods.processStudentImage(setImageVerified, file, setSuccessMessage, setImageStatus,studentID);
+            imageProcessMethods.processStudentImage(setImageVerified, file, setSuccessMessage, setImageStatus, studentID);
         }
         else {
             setImageStatus(false);
@@ -489,7 +505,7 @@ const SignUp = () => {
                                             }}
                                             disabled={imageStatus}
                                         >
-                                            {imageStatus?<CircularProgress color="primary" size={20} /> : "Upload Campus ID"}
+                                            {imageStatus ? <CircularProgress color="primary" size={20} /> : "Upload Campus ID"}
                                         </Button>
                                     </label>
 

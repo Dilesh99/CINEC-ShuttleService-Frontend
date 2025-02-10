@@ -22,14 +22,14 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import backEndURL from "../backend/backEndApi";
 
-import {imageProcessMethods} from "../backend/imageProcess"
+import { imageProcessMethods } from "../backend/imageProcess"
 
 const SignUp2 = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [imageVerified, setImageVerified] = useState(false);
   const [imageStatus, setImageStatus] = useState(false);
-  
+
   const [username, setUsername] = useState("");
   const [staffID, setStaffID] = useState("");
   const [email, setEmail] = useState("");
@@ -49,7 +49,7 @@ const SignUp2 = () => {
     setImageStatus(true);
     setImageVerified(false);
     setFileImg(event.target.files[0]);
-    imageProcessMethods.processStaffImage(setImageVerified,event.target.files[0],setSuccessMessage,setImageStatus,staffID);
+    imageProcessMethods.processStaffImage(setImageVerified, event.target.files[0], setSuccessMessage, setImageStatus, staffID);
     if (fileimg) {
       //setFileName(fileimg.name);
       const reader = new FileReader();
@@ -94,34 +94,52 @@ const SignUp2 = () => {
     }
 
     if (canSignUp) {
-      const response = await fetch(`${backEndURL}/sendStaffLogins`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ staffID, password }),
-      });
-      if (await response.json()) {
-        window.alert("Staff member already signed up");
+      try {
+        const response = await fetch(`${backEndURL}/getStaff?staffID=${staffID}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const textData = await response.text(); // Read response as text first
+        const data = textData ? JSON.parse(textData) : {}; // Convert empty response to an empty object
+
+        console.log("Received Data:", data);
+
+        if (Object.keys(data).length > 0) {  // Check if the response is not empty
+          window.alert("User already signed up");
+          setIsLoading(false);
+        } else {
+          console.log("No User found. Continuing with sign-up.");
+
+          const updateResponse = await fetch(`${backEndURL}/updateStaff`, {
+            method: "PUT",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ staffID: staffID, username, email, phone_number, password, role: "Staff", paymentStatus: false })
+          });
+
+          const updateText = await updateResponse.text();
+          console.log(updateText);
+
+          const response2 = await fetch(`${backEndURL}/sendStaffLogins`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ staffID, password, role: "Staff", keepLogged: false })
+          });
+          if (response2.ok) {
+            setIsLoading(false);
+            window.alert("User signed up successfully");
+            window.location.href = '/home';
+          }
+
+        }
+      } catch (exception) {
+        window.alert("Connection error: " + exception.message);
         setIsLoading(false);
-      } else {
-        const response = await fetch(`${backEndURL}/updateStaff`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            staffID,
-            username,
-            email,
-            phone_number,
-            password,
-          }),
-        });
-        const data = await response.text();
-        console.log(data);
-        setIsLoading(false);
-        window.location.href = '/home';
       }
     } else {
       window.alert(errors);
@@ -355,7 +373,7 @@ const SignUp2 = () => {
                   </InputAdornment>
                 ),
               }}
-               sx={{
+              sx={{
                 width: { xs: "180px", sm: "300px", md: "320px", lg: "380px" },
                 "& .MuiOutlinedInput-root": {
                   height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
@@ -584,9 +602,9 @@ const SignUp2 = () => {
                   },
                   boxShadow: 3,
                 }}
-                disabled = {imageStatus}
+                disabled={imageStatus}
               >
-                {imageStatus? <CircularProgress color="inherit" size={20}/> : "Upload Photo"}
+                {imageStatus ? <CircularProgress color="inherit" size={20} /> : "Upload Photo"}
               </Button>
             </label>
 
@@ -695,42 +713,42 @@ const SignUp2 = () => {
                 justifyContent: "center",
               }}
             >
-                <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    justifyItems: "center",
-                    display: "flex",
-                    fontWeight: 800,
-                    bgcolor: "#002147",
-                    padding: "5px",
-                    fontSize: {
-                      xs: "14px",
-                      sm: "18px",
-                      md: "16px",
-                      lg: "18px",
-                    },
-                    width: {
-                      xs: "170px",
-                      sm: "290px",
-                      md: "310px",
-                      lg: "370px",
-                    },
-                    height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
-                    borderRadius: "30px",
-                    mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
-                    mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
-                    "&:hover": {
-                      bgcolor: "rgba(70, 108, 148, 0.8)",
-                    },
-                  }}
-                  onClick={handleSignUp}
-                  disabled={isLoading || !imageVerified}
-                >
-                  {isLoading? <CircularProgress size={24} color="inherit"/> : "Sign Up"}
-                </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  justifyItems: "center",
+                  display: "flex",
+                  fontWeight: 800,
+                  bgcolor: "#002147",
+                  padding: "5px",
+                  fontSize: {
+                    xs: "14px",
+                    sm: "18px",
+                    md: "16px",
+                    lg: "18px",
+                  },
+                  width: {
+                    xs: "170px",
+                    sm: "290px",
+                    md: "310px",
+                    lg: "370px",
+                  },
+                  height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
+                  borderRadius: "30px",
+                  mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+                  mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+                  "&:hover": {
+                    bgcolor: "rgba(70, 108, 148, 0.8)",
+                  },
+                }}
+                onClick={handleSignUp}
+                disabled={isLoading || !imageVerified}
+              >
+                {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
+              </Button>
             </Box>
 
             {/* "Already have an account?" Section */}
