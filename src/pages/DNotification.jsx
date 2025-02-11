@@ -19,10 +19,42 @@ function ShuttleService() {
   const navigate = useNavigate();
   let ID = null;
   const hasRun = useRef(false);
+
+  let wakeLock = null;
+
+  async function requestWakeLock() {
+    try {
+      // Check if the Screen Wake Lock API is supported
+      if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+        console.log('Screen wake lock is active!');
+      } else {
+        console.log('Screen Wake Lock API is not supported on this device.');
+      }
+    } catch (err) {
+      console.error('Error requesting screen wake lock:', err);
+    }
+  }
+
+  // Optionally, release the wake lock when the page is no longer active
+  window.addEventListener('visibilitychange', () => {
+    if (document.hidden && wakeLock) {
+      wakeLock.release().then(() => {
+        console.log('Screen wake lock released!');
+      }).catch(err => {
+        console.error('Failed to release wake lock:', err);
+      });
+    }
+    else{
+      requestWakeLock()
+    }
+  });
+
   useEffect(() => {
     if (!hasRun.current) {
       hasRun.current = true;
       try {
+        requestWakeLock();
         handleAuth();
       } catch {
         return null;
@@ -241,7 +273,7 @@ function ShuttleService() {
                     sx={{ mb: 2 }}
                   />
 
-<Box display="flex" flexDirection="column">
+                  <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center">
                       <Button
                         variant="contained"

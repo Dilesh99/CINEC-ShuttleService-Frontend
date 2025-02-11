@@ -56,7 +56,7 @@ function App() {
 
       <BrowserRouter>
         <Routes>
-        <Route index element={<SignUp2/>} ></Route>
+        <Route index element={<SignIn/>} ></Route>
         
         <Route path='/interaction' element={<Interaction/>} ></Route>
         <Route path='/signup' element={<SignUp/>} ></Route>
