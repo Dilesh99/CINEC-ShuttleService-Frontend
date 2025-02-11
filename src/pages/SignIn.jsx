@@ -10,12 +10,24 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import backEndURL from '../backend/backEndApi'
-import {authMethods} from '../backend/authMethods'
+import { authMethods } from '../backend/authMethods'
+import Popup from '../components/Popup'
 
 
 
 
 const SignIn = () => {
+
+
+    const [popupOpen, setPopupOpen] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('');
+    const [popupType, setPopupType] = useState('info');
+
+    const showPopup = (message, type = 'info') => {
+        setPopupMessage(message);
+        setPopupType(type);
+        setPopupOpen(true);
+      };
 
     const hasRun = useRef(false);
     var response = null;
@@ -44,28 +56,28 @@ const SignIn = () => {
     const handleAutoSignIn = async () => {
         try {
             const res = await authMethods.refreshToken();
-        if (res) {
-            switch (res.role){
-                case "Student":
-                    window.location.href = "/home"
-                    break;
-                case "Staff":
-                    window.location.href = "/home"
-                    break;
-                case "Admin":
-                    window.location.href = "/admindashboard"
-                    break;
-                case "Driver":
-                    window.location.href = `/shuttleService/${res.ID}`;
-                    break;
-                default:
-                    break;
+            if (res) {
+                switch (res.role) {
+                    case "Student":
+                        window.location.href = "/home"
+                        break;
+                    case "Staff":
+                        window.location.href = "/home"
+                        break;
+                    case "Admin":
+                        window.location.href = "/admindashboard"
+                        break;
+                    case "Driver":
+                        window.location.href = `/shuttleService/${res.ID}`;
+                        break;
+                    default:
+                        break;
+                }
             }
-        }
-        else{
-            return null;
-        }
-        } catch{
+            else {
+                return null;
+            }
+        } catch {
             return null;
         }
     }
@@ -93,10 +105,10 @@ const SignIn = () => {
                     throw new Error("Student not found");
                 }
                 setIsResettingPassword(false);
-                window.alert("Password reset code sent via email");
+                showPopup("Password reset code sent via email", 'success');
             }
             catch (e) {
-                window.alert(e.message);
+                showPopup(e.message, 'error');
                 setIsResettingPassword(false);
             }
         }
@@ -115,10 +127,10 @@ const SignIn = () => {
                     throw new Error("User not found");
                 }
                 setIsResettingPassword(false);
-                window.alert("Password reset code sent via email");
+                showPopup("Password reset code sent via email", 'success');
             }
             catch (e) {
-                window.alert(e.message);
+                showPopup(e.message, 'error');
                 setIsResettingPassword(false);
             }
         }
@@ -194,17 +206,21 @@ const SignIn = () => {
                     });
                     break;
                 default:
-                    setError("Incorrect Login");
+                    setError("Invalid Login");
                     break;
             }
-            const data = await response.json();
+            if (!response) {
+                setError("Invalid Login");
+                return;
+            }
 
+            const data = await response.json();
             const accessToken = data.accessToken;
             const role = data.role;
             const retrievedID = data.id;
 
             if (response.ok && accessToken && role && retrievedID) {
-                window.alert("login successfull");
+                showPopup("Login successful", 'success');
                 if (person == "Student" || person == "Staff") {
                     window.location.href = "/home";
                 }
@@ -221,7 +237,7 @@ const SignIn = () => {
                 setError("Incorrect ID or Password");
             }
         } catch (error) {
-            setError("An error occurred while logging in. Please try again later.");
+            setError(error);
         }
         finally {
             setIsloading(false);
@@ -279,7 +295,7 @@ const SignIn = () => {
                             sx={{
                                 mt: '-2%',
                                 width: { xs: '84%', sm: '70%', md: '48%', lg: '48%' },
-                                height: { xs: '405px', sm: '425px', md: '615px', lg: '615px' },
+                                height: { xs: '450px', sm: '500px', md: '615px', lg: '650px' },
                                 borderTopLeftRadius: { xs: 10, sm: 10, md: 10, lg: 10 },
                                 borderEndStartRadius: { xs: 10, sm: 10, md: 10, lg: 10 },
                                 borderTopRightRadius: { xs: 10, sm: 10, md: 0, lg: 0 },
@@ -400,14 +416,12 @@ const SignIn = () => {
                             }} onClick={handleResetPassword} disabled={isResettingPassword}>
                                 {isResettingPassword ? 'Resetting Password...' : 'Forgot Password? '}
                             </Button>
-                            
 
 
-                            {error && (
-                                <Typography sx={{ color: "red", fontSize: "12px", marginBottom: "16px", textAlign: 'center', marginRight: { xs: '8%', md: '0' }, marginLeft: { xs: '8%', md: '0' } }}>
-                                    {error}
-                                </Typography>
-                            )}
+
+                            <Typography sx={{ color: "red", fontSize: "12px", marginBottom: "16px", textAlign: 'center', marginRight: { xs: '8%', md: '0' }, marginLeft: { xs: '8%', md: '0' }, minHeight: '20px' }}>
+                                {error ? error : ""}
+                            </Typography>
 
                             <Box  //Box of Button that used to center the box
                                 sx={{
@@ -436,14 +450,14 @@ const SignIn = () => {
                                     {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign In"}
                                 </Button>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 0 , gap: 0, }}>
-                            <Checkbox
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 0, gap: 0, }}>
+                                <Checkbox
                                     checked={rememberMe}
                                     onChange={(e) => setRememberMe(e.target.checked)}
-                                    sx={{ color: '#002147CC', transform: 'scale(0.6)',marginLeft: '-3% '}}	
+                                    sx={{ color: '#002147CC', transform: 'scale(0.6)', marginLeft: '-3% ' }}
                                 />
-                                <Typography sx={{ fontSize: { xs: '10px', sm: '12px', md: '15px', lg: '15px' }, fontWeight: 200, color: '#002147CC',marginLeft: '-1% '}}>Remember Me</Typography>
-                               
+                                <Typography sx={{ fontSize: { xs: '10px', sm: '12px', md: '15px', lg: '15px' }, fontWeight: 200, color: '#002147CC', marginLeft: '-1% ' }}>Remember Me</Typography>
+
                             </Box>
 
                             <Typography sx={{
@@ -487,7 +501,7 @@ const SignIn = () => {
                             sx={{
                                 mt: '-2%',
                                 width: { xs: 0, sm: 0, md: '36%', lg: '36%' },
-                                height: { xs: 0, sm: 0, md: '615px', lg: '615px' },
+                                height: { xs: 0, sm: 0, md: '615px', lg: '650px' },
                                 borderTopRightRadius: { xs: 0, sm: 0, md: 10, lg: 10 },
                                 borderTopLeftRadius: { xs: 0, sm: 0, md: 0, lg: 0 },
                                 borderEndEndRadius: { xs: 10, sm: 10, md: 10, lg: 10 },
@@ -539,6 +553,12 @@ const SignIn = () => {
                     </Grid2>
                 </Grid2>
             </Grid2>
+            <Popup
+                open={popupOpen}
+                onClose={() => setPopupOpen(false)}
+                message={popupMessage}
+                type={popupType}
+            />
         </>
     )
 }

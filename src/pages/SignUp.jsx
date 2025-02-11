@@ -14,11 +14,21 @@ import { imageProcessMethods } from '../backend/imageProcess';
 
 import backEndURL from '../backend/backEndApi';
 import { StuMethods } from '../backend/StuMethods';
-
+import Popup from '../components/Popup'
 import { Link } from 'react-router-dom';
 
 
 const SignUp = () => {
+
+    const [popupOpen, setPopupOpen] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('');
+    const [popupType, setPopupType] = useState('info');
+
+    const showPopup = (message, type = 'info') => {
+        setPopupMessage(message);
+        setPopupType(type);
+        setPopupOpen(true);
+    };
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -79,7 +89,7 @@ const SignUp = () => {
                 console.log("Received Data:", data);
 
                 if (Object.keys(data).length > 0) {  // Check if the response is not empty
-                    window.alert("Student already signed up");
+                    showPopup("Student already signed up", 'error')
                     setIsLoading(false);
                 } else {
                     console.log("No student found. Continuing with sign-up.");
@@ -104,17 +114,17 @@ const SignUp = () => {
                     });
                     if (response2.ok) {
                         setIsLoading(false);
-                        window.alert("Student signed up successfully");
+                        showPopup("Signed up successfully.", 'success');
                         window.location.href = '/home';
                     }
 
                 }
             } catch (exception) {
-                window.alert("Connection error: " + exception.message);
+                showPopup("Connection error: "+ exception.message, 'error');
                 setIsLoading(false);
             }
         } else {
-            window.alert(errors);
+            showPopup(errors, 'error');
             setIsLoading(false);
         }
 
@@ -602,6 +612,12 @@ const SignUp = () => {
                     </Grid2>
                 </Grid2>
             </Grid2>
+            <Popup
+                open={popupOpen}
+                onClose={() => setPopupOpen(false)}
+                message={popupMessage}
+                type={popupType}
+            />
         </>
     );
 };

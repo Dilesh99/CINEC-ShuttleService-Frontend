@@ -21,10 +21,22 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import backEndURL from "../backend/backEndApi";
+import Popup from "../components/Popup";
 
 import { imageProcessMethods } from "../backend/imageProcess"
 
 const SignUp2 = () => {
+
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [popupType, setPopupType] = useState('info');
+
+  const showPopup = (message, type = 'info') => {
+    setPopupMessage(message);
+    setPopupType(type);
+    setPopupOpen(true);
+  };
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [imageVerified, setImageVerified] = useState(false);
@@ -107,7 +119,7 @@ const SignUp2 = () => {
         console.log("Received Data:", data);
 
         if (Object.keys(data).length > 0) {  // Check if the response is not empty
-          window.alert("User already signed up");
+          showPopup("User already signed up", 'error');
           setIsLoading(false);
         } else {
           console.log("No User found. Continuing with sign-up.");
@@ -132,17 +144,17 @@ const SignUp2 = () => {
           });
           if (response2.ok) {
             setIsLoading(false);
-            window.alert("User signed up successfully");
+            showPopup("Signed up successfully." , 'success');
             window.location.href = '/home';
           }
 
         }
       } catch (exception) {
-        window.alert("Connection error: " + exception.message);
+        showPopup("Connection error: "+exception.message, 'error');
         setIsLoading(false);
       }
     } else {
-      window.alert(errors);
+      showPopup(errors, 'error');
       setIsLoading(false);
     }
   };
@@ -779,6 +791,12 @@ const SignUp2 = () => {
           </Box>
         </Grid>
       </Grid>
+      <Popup
+        open={popupOpen}
+        onClose={() => setPopupOpen(false)}
+        message={popupMessage}
+        type={popupType}
+      />
     </>
   );
 };
