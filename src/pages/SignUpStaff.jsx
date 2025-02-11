@@ -101,7 +101,7 @@ const SignUp2 = () => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const textData = await response.text(); // Read response as text first
+        const textData = await response.text();
         const data = textData ? JSON.parse(textData) : {}; // Convert empty response to an empty object
 
         console.log("Received Data:", data);
@@ -544,6 +544,7 @@ const SignUp2 = () => {
             src={St1}
             alt="Cinec Campus"
             sx={{
+              display: { xs: "none", md: "flex" },
               mt: { xs: 3, sm: 18, md: 0 },
               width: { xs: "100%", md: "380px" },
               height: { xs: "auto", md: "380px" },

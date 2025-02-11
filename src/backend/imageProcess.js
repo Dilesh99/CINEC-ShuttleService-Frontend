@@ -91,7 +91,7 @@ export const imageProcessMethods = {
                 console.log("OCR completed. Extracted text:", text);
 
                 // Regular expression to find 12-digit numbers
-                const idRegex = /\b\d{12}\b/g;
+                const idRegex = /\b\d{6}\b/g;
                 const matches = text.match(idRegex);
 
                 console.log("Candidate IDs:", matches);

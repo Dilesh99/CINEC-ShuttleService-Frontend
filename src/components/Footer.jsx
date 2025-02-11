@@ -134,19 +134,6 @@ const Footer = () => {
               >
                 SHUTTLE PASS
               </Link>
-              <Link
-                href="/notification"
-                sx={{
-                  display: 'block',
-                  color: '#ffffff',
-                  fontSize: { xs: '12px', sm: '12px' },
-                  textDecoration: 'none',
-                  mb: 1,
-                  '&:hover': { color: '#D4790E' },
-                }}
-              >
-                NOTIFICATION
-              </Link>
             </Box>
           </Grid>
 
