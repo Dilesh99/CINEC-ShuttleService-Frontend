@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState, useRef } from "react";
 import {
   AppBar,
@@ -14,8 +13,40 @@ import Layout from "../components/Layout";
 import BackgroundImage from "/src/assets/bg5.jpg";
 import { useNavigate } from "react-router-dom";
 import { authMethods } from "../backend/authMethods";
+import Popup from "../components/Popup";
 
 const TransportBookingForm = () => {
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [popupType, setPopupType] = useState('info');
+  const [popupCallback, setPopupCallback] = useState(null);
+
+  // State for form fields
+  const [formData, setFormData] = useState({
+    department: "",
+    purpose: "",
+    date: "",
+    time: "",
+    destination: "",
+    from: "",
+    to: "",
+    pickupPlace: "",
+    paxLoad: "",
+    numPacks: "",
+    route: "",
+    inCharge: "",
+    requestedByName: "",
+    requestedByStaffID: "",
+    hodName: "",
+    hodEmail: "",
+  });
+
+  const showPopup = (message, type = 'info') => {
+    setPopupMessage(message);
+    setPopupType(type);
+    setPopupOpen(true);
+  };
+
   const navigate = useNavigate();
   let ID = null;
   let role = "";
@@ -37,13 +68,52 @@ const TransportBookingForm = () => {
       ID = res.ID;
       role = res.role;
       if (role == "Student") {
-        window.alert("Please see a Lecturer to book a shuttle.");
-        navigate("/home");
+        showPopup("Please see a lecturer to book shuttle", 'info');
+        setPopupCallback(() => () => {
+          navigate("/home");
+        });
         return;
       }
     } else {
       navigate("/");
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Construct the email body
+    const emailBody = `
+      Department: ${formData.department}
+      Purpose: ${formData.purpose}
+      Date: ${formData.date}
+      Time: ${formData.time}
+      Destination: ${formData.destination}
+      From: ${formData.from}
+      To: ${formData.to}
+      Place to Pickup: ${formData.pickupPlace}
+      Pax/Load: ${formData.paxLoad}
+      No. of Packs: ${formData.numPacks}
+      Route: ${formData.route}
+      In Charge of the Journey: ${formData.inCharge}
+      Requested By (Name): ${formData.requestedByName}
+      Requested By (Staff ID): ${formData.requestedByStaffID}
+      HOD (Name): ${formData.hodName}
+    `;
+
+    // Construct the mailto URL
+    const mailtoUrl = `mailto:naveensandaru2@gmail.com?cc=${formData.hodEmail}subject=Transport Booking Request&body=${encodeURIComponent(emailBody)}`;
+
+    // Open the email client
+    window.location.href = mailtoUrl;
   };
 
   const textFieldStyles = {
@@ -58,10 +128,10 @@ const TransportBookingForm = () => {
         backgroundColor: "#fff",
         borderRadius: 3,
         "&:before, &:after": {
-          borderBottom: "none !important", // Completely removes the orange underline
+          borderBottom: "none !important",
         },
         "&:hover:not(.Mui-disabled):before": {
-          borderBottom: "none !important", // Prevents it from appearing on hover
+          borderBottom: "none !important",
         },
       },
     },
@@ -69,7 +139,7 @@ const TransportBookingForm = () => {
 
   return (
     <Layout>
-      <CssBaseline /> {/* Resets default margins and paddings globally */}
+      <CssBaseline />
       <Box
         sx={{
           display: "flex",
@@ -78,17 +148,16 @@ const TransportBookingForm = () => {
           justifyContent: "center",
           color: "white",
           minHeight: "100vh",
-          width: "100vw", // Ensures full viewport width
+          width: "100vw",
           backgroundImage: `url(${BackgroundImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           margin: 0,
           padding: 0,
-          overflow: "hidden", // Prevent scrollbars if content overflows
+          overflow: "hidden",
         }}
       >
-        {/* Form Container */}
         <Box
           sx={{
             bgcolor: "rgba(0, 33, 71, 0.95)",
@@ -110,30 +179,31 @@ const TransportBookingForm = () => {
               fontSize: { xs: "1.5rem", sm: "2rem" },
             }}
           >
-            TRANSPORT BOOKING FORM
-            <br />
-            FORM NO.001
+            SHUTTLE BOOKING FORM
           </Typography>
-          <form>
+          <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               {[
-                { label: "Department", xs: 12 },
-                { label: "Purpose", xs: 12 },
-                { label: "Date", xs: 12, sm: 6 },
-                { label: "Time", xs: 12, sm: 6 },
-                { label: "Destination", xs: 12, sm: 4 },
-                { label: "From", xs: 12, sm: 4 },
-                { label: "To", xs: 12, sm: 4 },
-                { label: "Place to pickup", xs: 12 },
-                { label: "Pax/ Load", xs: 12, sm: 6 },
-                { label: "No. of packs", xs: 12, sm: 6 },
-                { label: "Route", xs: 12 },
-                { label: "In charge Of the Journey", xs: 12 },
-              ].map(({ label, xs, sm }) => (
-                <Grid item xs={xs} sm={sm} key={label}>
+                { label: "Department", name: "department", xs: 12 },
+                { label: "Purpose", name: "purpose", xs: 12 },
+                { label: "Date", name: "date", xs: 12, sm: 6 },
+                { label: "Time", name: "time", xs: 12, sm: 6 },
+                { label: "Destination", name: "destination", xs: 12, sm: 4 },
+                { label: "From", name: "from", xs: 12, sm: 4 },
+                { label: "To", name: "to", xs: 12, sm: 4 },
+                { label: "Place to pickup", name: "pickupPlace", xs: 12 },
+                { label: "Pax/ Load", name: "paxLoad", xs: 12, sm: 6 },
+                { label: "No. of packs", name: "numPacks", xs: 12, sm: 6 },
+                { label: "Route", name: "route", xs: 12 },
+                { label: "In charge Of the Journey", name: "inCharge", xs: 12 },
+              ].map(({ label, name, xs, sm }) => (
+                <Grid item xs={xs} sm={sm} key={name}>
                   <TextField
                     fullWidth
                     label={label}
+                    name={name}
+                    value={formData[name]}
+                    onChange={handleChange}
                     variant="filled"
                     {...textFieldStyles}
                   />
@@ -146,6 +216,9 @@ const TransportBookingForm = () => {
                 <TextField
                   fullWidth
                   label="Name"
+                  name="requestedByName"
+                  value={formData.requestedByName}
+                  onChange={handleChange}
                   variant="filled"
                   {...textFieldStyles}
                   sx={{
@@ -166,6 +239,9 @@ const TransportBookingForm = () => {
                 <TextField
                   fullWidth
                   label="Staff ID"
+                  name="requestedByStaffID"
+                  value={formData.requestedByStaffID}
+                  onChange={handleChange}
                   variant="filled"
                   {...textFieldStyles}
                   sx={{
@@ -191,6 +267,9 @@ const TransportBookingForm = () => {
                 <TextField
                   fullWidth
                   label="Name"
+                  name="hodName"
+                  value={formData.hodName}
+                  onChange={handleChange}
                   variant="filled"
                   {...textFieldStyles}
                   sx={{
@@ -211,6 +290,9 @@ const TransportBookingForm = () => {
                 <TextField
                   fullWidth
                   label="Email"
+                  name="hodEmail"
+                  value={formData.hodEmail}
+                  onChange={handleChange}
                   variant="filled"
                   {...textFieldStyles}
                   sx={{
@@ -231,14 +313,14 @@ const TransportBookingForm = () => {
               </Grid>
               <Grid item xs={12} display="flex" justifyContent="right">
                 <Button
+                  type="submit"
                   variant="contained"
                   sx={{
                     mt: 3,
                     px: { xs: 4, sm: 5 },
-                    backgroundColor: "gold",
-                    color: "black",
+                    backgroundColor: "#b13f03",
+                    color: "white",
                     borderRadius: 3,
-                    
                   }}
                 >
                   SUBMIT
@@ -248,6 +330,13 @@ const TransportBookingForm = () => {
           </form>
         </Box>
       </Box>
+      <Popup
+        open={popupOpen}
+        onClose={() => setPopupOpen(false)}
+        message={popupMessage}
+        type={popupType}
+        onConfirm={popupCallback}
+      />
     </Layout>
   );
 };

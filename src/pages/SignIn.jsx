@@ -22,12 +22,13 @@ const SignIn = () => {
     const [popupOpen, setPopupOpen] = useState(false);
     const [popupMessage, setPopupMessage] = useState('');
     const [popupType, setPopupType] = useState('info');
+    const [popupCallback, setPopupCallback] = useState(null);
 
     const showPopup = (message, type = 'info') => {
         setPopupMessage(message);
         setPopupType(type);
         setPopupOpen(true);
-      };
+    };
 
     const hasRun = useRef(false);
     var response = null;
@@ -83,6 +84,9 @@ const SignIn = () => {
     }
 
     const handleResetPassword = async () => {
+    if (!window.confirm("Do you really want to reset your password?")){
+        return;
+    }
         selectPerson();
         setIsResettingPassword(true);
         setError('');
@@ -220,29 +224,30 @@ const SignIn = () => {
             const retrievedID = data.id;
 
             if (response.ok && accessToken && role && retrievedID) {
+                // Show success popup and wait for user to click OK
                 showPopup("Login successful", 'success');
-                if (person == "Student" || person == "Staff") {
-                    window.location.href = "/home";
-                }
-                else if (person == "Driver") {
-                    window.location.href = `/shuttleService/${driverID}`
-                }
-                else if (person == "Admin") {
-                    window.location.href = "/admindashboard";
-                }
-                else {
-                    setError("Error log in");
-                }
+                setPopupOpen(true); // Ensure popup is open
+                setPopupType('success');
+                setPopupMessage("Login successful");
+
+                // Add a callback to handle the OK button click
+                setPopupCallback(() => () => {
+                    if (person === "Student" || person === "Staff") {
+                        window.location.href = "/home";
+                    } else if (person === "Driver") {
+                        window.location.href = `/shuttleService/${driverID}`;
+                    } else if (person === "Admin") {
+                        window.location.href = "/admindashboard";
+                    }
+                });
             } else {
                 setError("Incorrect ID or Password");
             }
         } catch (error) {
             setError(error);
-        }
-        finally {
+        } finally {
             setIsloading(false);
         }
-
     };
 
     return (
@@ -558,6 +563,7 @@ const SignIn = () => {
                 onClose={() => setPopupOpen(false)}
                 message={popupMessage}
                 type={popupType}
+                onConfirm={popupCallback}
             />
         </>
     )
