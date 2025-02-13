@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { CssBaseline, Box, Button, Grid2, TextField, Typography, InputAdornment, IconButton, CircularProgress } from '@mui/material'
 import BG from "../assets/bg5.jpg"
 import IM2 from "../assets/M2.png"
 import L1 from "../assets/Logo2.png"
+import ExampleID from "../assets/ExampleStudentID.jpg";
 import LockIcon from '@mui/icons-material/Lock';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
@@ -15,10 +16,25 @@ import { imageProcessMethods } from '../backend/imageProcess';
 import backEndURL from '../backend/backEndApi';
 import { StuMethods } from '../backend/StuMethods';
 import Popup from '../components/Popup'
+import UploadIDPopup from '../components/UploadIDPopup';
 import { Link } from 'react-router-dom';
 
 
 const SignUp = () => {
+
+    const [uploadIDPopupOpen, setUploadIDPopupOpen] = useState(false); // State for the new popup
+    const fileInputRef = useRef(null);
+
+    const examplePhoto = {ExampleID};
+
+    const handleUploadButtonClick = () => {
+        setUploadIDPopupOpen(true);
+    };
+
+    const handlePopupOkClick = () => {
+        setUploadIDPopupOpen(false);
+        fileInputRef.current.click(); // Trigger the file input
+    };
 
     const [popupOpen, setPopupOpen] = useState(false);
     const [popupMessage, setPopupMessage] = useState('');
@@ -120,7 +136,7 @@ const SignUp = () => {
 
                 }
             } catch (exception) {
-                showPopup("Connection error: "+ exception.message, 'error');
+                showPopup("Connection error: " + exception.message, 'error');
                 setIsLoading(false);
             }
         } else {
@@ -129,7 +145,7 @@ const SignUp = () => {
         }
 
     }
-    // Handle the file upload
+
     const handleFileUpload = (event) => {
         setImageStatus(true);
         setImageVerified(false);
@@ -478,46 +494,47 @@ const SignUp = () => {
                                     {/* Hidden file input */}
                                     <input
                                         accept="image/*"
+                                        ref={fileInputRef}
                                         id="upload-photo"
                                         type="file"
                                         style={{ display: "none" }}
                                         onChange={handleFileUpload}
+                                        capture={false}
                                         disabled={imageStatus}
                                     />
 
                                     {/* Custom Button for File Upload */}
-                                    <label htmlFor="upload-photo">
-                                        <Button
-                                            variant="outlined"
 
-                                            component="span"
-                                            sx={{
-                                                color: 'primary.main',
-                                                bgcolor: 'white',
-                                                fontWeight: 600,
-                                                padding: "5px",
-                                                fontSize: { xs: "14px", sm: "18px", md: "16px", lg: "18px" },
-                                                width: {
-                                                    xs: "170px",
-                                                    sm: "190px",
-                                                    md: "190px",
-                                                    lg: "190px",
-                                                },
-                                                height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
-                                                borderRadius: "10px",
-                                                mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
-                                                mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
-                                                "&:hover": {
-                                                    bgcolor: "white",
-                                                    color: "secondary.main",
-                                                },
-                                                boxShadow: 3,
-                                            }}
-                                            disabled={imageStatus}
-                                        >
-                                            {imageStatus ? <CircularProgress color="primary" size={20} /> : "Upload Campus ID"}
-                                        </Button>
-                                    </label>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={handleUploadButtonClick}
+                                        component="span"
+                                        sx={{
+                                            color: 'primary.main',
+                                            bgcolor: 'white',
+                                            fontWeight: 600,
+                                            padding: "5px",
+                                            fontSize: { xs: "14px", sm: "18px", md: "16px", lg: "18px" },
+                                            width: {
+                                                xs: "170px",
+                                                sm: "190px",
+                                                md: "190px",
+                                                lg: "190px",
+                                            },
+                                            height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
+                                            borderRadius: "10px",
+                                            mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+                                            mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+                                            "&:hover": {
+                                                bgcolor: "white",
+                                                color: "secondary.main",
+                                            },
+                                            boxShadow: 3,
+                                        }}
+                                        disabled={imageStatus}
+                                    >
+                                        {imageStatus ? <CircularProgress color="primary" size={20} /> : "Upload Campus ID"}
+                                    </Button>
 
                                     {/* Success message */}
                                     {successMessage && (
@@ -617,6 +634,12 @@ const SignUp = () => {
                 onClose={() => setPopupOpen(false)}
                 message={popupMessage}
                 type={popupType}
+            />
+            <UploadIDPopup
+                open={uploadIDPopupOpen}
+                onClose={handlePopupOkClick}
+                message="Please take a photo of your campus ID in advance and crop out the background. Only the ID should be uploaded in landscape mode. Refer to the example ID below."
+                examplePhoto={examplePhoto}
             />
         </>
     );

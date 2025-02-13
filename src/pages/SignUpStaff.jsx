@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   CssBaseline,
   Box,
@@ -19,6 +19,9 @@ import { Link } from "react-router-dom";
 import St1 from "../assets/St1.jpg"; // Update with your actual image path
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import ExampleID from "../assets/ExampleStaffID.jpg";
+
+import UploadIDPopup from '../components/UploadIDPopup';
 
 import backEndURL from "../backend/backEndApi";
 import Popup from "../components/Popup";
@@ -26,6 +29,20 @@ import Popup from "../components/Popup";
 import { imageProcessMethods } from "../backend/imageProcess"
 
 const SignUp2 = () => {
+
+  const [uploadIDPopupOpen, setUploadIDPopupOpen] = useState(false); // State for the new popup
+  const fileInputRef = useRef(null);
+
+  const examplePhoto = { ExampleID };
+
+  const handleUploadButtonClick = () => {
+    setUploadIDPopupOpen(true);
+  };
+
+  const handlePopupOkClick = () => {
+    setUploadIDPopupOpen(false);
+    fileInputRef.current.click(); // Trigger the file input
+  };
 
   const [popupOpen, setPopupOpen] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
@@ -144,13 +161,13 @@ const SignUp2 = () => {
           });
           if (response2.ok) {
             setIsLoading(false);
-            showPopup("Signed up successfully." , 'success');
+            showPopup("Signed up successfully.", 'success');
             window.location.href = '/home';
           }
 
         }
       } catch (exception) {
-        showPopup("Connection error: "+exception.message, 'error');
+        showPopup("Connection error: " + exception.message, 'error');
         setIsLoading(false);
       }
     } else {
@@ -582,6 +599,7 @@ const SignUp2 = () => {
             <input
               accept="image/*"
               id="upload-photo"
+              ref={fileInputRef}
               type="file"
               style={{ display: "none" }}
               onChange={handleFileUpload}
@@ -589,37 +607,36 @@ const SignUp2 = () => {
             />
 
             {/* Custom Button for File Upload */}
-            <label htmlFor="upload-photo">
-              <Button
-                variant=""
-                color="rgba(123, 164, 208, 0.8)"
-                component="span"
-                sx={{
-                  color: "rgba(83, 129, 177, 0.8)",
-                  fontWeight: 600,
-                  padding: "5px",
-                  fontSize: { xs: "14px", sm: "18px", md: "16px", lg: "18px" },
-                  width: {
-                    xs: "170px",
-                    sm: "190px",
-                    md: "190px",
-                    lg: "190px",
-                  },
-                  height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
-                  borderRadius: "10px",
-                  mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
-                  mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
-                  "&:hover": {
-                    bgcolor: "rgba(50, 146, 249, 0.8)",
-                    color: "white",
-                  },
-                  boxShadow: 3,
-                }}
-                disabled={imageStatus}
-              >
-                {imageStatus ? <CircularProgress color="inherit" size={20} /> : "Upload Photo"}
-              </Button>
-            </label>
+            <Button
+              variant=""
+              onClick={handleUploadButtonClick}
+              color="rgba(123, 164, 208, 0.8)"
+              component="span"
+              sx={{
+                color: "rgba(83, 129, 177, 0.8)",
+                fontWeight: 600,
+                padding: "5px",
+                fontSize: { xs: "14px", sm: "18px", md: "16px", lg: "18px" },
+                width: {
+                  xs: "170px",
+                  sm: "190px",
+                  md: "190px",
+                  lg: "190px",
+                },
+                height: { xs: "34px", sm: "40px", md: "45px", lg: "50px" },
+                borderRadius: "10px",
+                mt: { xs: 1.5, sm: 1.5, md: 1.5, lg: 1 },
+                mb: { xs: 1, sm: 1, md: 1.5, lg: 2 },
+                "&:hover": {
+                  bgcolor: "rgba(50, 146, 249, 0.8)",
+                  color: "white",
+                },
+                boxShadow: 3,
+              }}
+              disabled={imageStatus}
+            >
+              {imageStatus ? <CircularProgress color="inherit" size={20} /> : "Upload Satff ID"}
+            </Button>
 
             {/* Display file name */}
             {fileName && !isSubmitted && (
@@ -796,6 +813,12 @@ const SignUp2 = () => {
         onClose={() => setPopupOpen(false)}
         message={popupMessage}
         type={popupType}
+      />
+      <UploadIDPopup
+        open={uploadIDPopupOpen}
+        onClose={handlePopupOkClick}
+        message="Please take a photo of your staff ID in advance and crop out the background. Only the ID should be uploaded in portrait mode. Refer to the example ID below."
+        examplePhoto={examplePhoto}
       />
     </>
   );
