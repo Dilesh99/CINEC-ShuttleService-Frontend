@@ -6,41 +6,127 @@ import InnerBackgroundImage from "/src/assets/bg5.jpg";
 
 import { useNavigate } from 'react-router-dom';
 import { authMethods } from '../backend/authMethods';
+import { StuMethods } from '../backend/StuMethods';
+import { StaffMethods } from '../backend/StaffMethods';
+
+import Popup from '../components/Popup';
 
 const ProfileCard = () => {
-  const navigate = useNavigate();
-  let ID = null;
-  const hasRun = useRef(false);
-  useEffect(() => {
-    if (!hasRun.current) {
-      hasRun.current = true;
-      try {
-        handleAuth();
-      } catch {
-        return null;
-      }
-    }
-  }, []);
 
-  const handleAuth = async () => {
-    const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID) {
-      ID = res.ID;
-    }
-    else {
-      navigate("/");
-    }
-  }
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [popupType, setPopupType] = useState('info');
+  const [popupCallback, setPopupCallback] = useState(null);
+
+  const showPopup = (message, type = 'info') => {
+    setPopupMessage(message);
+    setPopupType(type);
+    setPopupOpen(true);
+  };
+
+  const [ID, setID] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(false);
+
+  const [username, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone_number, setPhoneNumber] = useState(0);
 
   const [formData, setFormData] = useState({
-    idNo: '',
-    faculty: '',
-    department: '',
-    mobile: ''
+    username: '',
+    email: '',
+    phone_number: '',
+    password: ''
   });
+
+  const [role, setRole] = useState("");
+
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        // 1) Refresh token
+        const res = await authMethods.refreshToken();
+        // 2) If valid, store ID and role in state
+        if (res && res.accessToken && res.ID) {
+          setID(res.ID);
+          setRole(res.role);
+        } else {
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Authentication error:", error);
+      }
+    })();
+  }, [navigate]);
+
+  useEffect(() => {
+    // Only fetch user when ID and role are set
+    (async () => {
+      if (!ID || !role) return;
+
+      let fetchedUser = null;
+      try {
+        if (role === "Student") {
+          fetchedUser = await StuMethods.getStudent(ID);
+        } else if (role === "Staff") {
+          fetchedUser = await StaffMethods.getStaff(ID);
+        }
+
+        if (fetchedUser) {
+          // Update your local state
+          setUserName(fetchedUser.name);
+          setEmail(fetchedUser.email);
+          setPassword(fetchedUser.password);
+          setPhoneNumber(fetchedUser.phone_number);
+          setPaymentStatus(fetchedUser.paymentStatus);
+
+          // Update formData from the *fetched* user object
+          setFormData({
+            username: fetchedUser.username,
+            email: fetchedUser.email,
+            phone_number: fetchedUser.phone_number,
+            password: fetchedUser.password,
+          });
+        } else {
+          // If no user found, reset
+          setUserName("");
+          setEmail("");
+          setPassword("");
+          setPhoneNumber(0);
+          setFormData({
+            username: "",
+            email: "",
+            phone_number: 0,
+            password: "",
+          });
+        }
+      } catch (error) {
+        console.error("Fetching user error:", error);
+      }
+    })();
+  }, [ID, role]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = async () => {
+    let res = null;
+    if (role == "Student") {
+      res = await StuMethods.updateStudent(ID, formData.username, formData.email, formData.phone_number, formData.password, paymentStatus);
+
+    }
+    else if (role == "Staff") {
+      res = await StaffMethods.updateStaff(ID, formData.username, formData.email, formData.phone_number, formData.password, paymentStatus);
+    }
+    if (res) {
+      showPopup("Profile updated successfully!", 'info');
+    } else {
+      showPopup("Failed to update profile. Please try again later.", 'error');
+    }
   };
 
   return (
@@ -90,7 +176,7 @@ const ProfileCard = () => {
               }}
             >
               <Avatar
-                alt="Naveen Sandaru"
+                alt={username}
                 src="path_to_avatar_image" // Ensure this path is correct
                 sx={{
                   width: { xs: 50, sm: 60, md: 70 },
@@ -101,78 +187,173 @@ const ProfileCard = () => {
               />
               <Box>
                 <Typography variant="h6" fontWeight="bold" fontSize={{ xs: '1rem', sm: '1.25rem', md: '1.5rem' }}>
-                  Naveen Sandaru
-                </Typography>
-                <Typography variant="body2" color="rgba(255, 255, 255, 0.9)" fontSize={{ xs: '0.8rem', sm: '0.9rem', md: '1rem' }}>
-                  navee@gmail.com
+                  {ID}
                 </Typography>
               </Box>
-              <IconButton
-                sx={{
-                  color: 'white',
-                  position: 'absolute',
-                  top: 10,
-                  right: 10,
-                }}
-                aria-label="edit profile"
-              >
-                <EditIcon />
-              </IconButton>
             </Box>
 
             {/* Centered Input Fields */}
-            <Box sx={{ padding: { xs: 5, sm: 5, md: 2 }, pb: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              {['ID No', 'Faculty', 'Department', 'Mobile'].map((label, index) => (
-                <TextField
-                  key={index}
-                  name={label.toLowerCase().replace(" ", "")} // Dynamically set the name attribute
-                  label={label}
-                  variant="outlined"
-                  fullWidth
-                  value={formData[label.toLowerCase().replace(" ", "")]} // Set value from state
-                  onChange={handleChange} // Handle change
-                  InputProps={{
-                    style: { color: 'white' },
-                    disableUnderline: true,
-                  }}
-                  sx={{
-                    mb: 2,
-                    width: { xs: '100%', sm: '80%', md: '70%', lg: '60%' }, // Responsive width
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                        borderColor: 'primary.main',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(255, 255, 255, 0.8)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#FF8C00',
-                      },
+            <Box
+              sx={{
+                padding: { xs: 5, sm: 5, md: 2 },
+                pb: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              {/* Name Field */}
+              <TextField
+                name="username"
+                label="Name"
+                variant="outlined"
+                fullWidth
+                value={formData.username}
+                onChange={handleChange}
+                InputProps={{
+                  style: { color: 'white' },
+                  disableUnderline: true,
+                }}
+                sx={{
+                  mb: 2,
+                  width: { xs: '100%', sm: '80%', md: '70%', lg: '60%' },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'primary.main',
                     },
-                    '& .MuiInputLabel-root': {
-                      color: 'rgba(255, 255, 255, 0.7)',
+                    '&:hover fieldset': {
+                      borderColor: 'rgba(255, 255, 255, 0.8)',
                     },
-                    input: { color: 'white' },
-                  }}
-                />
-              ))}
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#FF8C00',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  },
+                  input: { color: 'white' },
+                }}
+              />
+
+              {/* Email Field */}
+              <TextField
+                name="email"
+                label="Email"
+                variant="outlined"
+                fullWidth
+                value={formData.email}
+                onChange={handleChange}
+                InputProps={{
+                  style: { color: 'white' },
+                  disableUnderline: true,
+                }}
+                sx={{
+                  mb: 2,
+                  width: { xs: '100%', sm: '80%', md: '70%', lg: '60%' },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'rgba(255, 255, 255, 0.8)',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#FF8C00',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  },
+                  input: { color: 'white' },
+                }}
+              />
+
+              {/* Phone Number Field */}
+              <TextField
+                name="phone_number"
+                label="Phone Number"
+                variant="outlined"
+                type='number'
+                fullWidth
+                value={formData.phone_number}
+                onChange={handleChange}
+                InputProps={{
+                  style: { color: 'white' },
+                  disableUnderline: true,
+                }}
+                sx={{
+                  mb: 2,
+                  width: { xs: '100%', sm: '80%', md: '70%', lg: '60%' },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'rgba(255, 255, 255, 0.8)',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#FF8C00',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  },
+                  input: { color: 'white' },
+                }}
+              />
+
+              {/* Password Field */}
+              <TextField
+                name="password"
+                type="password"
+                label="Password"
+                variant="outlined"
+                fullWidth
+                value={formData.password}
+                onChange={handleChange}
+                InputProps={{
+                  style: { color: 'white' },
+                  disableUnderline: true,
+                }}
+                sx={{
+                  mb: 2,
+                  width: { xs: '100%', sm: '80%', md: '70%', lg: '60%' },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'rgba(255, 255, 255, 0.8)',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#FF8C00',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  },
+                  input: { color: 'white' },
+                }}
+              />
+
               {/* Centered Edit Button for Mobile and Tablet */}
               <Box
                 sx={{
                   width: '100%',
                   display: 'flex',
-                  justifyContent: { xs: 'center', sm: 'center', md: 'flex-end' }, // Center for xs and sm, right-aligned for md and lg
+                  justifyContent: { xs: 'center', sm: 'center', md: 'flex-end' },
                   mt: 2,
                 }}
               >
                 <Button
                   variant="contained"
-                  size="small" // Make the button small
+                  onClick={handleSave}
+                  size="small"
                   sx={{
                     backgroundColor: 'primary.main',
                     color: 'secondary.main',
                     ':hover': { backgroundColor: '#FF7A00' },
-                    width: { xs: 'auto', sm: 'auto' }, // Full width on xs, auto on larger screens
+                    width: { xs: 'auto', sm: 'auto' },
                     fontSize: { xs: '0.875rem', sm: '1rem' },
                   }}
                 >
@@ -183,6 +364,13 @@ const ProfileCard = () => {
           </Box>
         </Box>
       </Layout>
+      <Popup
+        open={popupOpen}
+        onClose={() => setPopupOpen(false)}
+        message={popupMessage}
+        type={popupType}
+        onConfirm={popupCallback}
+      />
     </>
   );
 };

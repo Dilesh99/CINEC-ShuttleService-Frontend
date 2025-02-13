@@ -100,7 +100,7 @@ export const StuMethods = {
         }
     },
 
-    updateStudent: async function (studentsID, username, email, phone_number, password) {
+    updateStudent: async function (studentsID, username, email, phone_number, password, paymentStatus) {
         try {
             const retrievedData = await authMethods.refreshToken();
             const accessToken = retrievedData.accessToken;
@@ -111,7 +111,7 @@ export const StuMethods = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`
                 },
-                body: JSON.stringify({ studentsID, username, email, phone_number, password })
+                body: JSON.stringify({ studentsID, username, email, phone_number, password, paymentStatus })
             });
 
             if (!response.ok) {

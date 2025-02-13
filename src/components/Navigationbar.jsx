@@ -44,7 +44,7 @@ const Navigationbar = () => {
   // Example logic to disable specific buttons
   const isBookingDisabled = false; // Set to true to disable the "BOOKING" button
   const isPaymentDisabled = false; // Set to true to disable the "PAYMENT" button
-  const isProfileDisabled = true; // Set to true to disable the "Profile" button
+  const isProfileDisabled = false; // Set to true to disable the "Profile" button
 
   return (
     <AppBar position="fixed" sx={{ backgroundColor: 'primary.light', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -177,7 +177,7 @@ const Navigationbar = () => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                <Avatar src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu

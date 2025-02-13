@@ -100,7 +100,7 @@ export const StaffMethods = {
         }
     },
 
-    updateStaff: async function (staffID, username, email, phone_number, password) {
+    updateStaff: async function (staffID, username, email, phone_number, password, paymentStatus) {
         try {
             const retrievedData = await authMethods.refreshToken();
             const accessToken = retrievedData.accessToken;
@@ -111,7 +111,7 @@ export const StaffMethods = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`
                 },
-                body: JSON.stringify({ staffID, username, email, phone_number, password })
+                body: JSON.stringify({ staffID, username, email, phone_number, password, paymentStatus })
             });
 
             if (!response.ok) {
