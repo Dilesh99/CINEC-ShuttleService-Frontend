@@ -24,7 +24,7 @@ import Sta from './pages/Staff';
 import Shu from './pages/Shuttles';
 import Inco from './pages/Income';
 import Dri from './pages/Driver';
-import AdminLogin from './pages/AdminLogin';
+import QRScanner from './pages/QRScanner';
 
 
 
@@ -81,7 +81,8 @@ function App() {
         <Route path='/staff' element={<Sta/>} ></Route>
         <Route path='/shuttles' element={<Shu/>} ></Route>
         <Route path='/income' element={<Inco/>} ></Route>
-        <Route path='/driver' element={<Dri/>} ></Route>     
+        <Route path='/driver' element={<Dri/>} ></Route> 
+        <Route path='/qrscanner' element={<QRScanner/>} ></Route>    
         </Routes>
       </BrowserRouter>
      </ThemeProvider>

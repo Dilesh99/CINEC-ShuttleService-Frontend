@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Box, CssBaseline } from "@mui/material";
+import { Box, CssBaseline, Button } from "@mui/material";
 import CINEClogo from "./../assets/cinec.png";
 import BackgroundImage from "/src/assets/bg5.jpg";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ export default function Payment() {
     const date = new Date();
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    
+
     return {
       firstDay: firstDay.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
       lastDay: lastDay.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -35,9 +35,9 @@ export default function Payment() {
       hasRun.current = true;
       const initialize = async () => {
         try {
-          const {authId, role} = await handleAuth(); // Get ID from handleAuth
+          const { authId, role } = await handleAuth(); // Get ID from handleAuth
           if (!authId) return;
-      
+
           const person = await getPerson(authId, role); // Pass authId directly
           if (person?.paymentStatus) {
             const { firstDay, lastDay } = getMonthDates();
@@ -68,7 +68,7 @@ export default function Payment() {
     if (res?.accessToken && res.ID && res.role) {
       setID(res.ID);
       setRole(res.role);
-      return {authId: res.ID, role: res.role}; // Return the ID
+      return { authId: res.ID, role: res.role }; // Return the ID
     } else {
       navigate("/");
       return null;
@@ -77,10 +77,10 @@ export default function Payment() {
 
   const getPerson = async (id, role) => {
     let res = null;
-    if(role == "Student"){
+    if (role == "Student") {
       res = await StuMethods.getStudent(id);
     }
-    else if(role == "Staff"){
+    else if (role == "Staff") {
       res = await StaffMethods.getStaff(id);
     }
     if (res) {
@@ -142,6 +142,10 @@ export default function Payment() {
     };
   };
 
+  const handleQRScanner = () => {
+    navigate("/qrscanner");
+  };
+
   return (
     <Layout>
       <CssBaseline />
@@ -170,6 +174,24 @@ export default function Payment() {
             style={{ width: "100%", height: "auto" }}
           />
         </Box>
+        <Button
+          onClick={handleQRScanner}
+          variant="contained"
+          sx={{
+            mt: 2,
+            backgroundColor: "#05183A",
+            color: "#fff",
+            fontWeight: "bold",
+            borderRadius: "8px",
+            px: 3,
+            py: 1,
+            "&:hover": {
+              backgroundColor: "#193D61",
+            },
+          }}
+        >
+          Scan QR Code
+        </Button>
       </Box>
     </Layout>
   );
