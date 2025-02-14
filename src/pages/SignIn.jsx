@@ -84,9 +84,9 @@ const SignIn = () => {
     }
 
     const handleResetPassword = async () => {
-    if (!window.confirm("Do you really want to reset your password?")){
-        return;
-    }
+        if (!window.confirm("Do you really want to reset your password?")) {
+            return;
+        }
         selectPerson();
         setIsResettingPassword(true);
         setError('');
@@ -158,6 +158,9 @@ const SignIn = () => {
         else if (ID[0] == "a") {
             person = 'Admin';
         }
+        else if (ID[0] == "C") {
+            person = 'Cashier';
+        }
         else {
             person = 'Invalid';
         }
@@ -209,6 +212,16 @@ const SignIn = () => {
                         body: JSON.stringify({ adminID, password, role: "Admin", keepLogged: rememberMe })
                     });
                     break;
+                case 'Cashier':
+                    var cashierID = ID;
+                    response = await fetch(`${backEndURL}/sendCashierLogins`, {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ cashierID, password, role: "Cashier", keepLogged: rememberMe })
+                    });
+                    break;
                 default:
                     setError("Invalid Login");
                     break;
@@ -238,6 +251,9 @@ const SignIn = () => {
                         window.location.href = `/shuttleService/${driverID}`;
                     } else if (person === "Admin") {
                         window.location.href = "/admindashboard";
+                    }
+                    else if (person === "Cashier") {
+                        window.location.href = "/students";
                     }
                 });
             } else {
