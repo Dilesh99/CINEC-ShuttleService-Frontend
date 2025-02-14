@@ -5,7 +5,7 @@ export default function QRScanner() {
   const videoRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
+  /*useEffect(() => {
     const codeReader = new BrowserQRCodeReader();
 
     const setupScanner = async () => {
@@ -60,17 +60,18 @@ export default function QRScanner() {
         tracks.forEach(track => track.stop());
       }
     };
-  }, []);
+  }, []);*/
 
   return (
     <div>
       <video
-        ref={videoRef}
+        //ref={videoRef}
         style={{ width: '100%', maxWidth: '600px' }}
         playsInline
         autoPlay
       />
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      {/*errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>*/}
+      <button onClick={() => {}}>Back</button>
     </div>
   );
 }
