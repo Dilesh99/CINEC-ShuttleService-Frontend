@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserQRCodeReader } from '@zxing/browser';
+import { Box, Button, CssBaseline, Typography } from '@mui/material';
+import BackgroundImage from "/src/assets/bg5.jpg";
+import Layout from '../components/Layout';
+
 
 export default function QRScanner() {
   const videoRef = useRef(null);
@@ -63,15 +67,88 @@ export default function QRScanner() {
   }, []);*/
 
   return (
-    <div>
-      <video
-        //ref={videoRef}
-        style={{ width: '100%', maxWidth: '600px' }}
-        playsInline
-        autoPlay
-      />
-      {/*errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>*/}
-      <button onClick={() => {}}>Back</button>
-    </div>
+    <>
+    <Layout>
+    <CssBaseline />
+    <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                minHeight: "100vh",
+                width: "100vw", // Ensures full viewport width
+                backgroundImage: `url(${BackgroundImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                margin: 0,
+                padding: 4,
+                overflow: "hidden", // Prevent scrollbars if content overflows
+              }}
+            >
+      <Box
+        sx={{
+          bgcolor: 'rgba(255, 255, 255, 0.3)',
+          position: 'relative',
+          width: '100%',
+          maxWidth: '400px',
+          aspectRatio: '1',
+          border: '10px solid rgba(255, 255, 255, 0.3)',
+          boxShadow: '0 0 15px rgba(0, 0, 0, 0.5)',
+          borderRadius: '20px',
+          overflow: 'hidden',
+        }}
+      >
+        
+        
+        <video
+          ref={videoRef}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+          playsInline
+          autoPlay
+        />
+        
+      </Box>
+      <Button
+         
+          variant="contained"
+          sx={{
+          // onClick: () => {  window.location.href = "/payment"; },
+            mt: 2,
+            backgroundColor: "#05183A",
+            color: "#fff",
+            fontWeight: "bold",
+            borderRadius: "8px",
+            px: 3,
+            py: 1,
+            "&:hover": {
+              backgroundColor: "#193D61",
+            },
+          }}
+        >
+          Back
+        </Button>
+        
+
+      {errorMessage && (
+        <Typography
+          sx={{
+            color: 'red',
+            marginTop: '10px',
+            textAlign: 'center',
+          }}
+        >
+          {errorMessage}
+        </Typography>
+      )}
+    </Box>
+    </Layout>
+    </>
   );
 }
