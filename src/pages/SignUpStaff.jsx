@@ -33,7 +33,7 @@ const SignUp2 = () => {
   const [uploadIDPopupOpen, setUploadIDPopupOpen] = useState(false); // State for the new popup
   const fileInputRef = useRef(null);
 
-  const examplePhoto = { ExampleID };
+  const examplePhoto = ExampleID;
 
   const handleUploadButtonClick = () => {
     setUploadIDPopupOpen(true);

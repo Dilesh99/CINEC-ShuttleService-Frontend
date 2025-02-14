@@ -25,7 +25,7 @@ const SignUp = () => {
     const [uploadIDPopupOpen, setUploadIDPopupOpen] = useState(false); // State for the new popup
     const fileInputRef = useRef(null);
 
-    const examplePhoto = {ExampleID};
+    const examplePhoto = ExampleID;
 
     const handleUploadButtonClick = () => {
         setUploadIDPopupOpen(true);
@@ -33,7 +33,7 @@ const SignUp = () => {
 
     const handlePopupOkClick = () => {
         setUploadIDPopupOpen(false);
-        fileInputRef.current.click(); // Trigger the file input
+        fileInputRef.current.click();
     };
 
     const [popupOpen, setPopupOpen] = useState(false);
@@ -371,7 +371,7 @@ const SignUp = () => {
                                     }} />
                             </Box>
 
-                            <Box // conform password field
+                            <Box // confirm password field
                                 component="form"
                                 sx={{
                                     '& > :not(style)': {
@@ -381,7 +381,7 @@ const SignUp = () => {
                                         mb: { xs: 0.5, sm: 1, md: 1, lg: 1.5 },
                                     }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 }} noValidate autoComplete="off">
-                                <TextField id="outlined-basic" label="" variant="outlined" type={showsecondPassword ? "text" : "password"} placeholder="Conform password"
+                                <TextField id="outlined-basic" label="" variant="outlined" type={showsecondPassword ? "text" : "password"} placeholder="Confirm password"
                                     onChange={
                                         (e) => setSecondPassword(e.target.value)}
                                     InputProps={{

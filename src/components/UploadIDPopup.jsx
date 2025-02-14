@@ -11,7 +11,7 @@ const UploadIDPopup = ({ open, onClose, message, examplePhoto }) => {
           <img
             src={examplePhoto}
             alt="Example Campus ID"
-            style={{ width: '50px', height: '30px', marginTop: '10px', borderRadius: '8px' }}
+            style={{ width: '400px', height: '200px', marginTop: '10px', borderRadius: '8px' }}
           />
         )}
       </DialogContent>
