@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserQRCodeReader } from '@zxing/browser';
-import Layout from '../components/Layout';
 
 export default function QRScanner() {
   const videoRef = useRef(null);
@@ -64,16 +63,14 @@ export default function QRScanner() {
   }, []);
 
   return (
-    <Layout>
-      <div>
-        <video
-          ref={videoRef}
-          style={{ width: '100%', maxWidth: '600px' }}
-          playsInline
-          autoPlay
-        />
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      </div>
-    </Layout>
+    <div>
+      <video
+        ref={videoRef}
+        style={{ width: '100%', maxWidth: '600px' }}
+        playsInline
+        autoPlay
+      />
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+    </div>
   );
 }
