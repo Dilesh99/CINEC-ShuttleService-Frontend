@@ -19,7 +19,7 @@ const Popup = ({ open, onClose, message, type = 'info', onConfirm }) => {
   const getColor = () => {
     switch (type) {
       case 'success':
-        return { main: '#002147', light: '#D4790E' };
+        return { main: '#4CAF50', light: '#E8F5E9' };
       case 'error':
         return { main: '#F44336', light: '#FFEBEE' };
       default:
