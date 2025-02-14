@@ -26,7 +26,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField
+  TextField,
 } from '@mui/material';
 import {
   Menu,
@@ -36,11 +36,11 @@ import {
   AccountBalanceWallet,
   Person,
   Edit,
-  Delete
+  Delete,
 } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import cinecLogo from "/src/assets/cinec.png";
+import cinecLogo from '/src/assets/cinec.png';
 import { useNavigate } from 'react-router-dom';
 
 import { StuMethods } from '../backend/StuMethods';
@@ -49,6 +49,7 @@ import { authMethods } from '../backend/authMethods';
 const St = () => {
   const navigate = useNavigate();
   let ID = null;
+  const [role, setRole] = useState(''); // Store role in state
   const hasRun = useRef(false);
 
   // Store the students list here.
@@ -65,10 +66,11 @@ const St = () => {
   // Check if the user is authenticated and has the Admin role.
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID && res.role === "Admin") {
+    if (res && res.accessToken && res.ID && (res.role === 'Admin' || res.role === 'Cashier')) {
       ID = res.ID;
+      setRole(res.role); // Set the role in state
     } else {
-      navigate("/");
+      navigate('/');
     }
   };
 
@@ -87,7 +89,7 @@ const St = () => {
   const deleteStudent = async (studentsID) => {
     try {
       await StuMethods.deleteStudent(studentsID);
-      setStudents(prev => prev.filter(student => student.studentsID !== studentsID));
+      setStudents((prev) => prev.filter((student) => student.studentsID !== studentsID));
     } catch (error) {
       console.error(error);
     }
@@ -98,8 +100,8 @@ const St = () => {
     try {
       await StuMethods.updateStudent(studentsID, username, email, phone_number, password);
       // Update the student’s data in state.
-      setStudents(prev =>
-        prev.map(student =>
+      setStudents((prev) =>
+        prev.map((student) =>
           student.studentsID === studentsID
             ? { ...student, username, email, phone_number }
             : student
@@ -114,8 +116,8 @@ const St = () => {
   const makeStudentPaid = async (studentsID) => {
     try {
       await StuMethods.makeStudentPaid(studentsID);
-      setStudents(prev =>
-        prev.map(student =>
+      setStudents((prev) =>
+        prev.map((student) =>
           student.studentsID === studentsID ? { ...student, paymentStatus: true } : student
         )
       );
@@ -127,8 +129,8 @@ const St = () => {
   const makeStudentUnpaid = async (studentsID) => {
     try {
       await StuMethods.makeStudentUnpaid(studentsID);
-      setStudents(prev =>
-        prev.map(student =>
+      setStudents((prev) =>
+        prev.map((student) =>
           student.studentsID === studentsID ? { ...student, paymentStatus: false } : student
         )
       );
@@ -144,7 +146,7 @@ const St = () => {
 
   return (
     <div style={{ display: 'flex' }}>
-      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
+      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} role={role} />
       <div style={{ flexGrow: 1 }}>
         <Header handleDrawerToggle={handleDrawerToggle} />
         <MainContent
@@ -154,13 +156,14 @@ const St = () => {
           makeStudentPaid={makeStudentPaid}
           makeStudentUnpaid={makeStudentUnpaid}
           refreshStudents={fetchAllStudents}
+          role={role} // Pass the role to MainContent
         />
       </div>
     </div>
   );
 };
 
-const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
+const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -170,6 +173,20 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
     setSelectedIndex(index);
     navigate(route);
   };
+
+  // Define sidebar items based on role
+  const sidebarItems =
+    role === 'Cashier'
+      ? [
+          { text: 'Students', route: '/students' },
+          { text: 'Staff', route: '/staff' },
+        ]
+      : [
+          { text: 'Dashboard', route: '/admindashboard' },
+          { text: 'Students', route: '/students' },
+          { text: 'Staff', route: '/staff' },
+          { text: 'Shuttles & Drivers', route: '/shuttles' },
+        ];
 
   const drawerContent = (
     <Box
@@ -183,12 +200,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
         <img src={cinecLogo} alt="logo" width={60} height={60} />
       </div>
       <List>
-        {[
-          { text: 'Dashboard', route: '/admindashboard' },
-          { text: 'Students', route: '/students' },
-          { text: 'Staff', route: '/staff' },
-          { text: 'Shuttles & Drivers', route: '/shuttles' },
-        ].map((item, index) => (
+        {sidebarItems.map((item, index) => (
           <ListItem
             button
             key={item.text}
@@ -203,13 +215,13 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
             }}
           >
             <ListItemIcon sx={{ color: selectedIndex === index ? 'black' : 'inherit' }}>
-              {index === 0 ? (
+              {item.text === 'Dashboard' ? (
                 <People />
-              ) : index === 1 ? (
+              ) : item.text === 'Students' ? (
                 <Person />
-              ) : index === 2 ? (
+              ) : item.text === 'Staff' ? (
                 <People />
-              ) : index === 3 ? (
+              ) : item.text === 'Shuttles & Drivers' ? (
                 <DirectionsBus />
               ) : (
                 <AccountBalanceWallet />
@@ -319,7 +331,8 @@ const MainContent = ({
   deleteStudent,
   makeStudentPaid,
   makeStudentUnpaid,
-  refreshStudents
+  refreshStudents,
+  role, // Receive the role prop
 }) => {
   return (
     <div style={{ padding: '16px' }}>
@@ -332,6 +345,7 @@ const MainContent = ({
             makeStudentPaid={makeStudentPaid}
             makeStudentUnpaid={makeStudentUnpaid}
             refreshStudents={refreshStudents}
+            role={role} // Pass the role to RecentPayments
           />
         </Grid>
       </Grid>
@@ -344,7 +358,8 @@ const RecentPayments = ({
   updateStudent,
   deleteStudent,
   makeStudentPaid,
-  makeStudentUnpaid
+  makeStudentUnpaid,
+  role, // Receive the role prop
 }) => {
   // This state controls which student (if any) is being edited.
   const [editingStudent, setEditingStudent] = useState(null);
@@ -358,13 +373,13 @@ const RecentPayments = ({
   };
 
   const handleDelete = (studentsID) => {
-    if (window.confirm("Are you sure you want to delete this student?")) {
+    if (window.confirm('Are you sure you want to delete this student?')) {
       deleteStudent(studentsID);
     }
   };
 
   return (
-    <Paper sx={{ padding: "16px", boxShadow: 3 }}>
+    <Paper sx={{ padding: '16px', boxShadow: 3 }}>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Students
       </Typography>
@@ -372,17 +387,17 @@ const RecentPayments = ({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Phone No.</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Student ID</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Paid</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Phone No.</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Student ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Paid</TableCell>
+              {role === 'Admin' && <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
             {students && students.length > 0 ? (
-              students.map(student => (
+              students.map((student) => (
                 <TableRow key={student.studentsID}>
                   <TableCell>{student.username}</TableCell>
                   <TableCell>{student.email}</TableCell>
@@ -394,16 +409,18 @@ const RecentPayments = ({
                       onChange={() => handlePaymentToggle(student)}
                       color="primary"
                     />
-                    {student.paymentStatus ? "Paid" : "Not Paid"}
+                    {student.paymentStatus ? 'Paid' : 'Not Paid'}
                   </TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => setEditingStudent(student)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleDelete(student.studentsID)}>
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
+                  {role === 'Admin' && (
+                    <TableCell>
+                      <IconButton onClick={() => setEditingStudent(student)}>
+                        <Edit />
+                      </IconButton>
+                      <IconButton onClick={() => handleDelete(student.studentsID)}>
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             ) : (
@@ -460,7 +477,7 @@ const EditStudentDialog = ({ open, onClose, student, onSave }) => {
   }, [student]);
 
   const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSave = () => {
@@ -515,7 +532,9 @@ const EditStudentDialog = ({ open, onClose, student, onSave }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave} variant="contained">Save</Button>
+        <Button onClick={handleSave} variant="contained">
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );
