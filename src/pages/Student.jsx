@@ -185,7 +185,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
           { text: 'Dashboard', route: '/admindashboard' },
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
-          { text: 'Shuttles & Drivers', route: '/shuttles' },
+          { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
         ];
 
   const drawerContent = (
@@ -221,7 +221,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
                 <Person />
               ) : item.text === 'Staff' ? (
                 <People />
-              ) : item.text === 'Shuttles & Drivers' ? (
+              ) : item.text === 'Cashiers, Shuttles & Drivers' ? (
                 <DirectionsBus />
               ) : (
                 <AccountBalanceWallet />

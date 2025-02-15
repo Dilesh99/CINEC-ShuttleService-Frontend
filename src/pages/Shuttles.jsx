@@ -48,6 +48,7 @@ import cinecLogo from "/src/assets/cinec.png";
 
 import { LocationMethods } from '../backend/LocationMethods';
 import { DriverMethods } from '../backend/DriverMethods';
+import { CashierMethods } from '../backend/CashierMethods';
 import { authMethods } from '../backend/authMethods';
 
 const Shu = () => {
@@ -57,6 +58,10 @@ const Shu = () => {
 
   // Error state for displaying error messages gracefully
   const [errorMessage, setErrorMessage] = useState('');
+  const [shuttles, setShuttles] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [cashiers, setCashiers] = useState([]);
+
   const handleCloseError = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -64,15 +69,13 @@ const Shu = () => {
     setErrorMessage('');
   };
 
-  const [shuttles, setShuttles] = useState([]);
-  const [drivers, setDrivers] = useState([]);
-
   useEffect(() => {
     if (!hasRun.current) {
       hasRun.current = true;
       handleAuth();
       fetchAllShuttles();
       fetchAllDrivers();
+      fetchAllCashiers();
     }
   }, []);
 
@@ -178,6 +181,49 @@ const Shu = () => {
     }
   };
 
+  const fetchAllCashiers = async () => {
+    try {
+      const cashiersData = await CashierMethods.getAllCashier();
+      setCashiers(cashiersData);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Failed to fetch cashiers.");
+    }
+  };
+
+  // Add a new cashier
+  const addCashier = async (cashierID, username, email, phone_number, password) => {
+    try {
+      await CashierMethods.updateCashier(cashierID, username, email, phone_number, password);
+      fetchAllCashiers();
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Failed to add cashier.");
+    }
+  };
+
+  // Update an existing cashier
+  const updateCashier = async (cashierID, username, email, phone_number, password) => {
+    try {
+      await CashierMethods.updateCashier(cashierID, username, email, phone_number, password);
+      fetchAllCashiers();
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Failed to update cashier.");
+    }
+  };
+
+  // Delete a cashier
+  const deleteCashier = async (cashierID) => {
+    try {
+      await CashierMethods.deleteCashier(cashierID);
+      setCashiers(prev => prev.filter(c => c.cashierID !== cashierID));
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Failed to delete cashier.");
+    }
+  };
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -192,14 +238,19 @@ const Shu = () => {
           <MainContent
             shuttles={shuttles}
             drivers={drivers}
+            cashiers={cashiers} // Pass cashiers to MainContent
             addShuttle={addShuttle}
             updateShuttle={updateShuttle}
             deleteShuttle={deleteShuttle}
             addDriver={addDriver}
             updateDriver={updateDriver}
             deleteDriver={deleteDriver}
+            addCashier={addCashier} // Pass cashier methods
+            updateCashier={updateCashier}
+            deleteCashier={deleteCashier}
             refreshShuttles={fetchAllShuttles}
             refreshDrivers={fetchAllDrivers}
+            refreshCashiers={fetchAllCashiers} // Pass refresh function
           />
         </div>
       </div>
@@ -240,7 +291,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Dashboard', route: '/admindashboard' },
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
-          { text: 'Shuttles & Drivers', route: '/shuttles' },
+          { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
         ].map((item, index) => (
           <ListItem
             button
@@ -360,14 +411,19 @@ const Header = ({ handleDrawerToggle }) => {
 const MainContent = ({
   shuttles,
   drivers,
+  cashiers,
   addShuttle,
   updateShuttle,
   deleteShuttle,
   addDriver,
   updateDriver,
   deleteDriver,
+  addCashier,
+  updateCashier,
+  deleteCashier,
   refreshShuttles,
   refreshDrivers,
+  refreshCashiers,
 }) => {
   return (
     <div style={{ padding: '16px' }}>
@@ -389,6 +445,14 @@ const MainContent = ({
             updateDriver={updateDriver}
             deleteDriver={deleteDriver}
             refreshDrivers={refreshDrivers}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <CashiersTable
+            cashiers={cashiers}
+            addCashier={addCashier}
+            updateCashier={updateCashier}
+            deleteCashier={deleteCashier}
           />
         </Grid>
       </Grid>
@@ -545,6 +609,86 @@ const DriversTable = ({ drivers, shuttles, addDriver, updateDriver, deleteDriver
           onSave={(driverID, shuttleID, username, phone_number, password) => {
             updateDriver(driverID, shuttleID, username, phone_number, password);
             setEditingDriver(null);
+          }}
+        />
+      )}
+    </Paper>
+  );
+};
+
+const CashiersTable = ({ cashiers, addCashier, updateCashier, deleteCashier }) => {
+  const [editingCashier, setEditingCashier] = useState(null);
+  const [addingCashier, setAddingCashier] = useState(false);
+
+  const handleDelete = (cashierID) => {
+    if (window.confirm("Are you sure you want to delete this cashier?")) {
+      deleteCashier(cashierID);
+    }
+  };
+
+  return (
+    <Paper sx={{ padding: "16px", boxShadow: 3, marginBottom: 2 }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h6">Cashiers</Typography>
+        <Button variant="contained" onClick={() => setAddingCashier(true)}>
+          Add Cashier
+        </Button>
+      </Box>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Cashier ID</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {cashiers && cashiers.length > 0 ? (
+              cashiers.map((cashier) => (
+                <TableRow key={cashier.cashierID}>
+                  <TableCell>{cashier.cashierID}</TableCell>
+                  <TableCell>{cashier.username}</TableCell>
+                  <TableCell>{cashier.email}</TableCell>
+                  <TableCell>{cashier.phone_number}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => setEditingCashier(cashier)}>
+                      <Edit />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(cashier.cashierID)}>
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  No cashiers found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <AddCashierDialog
+        open={addingCashier}
+        onClose={() => setAddingCashier(false)}
+        onSave={(cashierID, username, email, phone_number, password) => {
+          addCashier(cashierID, username, email, phone_number, password);
+          setAddingCashier(false);
+        }}
+      />
+      {editingCashier && (
+        <EditCashierDialog
+          open={Boolean(editingCashier)}
+          cashier={editingCashier}
+          onClose={() => setEditingCashier(null)}
+          onSave={(cashierID, username, email, phone_number, password) => {
+            updateCashier(cashierID, username, email, phone_number, password);
+            setEditingCashier(null);
           }}
         />
       )}
@@ -776,6 +920,134 @@ const EditDriverDialog = ({ open, onClose, driver, shuttles, onSave }) => {
           onChange={(e) => setUsername(e.target.value)}
         />
         {/* Phone Number */}
+        <TextField
+          margin="dense"
+          label="Phone Number"
+          fullWidth
+          value={phone_number}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSave} variant="contained">
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+const AddCashierDialog = ({ open, onClose, onSave }) => {
+  const [cashierID, setCashierID] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone_number, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSave = () => {
+    onSave(cashierID, username, email, phone_number, password);
+    setCashierID('');
+    setUsername('');
+    setEmail('');
+    setPhoneNumber('');
+    setPassword('');
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Add New Cashier</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="Cashier ID"
+          fullWidth
+          value={cashierID}
+          onChange={(e) => setCashierID(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Username"
+          fullWidth
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Email"
+          fullWidth
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Phone Number"
+          fullWidth
+          value={phone_number}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Password"
+          type="password"
+          fullWidth
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSave} variant="contained">
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+const EditCashierDialog = ({ open, onClose, cashier, onSave }) => {
+  const [username, setUsername] = useState(cashier?.username || '');
+  const [email, setEmail] = useState(cashier?.email || '');
+  const [phone_number, setPhoneNumber] = useState(cashier?.phone_number || '');
+
+  useEffect(() => {
+    if (cashier) {
+      setUsername(cashier.username);
+      setEmail(cashier.email);
+      setPhoneNumber(cashier.phone_number);
+    }
+  }, [cashier]);
+
+  const handleSave = () => {
+    onSave(cashier.cashierID, username, email, phone_number, cashier.password);
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Edit Cashier</DialogTitle>
+      <DialogContent>
+        <TextField
+          margin="dense"
+          label="Cashier ID"
+          fullWidth
+          value={cashier?.cashierID || ''}
+          disabled
+        />
+        <TextField
+          margin="dense"
+          label="Username"
+          fullWidth
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Email"
+          fullWidth
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
         <TextField
           margin="dense"
           label="Phone Number"

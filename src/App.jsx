@@ -25,6 +25,7 @@ import Shu from './pages/Shuttles';
 import Inco from './pages/Income';
 import Dri from './pages/Driver';
 import QRScanner from './pages/QRScanner';
+import TestPage from './pages/testPage';
 
 
 
@@ -56,7 +57,7 @@ function App() {
 
       <BrowserRouter>
         <Routes>
-        <Route index element={<QRScanner/>} ></Route>
+        <Route index element={<SignIn/>} ></Route>
         
         <Route path='/interaction' element={<Interaction/>} ></Route>
         <Route path='/signup' element={<SignUp/>} ></Route>
@@ -82,7 +83,8 @@ function App() {
         <Route path='/shuttles' element={<Shu/>} ></Route>
         <Route path='/income' element={<Inco/>} ></Route>
         <Route path='/driver' element={<Dri/>} ></Route> 
-        <Route path='/qrscanner' element={<QRScanner/>} ></Route>    
+        <Route path='/qrscanner' element={<QRScanner/>} ></Route>
+        <Route path='/testPage' element={<TestPage/>} ></Route> 
         </Routes>
       </BrowserRouter>
      </ThemeProvider>

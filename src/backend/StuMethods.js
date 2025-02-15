@@ -41,7 +41,8 @@ export const StuMethods = {
     getAllStudents: async function () {
         try {
             const data = await authMethods.refreshToken();
-            if (!data || data.role !== "Admin") {
+            console.log(data.role);
+            if (!data || (data.role !== "Admin" && data.role !== "Cashier")) {
                 console.error("Unauthorized access: Admin role required.");
                 return null;
             }

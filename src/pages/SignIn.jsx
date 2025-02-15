@@ -71,6 +71,9 @@ const SignIn = () => {
                     case "Driver":
                         window.location.href = `/shuttleService/${res.ID}`;
                         break;
+                    case "Cashier":
+                        window.location.href = "/students"
+                        break;
                     default:
                         break;
                 }

@@ -26,7 +26,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField
+  TextField,
 } from '@mui/material';
 import {
   Menu,
@@ -36,11 +36,11 @@ import {
   AccountBalanceWallet,
   Person,
   Edit,
-  Delete
+  Delete,
 } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import cinecLogo from "/src/assets/cinec.png";
+import cinecLogo from '/src/assets/cinec.png';
 import { useNavigate } from 'react-router-dom';
 
 import { StaffMethods } from '../backend/StaffMethods';
@@ -49,7 +49,7 @@ import { authMethods } from '../backend/authMethods';
 const St = () => {
   const navigate = useNavigate();
   let ID = null;
-  const [role, setRole] = useState(''); // Add role state
+  const [role, setRole] = useState(''); // Store role in state
   const hasRun = useRef(false);
 
   // Store the staff list here.
@@ -63,14 +63,14 @@ const St = () => {
     }
   }, []);
 
-  // Modified authentication to handle role
+  // Check if the user is authenticated and has the Admin or Cashier role.
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID && (res.role === "Admin" || res.role === "Cashier")) {
+    if (res && res.accessToken && res.ID && (res.role === 'Admin' || res.role === 'Cashier')) {
       ID = res.ID;
       setRole(res.role); // Set the role in state
     } else {
-      navigate("/");
+      navigate('/');
     }
   };
 
@@ -88,7 +88,7 @@ const St = () => {
   const deleteStaff = async (staffID) => {
     try {
       await StaffMethods.deleteStaff(staffID);
-      setStaff(prev => prev.filter(staff => staff.staffID !== staffID));
+      setStaff((prev) => prev.filter((staff) => staff.staffID !== staffID));
     } catch (error) {
       console.error(error);
     }
@@ -98,8 +98,8 @@ const St = () => {
   const updateStaff = async (staffID, username, email, phone_number, password) => {
     try {
       await StaffMethods.updateStaff(staffID, username, email, phone_number, password);
-      setStaff(prev =>
-        prev.map(staff =>
+      setStaff((prev) =>
+        prev.map((staff) =>
           staff.staffID === staffID
             ? { ...staff, username, email, phone_number }
             : staff
@@ -114,8 +114,8 @@ const St = () => {
   const makeStaffPaid = async (staffID) => {
     try {
       await StaffMethods.makeStaffPaid(staffID);
-      setStaff(prev =>
-        prev.map(staff =>
+      setStaff((prev) =>
+        prev.map((staff) =>
           staff.staffID === staffID ? { ...staff, paymentStatus: true } : staff
         )
       );
@@ -127,8 +127,8 @@ const St = () => {
   const makeStaffUnpaid = async (staffID) => {
     try {
       await StaffMethods.makeStaffUnpaid(staffID);
-      setStaff(prev =>
-        prev.map(staff =>
+      setStaff((prev) =>
+        prev.map((staff) =>
           staff.staffID === staffID ? { ...staff, paymentStatus: false } : staff
         )
       );
@@ -172,16 +172,19 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
     navigate(route);
   };
 
-  // Conditionally set sidebar items based on role
-  const sidebarItems = role === 'Cashier' ? [
-    { text: 'Students', route: '/students' },
-    { text: 'Staff', route: '/staff' },
-  ] : [
-    { text: 'Dashboard', route: '/admindashboard' },
-    { text: 'Students', route: '/students' },
-    { text: 'Staff', route: '/staff' },
-    { text: 'Shuttles & Drivers', route: '/shuttles' },
-  ];
+  // Define sidebar items based on role
+  const sidebarItems =
+    role === 'Cashier'
+      ? [
+          { text: 'Students', route: '/students' },
+          { text: 'Staff', route: '/staff' },
+        ]
+      : [
+          { text: 'Dashboard', route: '/admindashboard' },
+          { text: 'Students', route: '/students' },
+          { text: 'Staff', route: '/staff' },
+          { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
+        ];
 
   const drawerContent = (
     <Box
@@ -216,7 +219,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
                 <Person />
               ) : item.text === 'Staff' ? (
                 <People />
-              ) : item.text === 'Shuttles & Drivers' ? (
+              ) : item.text === 'Cashiers, Shuttles & Drivers' ? (
                 <DirectionsBus />
               ) : (
                 <AccountBalanceWallet />
@@ -245,7 +248,6 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
       </Box>
     </Box>
   );
-  
   return (
     <>
       <Drawer
@@ -267,7 +269,59 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
   );
 };
 
-// ... (SearchBar, StyledInputBase, and Header components remain the same)
+const SearchBar = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.black, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.black, 0.25),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: theme.spacing(2),
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: '30%',
+    borderRadius: '25px',
+  },
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  width: '100%',
+  padding: theme.spacing(1, 1, 1, 0),
+  paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+  transition: theme.transitions.create('width'),
+  [theme.breakpoints.up('md')]: {
+    width: '100%',
+  },
+}));
+
+const Header = ({ handleDrawerToggle }) => {
+  return (
+    <AppBar position="static" color="default" elevation={0} sx={{ padding: '8px 16px' }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={handleDrawerToggle}
+          sx={{ display: { sm: 'none' }, mr: 2 }}
+        >
+          <Menu />
+        </IconButton>
+        <Typography variant="h6">Dashboard</Typography>
+        <SearchBar>
+          <StyledInputBase
+            placeholder="Search…"
+            inputProps={{ 'aria-label': 'search' }}
+            startAdornment={<Search sx={{ position: 'absolute', left: '10px' }} />}
+          />
+        </SearchBar>
+      </Toolbar>
+    </AppBar>
+  );
+};
 
 const MainContent = ({
   staff,
@@ -276,7 +330,7 @@ const MainContent = ({
   makeStaffPaid,
   makeStaffUnpaid,
   refreshStaff,
-  role // Receive role prop
+  role, // Receive the role prop
 }) => {
   return (
     <div style={{ padding: '16px' }}>
@@ -303,7 +357,7 @@ const StaffList = ({
   deleteStaff,
   makeStaffPaid,
   makeStaffUnpaid,
-  role // Receive role prop
+  role, // Receive the role prop
 }) => {
   const [editingStaff, setEditingStaff] = useState(null);
 
@@ -316,13 +370,13 @@ const StaffList = ({
   };
 
   const handleDelete = (staffID) => {
-    if (window.confirm("Are you sure you want to delete this staff member?")) {
+    if (window.confirm('Are you sure you want to delete this staff member?')) {
       deleteStaff(staffID);
     }
   };
 
   return (
-    <Paper sx={{ padding: "16px", boxShadow: 3 }}>
+    <Paper sx={{ padding: '16px', boxShadow: 3 }}>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Staff Members
       </Typography>
@@ -330,17 +384,17 @@ const StaffList = ({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Phone No.</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Staff ID</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Paid</TableCell>
-              {role === 'Admin' && <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>}
+              <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Phone No.</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Staff ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Paid</TableCell>
+              {role === 'Admin' && <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
             {staff && staff.length > 0 ? (
-              staff.map(staffMember => (
+              staff.map((staffMember) => (
                 <TableRow key={staffMember.staffID}>
                   <TableCell>{staffMember.username}</TableCell>
                   <TableCell>{staffMember.email}</TableCell>
@@ -352,7 +406,7 @@ const StaffList = ({
                       onChange={() => handlePaymentToggle(staffMember)}
                       color="primary"
                     />
-                    {staffMember.paymentStatus ? "Paid" : "Not Paid"}
+                    {staffMember.paymentStatus ? 'Paid' : 'Not Paid'}
                   </TableCell>
                   {role === 'Admin' && (
                     <TableCell>
@@ -397,6 +451,84 @@ const StaffList = ({
   );
 };
 
-// ... (EditStaffDialog component remains the same)
+const EditStaffDialog = ({ open, onClose, staff, onSave }) => {
+  const [formData, setFormData] = useState({
+    username: staff ? staff.username : '',
+    email: staff ? staff.email : '',
+    phone_number: staff ? staff.phone_number : '',
+  });
+
+  useEffect(() => {
+    if (staff) {
+      setFormData({
+        username: staff.username,
+        email: staff.email,
+        phone_number: staff.phone_number,
+      });
+    }
+  }, [staff]);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSave = () => {
+    onSave(formData);
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Edit Staff Member</DialogTitle>
+      <DialogContent>
+        <TextField
+          margin="dense"
+          label="Staff ID"
+          value={staff ? staff.staffID : ''}
+          fullWidth
+          disabled
+        />
+        <TextField
+          autoFocus
+          margin="dense"
+          name="username"
+          label="Name"
+          value={formData.username}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          name="email"
+          label="Email"
+          value={formData.email}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          name="phone_number"
+          label="Phone Number"
+          value={formData.phone_number}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          label="Password"
+          value={staff ? staff.password : ''}
+          fullWidth
+          disabled
+          type="password"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSave} variant="contained">
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default St;

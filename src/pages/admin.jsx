@@ -130,7 +130,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Dashboard', route: '/admindashboard' },
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
-          { text: 'Shuttles & Drivers', route: '/shuttles' },
+          { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
         ].map((item, index) => (
           <ListItem
             button
