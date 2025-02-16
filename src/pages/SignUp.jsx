@@ -54,7 +54,7 @@ const SignUp = () => {
     const [username, setUsername] = useState('');
     const [studentID, setStudentID] = useState('');
     const [email, setEmail] = useState('');
-    const [phone_number, setPhone_number] = useState('');
+    const [phone_number, setPhone_number] = useState(0);
     const [password, setPassword] = useState('');
     const [secondPassword, setSecondPassword] = useState('');
 
@@ -115,7 +115,7 @@ const SignUp = () => {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ studentsID: studentID, shuttleID: "undefined", username, email, phone_number, password, role: "Student", paymentStatus: false, scannedStatus: false})
+                        body: JSON.stringify({ studentsID: studentID, shuttleID: "undefined", username, email,phone_number: Number(phone_number), password, paymentStatus: false, scannedStatus: false})
                     });
 
                     const updateText = await updateResponse.text();

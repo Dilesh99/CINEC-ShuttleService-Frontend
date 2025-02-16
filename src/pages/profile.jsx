@@ -26,6 +26,8 @@ const ProfileCard = () => {
 
   const [ID, setID] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState(false);
+  const [shuttleID, setShuttleID] = useState(null);
+  const [scannedStatus, setScannedStatus] = useState(null);
 
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -82,6 +84,8 @@ const ProfileCard = () => {
           setPassword(fetchedUser.password);
           setPhoneNumber(fetchedUser.phone_number);
           setPaymentStatus(fetchedUser.paymentStatus);
+          setShuttleID(fetchedUser.shuttleID);
+          setScannedStatus(fetchedUser.scannedStatus);
 
           // Update formData from the *fetched* user object
           setFormData({
@@ -116,11 +120,11 @@ const ProfileCard = () => {
   const handleSave = async () => {
     let res = null;
     if (role == "Student") {
-      res = await StuMethods.updateStudent(ID, formData.username, formData.email, formData.phone_number, formData.password, paymentStatus);
+      res = await StuMethods.updateStudent(ID, shuttleID, formData.username, formData.email, formData.phone_number, formData.password, paymentStatus, scannedStatus);
 
     }
     else if (role == "Staff") {
-      res = await StaffMethods.updateStaff(ID, formData.username, formData.email, formData.phone_number, formData.password, paymentStatus);
+      res = await StaffMethods.updateStaff(ID, shuttleID, formData.username, formData.email, formData.phone_number, formData.password, paymentStatus, scannedStatus);
     }
     if (res) {
       showPopup("Profile updated successfully!", 'info');

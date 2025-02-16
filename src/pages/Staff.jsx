@@ -27,6 +27,8 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import {
   Menu,
@@ -45,14 +47,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { StaffMethods } from '../backend/StaffMethods';
 import { authMethods } from '../backend/authMethods';
+import { LocationMethods } from '../backend/LocationMethods';
 
 const St = () => {
   const navigate = useNavigate();
   let ID = null;
-  const [role, setRole] = useState(''); // Store role in state
+  const [role, setRole] = useState('');
   const hasRun = useRef(false);
 
-  // Store the staff list here.
   const [staff, setStaff] = useState([]);
 
   useEffect(() => {
@@ -63,18 +65,16 @@ const St = () => {
     }
   }, []);
 
-  // Check if the user is authenticated and has the Admin or Cashier role.
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
     if (res && res.accessToken && res.ID && (res.role === 'Admin' || res.role === 'Cashier')) {
       ID = res.ID;
-      setRole(res.role); // Set the role in state
+      setRole(res.role);
     } else {
       navigate('/');
     }
   };
 
-  // Fetch all staff from the backend and store them in state.
   const fetchAllStaff = async () => {
     try {
       const staffData = await StaffMethods.getAllStaff();
@@ -84,7 +84,6 @@ const St = () => {
     }
   };
 
-  // Delete a staff member
   const deleteStaff = async (staffID) => {
     try {
       await StaffMethods.deleteStaff(staffID);
@@ -94,14 +93,13 @@ const St = () => {
     }
   };
 
-  // Update a staff member
-  const updateStaff = async (staffID, username, email, phone_number, password) => {
+  const updateStaff = async (staffID, shuttleID, username, email, phone_number, password, paymentStatus, scannedStatus) => {
     try {
-      await StaffMethods.updateStaff(staffID, username, email, phone_number, password);
+      await StaffMethods.updateStaff(staffID, shuttleID, username, email, phone_number, password, paymentStatus, scannedStatus);
       setStaff((prev) =>
         prev.map((staff) =>
           staff.staffID === staffID
-            ? { ...staff, username, email, phone_number }
+            ? { ...staff, username, email, phone_number, shuttleID }
             : staff
         )
       );
@@ -110,7 +108,6 @@ const St = () => {
     }
   };
 
-  // Toggle payment status
   const makeStaffPaid = async (staffID) => {
     try {
       await StaffMethods.makeStaffPaid(staffID);
@@ -154,7 +151,7 @@ const St = () => {
           makeStaffPaid={makeStaffPaid}
           makeStaffUnpaid={makeStaffUnpaid}
           refreshStaff={fetchAllStaff}
-          role={role} // Pass role to MainContent
+          role={role}
         />
       </div>
     </div>
@@ -172,7 +169,6 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
     navigate(route);
   };
 
-  // Define sidebar items based on role
   const sidebarItems =
     role === 'Cashier'
       ? [
@@ -330,7 +326,7 @@ const MainContent = ({
   makeStaffPaid,
   makeStaffUnpaid,
   refreshStaff,
-  role, // Receive the role prop
+  role,
 }) => {
   return (
     <div style={{ padding: '16px' }}>
@@ -343,7 +339,7 @@ const MainContent = ({
             makeStaffPaid={makeStaffPaid}
             makeStaffUnpaid={makeStaffUnpaid}
             refreshStaff={refreshStaff}
-            role={role} // Pass role to StaffList
+            role={role}
           />
         </Grid>
       </Grid>
@@ -357,9 +353,33 @@ const StaffList = ({
   deleteStaff,
   makeStaffPaid,
   makeStaffUnpaid,
-  role, // Receive the role prop
+  role,
 }) => {
   const [editingStaff, setEditingStaff] = useState(null);
+  const [shuttles, setShuttles] = useState([]);
+
+  useEffect(() => {
+    const fetchShuttles = async () => {
+      const shuttlesData = await LocationMethods.getAllShuttles();
+      if (shuttlesData) {
+        setShuttles(shuttlesData);
+      }
+    };
+    fetchShuttles();
+  }, []);
+
+  const handleShuttleChange = async (staffMember, newShuttleID) => {
+    await updateStaff(
+      staffMember.staffID,
+      newShuttleID,
+      staffMember.username,
+      staffMember.email,
+      staffMember.phone_number,
+      staffMember.password,
+      staffMember.paymentStatus,
+      staffMember.scannedStatus
+    );
+  };
 
   const handlePaymentToggle = (staffMember) => {
     if (staffMember.paymentStatus) {
@@ -388,6 +408,7 @@ const StaffList = ({
               <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Phone No.</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Staff ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Shuttle ID</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Paid</TableCell>
               {role === 'Admin' && <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>}
             </TableRow>
@@ -400,6 +421,19 @@ const StaffList = ({
                   <TableCell>{staffMember.email}</TableCell>
                   <TableCell>{staffMember.phone_number}</TableCell>
                   <TableCell>{staffMember.staffID}</TableCell>
+                  <TableCell>
+                    <Select
+                      value={staffMember.shuttleID || 'undefined'}
+                      onChange={(e) => handleShuttleChange(staffMember, e.target.value)}
+                    >
+                      <MenuItem value="undefined">Undefined</MenuItem>
+                      {shuttles.map((shuttle) => (
+                        <MenuItem key={shuttle.shuttleID} value={shuttle.shuttleID}>
+                          {shuttle.shuttleID}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </TableCell>
                   <TableCell>
                     <Checkbox
                       checked={staffMember.paymentStatus || false}
@@ -422,7 +456,7 @@ const StaffList = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={role === 'Admin' ? 6 : 5} align="center">
+                <TableCell colSpan={role === 'Admin' ? 7 : 6} align="center">
                   No staff members found
                 </TableCell>
               </TableRow>
@@ -438,10 +472,13 @@ const StaffList = ({
           onSave={(data) => {
             updateStaff(
               editingStaff.staffID,
+              editingStaff.shuttleID,
               data.username,
               data.email,
               data.phone_number,
-              editingStaff.password
+              editingStaff.password,
+              editingStaff.paymentStatus,
+              editingStaff.scannedStatus
             );
             setEditingStaff(null);
           }}

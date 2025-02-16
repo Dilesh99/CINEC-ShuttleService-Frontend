@@ -27,6 +27,8 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import {
   Menu,
@@ -45,14 +47,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { StuMethods } from '../backend/StuMethods';
 import { authMethods } from '../backend/authMethods';
+import { LocationMethods } from '../backend/LocationMethods';
 
 const St = () => {
   const navigate = useNavigate();
   let ID = null;
-  const [role, setRole] = useState(''); // Store role in state
+  const [role, setRole] = useState('');
   const hasRun = useRef(false);
 
-  // Store the students list here.
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
@@ -63,29 +65,25 @@ const St = () => {
     }
   }, []);
 
-  // Check if the user is authenticated and has the Admin role.
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
     if (res && res.accessToken && res.ID && (res.role === 'Admin' || res.role === 'Cashier')) {
       ID = res.ID;
-      setRole(res.role); // Set the role in state
+      setRole(res.role);
     } else {
       navigate('/');
     }
   };
 
-  // Fetch all students from the backend and store them in state.
   const fetchAllStudents = async () => {
     try {
       const studentsData = await StuMethods.getAllStudents();
-      // Assume studentsData is an array of student objects.
       setStudents(studentsData);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Delete a student, then remove that student from state.
   const deleteStudent = async (studentsID) => {
     try {
       await StuMethods.deleteStudent(studentsID);
@@ -95,15 +93,13 @@ const St = () => {
     }
   };
 
-  // Update a student (note that studentsID is the primary key and is not changed).
-  const updateStudent = async (studentsID, username, email, phone_number, password) => {
+  const updateStudent = async (studentsID, shuttleID, username, email, phone_number, password, paymentStatus, scannedStatus) => {
     try {
-      await StuMethods.updateStudent(studentsID, username, email, phone_number, password);
-      // Update the student’s data in state.
+      await StuMethods.updateStudent(studentsID, shuttleID, username, email, phone_number, password, paymentStatus, scannedStatus);
       setStudents((prev) =>
         prev.map((student) =>
           student.studentsID === studentsID
-            ? { ...student, username, email, phone_number }
+            ? { ...student, username, email, phone_number, shuttleID }
             : student
         )
       );
@@ -112,7 +108,6 @@ const St = () => {
     }
   };
 
-  // Toggle the student’s payment status.
   const makeStudentPaid = async (studentsID) => {
     try {
       await StuMethods.makeStudentPaid(studentsID);
@@ -156,7 +151,7 @@ const St = () => {
           makeStudentPaid={makeStudentPaid}
           makeStudentUnpaid={makeStudentUnpaid}
           refreshStudents={fetchAllStudents}
-          role={role} // Pass the role to MainContent
+          role={role}
         />
       </div>
     </div>
@@ -174,7 +169,6 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
     navigate(route);
   };
 
-  // Define sidebar items based on role
   const sidebarItems =
     role === 'Cashier'
       ? [
@@ -332,7 +326,7 @@ const MainContent = ({
   makeStudentPaid,
   makeStudentUnpaid,
   refreshStudents,
-  role, // Receive the role prop
+  role,
 }) => {
   return (
     <div style={{ padding: '16px' }}>
@@ -345,7 +339,7 @@ const MainContent = ({
             makeStudentPaid={makeStudentPaid}
             makeStudentUnpaid={makeStudentUnpaid}
             refreshStudents={refreshStudents}
-            role={role} // Pass the role to RecentPayments
+            role={role}
           />
         </Grid>
       </Grid>
@@ -359,10 +353,33 @@ const RecentPayments = ({
   deleteStudent,
   makeStudentPaid,
   makeStudentUnpaid,
-  role, // Receive the role prop
+  role,
 }) => {
-  // This state controls which student (if any) is being edited.
   const [editingStudent, setEditingStudent] = useState(null);
+  const [shuttles, setShuttles] = useState([]);
+
+  useEffect(() => {
+    const fetchShuttles = async () => {
+      const shuttlesData = await LocationMethods.getAllShuttles();
+      if (shuttlesData) {
+        setShuttles(shuttlesData);
+      }
+    };
+    fetchShuttles();
+  }, []);
+
+  const handleShuttleChange = async (student, newShuttleID) => {
+    await updateStudent(
+      student.studentsID,
+      newShuttleID,
+      student.username,
+      student.email,
+      student.phone_number,
+      student.password,
+      student.paymentStatus,
+      student.scannedStatus
+    );
+  };
 
   const handlePaymentToggle = (student) => {
     if (student.paymentStatus) {
@@ -391,6 +408,7 @@ const RecentPayments = ({
               <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Phone No.</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Student ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Shuttle ID</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Paid</TableCell>
               {role === 'Admin' && <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>}
             </TableRow>
@@ -403,6 +421,19 @@ const RecentPayments = ({
                   <TableCell>{student.email}</TableCell>
                   <TableCell>{student.phone_number}</TableCell>
                   <TableCell>{student.studentsID}</TableCell>
+                  <TableCell>
+                    <Select
+                      value={student.shuttleID || 'undefined'}
+                      onChange={(e) => handleShuttleChange(student, e.target.value)}
+                    >
+                      <MenuItem value="undefined">Undefined</MenuItem>
+                      {shuttles.map((shuttle) => (
+                        <MenuItem key={shuttle.shuttleID} value={shuttle.shuttleID}>
+                          {shuttle.shuttleID}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </TableCell>
                   <TableCell>
                     <Checkbox
                       checked={student.paymentStatus || false}
@@ -425,7 +456,7 @@ const RecentPayments = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} align="center">
+                <TableCell colSpan={7} align="center">
                   No students found
                 </TableCell>
               </TableRow>
@@ -433,20 +464,21 @@ const RecentPayments = ({
           </TableBody>
         </Table>
       </TableContainer>
-      {/* Render the edit dialog if a student is being edited */}
       {editingStudent && (
         <EditStudentDialog
           open={Boolean(editingStudent)}
           student={editingStudent}
           onClose={() => setEditingStudent(null)}
           onSave={(data) => {
-            // Call the update function; note that the student ID is not editable.
             updateStudent(
               editingStudent.studentsID,
+              editingStudent.shuttleID,
               data.username,
               data.email,
               data.phone_number,
-              editingStudent.password
+              editingStudent.password,
+              editingStudent.paymentStatus,
+              editingStudent.scannedStatus
             );
             setEditingStudent(null);
           }}
@@ -457,15 +489,12 @@ const RecentPayments = ({
 };
 
 const EditStudentDialog = ({ open, onClose, student, onSave }) => {
-  // Local state to hold the form values.
   const [formData, setFormData] = useState({
     username: student ? student.username : '',
     email: student ? student.email : '',
     phone_number: student ? student.phone_number : '',
   });
 
-  // When the student prop changes (i.e. a new student is being edited),
-  // initialize the form data accordingly.
   useEffect(() => {
     if (student) {
       setFormData({
@@ -481,7 +510,6 @@ const EditStudentDialog = ({ open, onClose, student, onSave }) => {
   };
 
   const handleSave = () => {
-    // Remember: the student ID is not modifiable.
     onSave(formData);
   };
 

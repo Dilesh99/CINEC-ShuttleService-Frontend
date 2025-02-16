@@ -11,6 +11,7 @@ import Layout from "../components/Layout";
 export default function Payment() {
   const navigate = useNavigate();
   const [ID, setID] = useState(null);
+  const [shuttleID, setShuttleID] = useState(null);
   const [role, setRole] = useState("");
   const [paid, setPaid] = useState(false);
   const [userName, setUserName] = useState("");
@@ -43,10 +44,11 @@ export default function Payment() {
             const { firstDay, lastDay } = getMonthDates();
 
             setUserName(person.username);
+            setShuttleID(person.shuttleID);
             setFirstDay(firstDay);
             setLastDay(lastDay);
             setPaid(true);
-            drawPass(person.username, firstDay, lastDay);
+            drawPass(person.username, person.shuttleID, firstDay, lastDay);
           } else {
             drawPass(person.username, "-", "Expired");
           }
@@ -92,7 +94,7 @@ export default function Payment() {
 
   const canvasRef = useRef(null);
 
-  const drawPass = (username, firstDay, lastDay) => {
+  const drawPass = (username, shuttleID, firstDay, lastDay) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -125,18 +127,39 @@ export default function Payment() {
       ctx.fillText("Passenger Name", canvas.width / 2, 120);
       ctx.fillStyle = "#000000";
       ctx.font = "bold 18px Arial";
-      ctx.fillText(username, canvas.width / 2, 150);
+      ctx.fillText(username, canvas.width / 2, 140);
+
+      // Draw line above Shuttle ID
+      ctx.strokeStyle = "#000000"; // Line color
+      ctx.lineWidth = 2; // Line thickness
+      ctx.beginPath();
+      ctx.moveTo(20, 170); // Start at left edge
+      ctx.lineTo(canvas.width - 20, 170); // Draw to right edge
+      ctx.stroke();
+
+      // Shuttle ID
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#666666";
+      ctx.font = "bold 30px Arial";
+      ctx.fillText(shuttleID, canvas.width / 2, 200);
+      ctx.font = "bold 18px Arial";
+
+      // Draw line below Shuttle ID
+      ctx.beginPath();
+      ctx.moveTo(20, 210); // Start at left edge
+      ctx.lineTo(canvas.width - 20, 210); // Draw to right edge
+      ctx.stroke();
 
       // Validity dates
       ctx.textAlign = "left";
       ctx.fillStyle = "#666666";
-      ctx.fillText("Valid From", 20, 240);
+      ctx.fillText("Valid From", 20, 250);
       ctx.fillStyle = "#000000";
       ctx.fillText(firstDay, 20, 270);
 
       ctx.textAlign = "right";
       ctx.fillStyle = "#666666";
-      ctx.fillText("Valid Until", canvas.width - 20, 240);
+      ctx.fillText("Valid Until", canvas.width - 20, 250);
       ctx.fillStyle = "#000000";
       ctx.fillText(lastDay, canvas.width - 20, 270);
     };
