@@ -54,6 +54,7 @@ const St = () => {
   let ID = null;
   const [role, setRole] = useState('');
   const hasRun = useRef(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [students, setStudents] = useState([]);
 
@@ -64,6 +65,16 @@ const St = () => {
       fetchAllStudents();
     }
   }, []);
+
+  const filteredStudents = students.filter(student =>
+    student.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    student.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    student.studentsID.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
@@ -143,9 +154,13 @@ const St = () => {
     <div style={{ display: 'flex' }}>
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} role={role} />
       <div style={{ flexGrow: 1 }}>
-        <Header handleDrawerToggle={handleDrawerToggle} />
+        <Header 
+        handleDrawerToggle={handleDrawerToggle} 
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        />
         <MainContent
-          students={students}
+          students={filteredStudents}
           updateStudent={updateStudent}
           deleteStudent={deleteStudent}
           makeStudentPaid={makeStudentPaid}
@@ -293,7 +308,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Header = ({ handleDrawerToggle }) => {
+const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
   return (
     <AppBar position="static" color="default" elevation={0} sx={{ padding: '8px 16px' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -311,6 +326,8 @@ const Header = ({ handleDrawerToggle }) => {
           <StyledInputBase
             placeholder="Search…"
             inputProps={{ 'aria-label': 'search' }}
+            value={searchQuery}
+            onChange={onSearchChange}
             startAdornment={<Search sx={{ position: 'absolute', left: '10px' }} />}
           />
         </SearchBar>

@@ -54,6 +54,7 @@ const St = () => {
   let ID = null;
   const [role, setRole] = useState('');
   const hasRun = useRef(false);
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
 
   const [staff, setStaff] = useState([]);
 
@@ -64,6 +65,17 @@ const St = () => {
       fetchAllStaff();
     }
   }, []);
+
+  // Filter staff based on search query
+  const filteredStaff = staff.filter((staffMember) =>
+    staffMember.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    staffMember.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    staffMember.staffID.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value); // Update search query state
+  };
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
@@ -143,9 +155,13 @@ const St = () => {
     <div style={{ display: 'flex' }}>
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} role={role} />
       <div style={{ flexGrow: 1 }}>
-        <Header handleDrawerToggle={handleDrawerToggle} />
+        <Header 
+          handleDrawerToggle={handleDrawerToggle} 
+          searchQuery={searchQuery} 
+          onSearchChange={handleSearchChange} 
+        />
         <MainContent
-          staff={staff}
+          staff={filteredStaff} // Pass filtered staff data
           updateStaff={updateStaff}
           deleteStaff={deleteStaff}
           makeStaffPaid={makeStaffPaid}
@@ -293,7 +309,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Header = ({ handleDrawerToggle }) => {
+const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
   return (
     <AppBar position="static" color="default" elevation={0} sx={{ padding: '8px 16px' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -311,6 +327,8 @@ const Header = ({ handleDrawerToggle }) => {
           <StyledInputBase
             placeholder="Search…"
             inputProps={{ 'aria-label': 'search' }}
+            value={searchQuery}
+            onChange={onSearchChange}
             startAdornment={<Search sx={{ position: 'absolute', left: '10px' }} />}
           />
         </SearchBar>

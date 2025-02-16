@@ -58,9 +58,15 @@ const Shu = () => {
 
   // Error state for displaying error messages gracefully
   const [errorMessage, setErrorMessage] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
   const [shuttles, setShuttles] = useState([]);
   const [drivers, setDrivers] = useState([]);
   const [cashiers, setCashiers] = useState([]);
+
+  const [filteredShuttles, setFilteredShuttles] = useState([]);
+  const [filteredDrivers, setFilteredDrivers] = useState([]);
+  const [filteredCashiers, setFilteredCashiers] = useState([]);
 
   const handleCloseError = (event, reason) => {
     if (reason === 'clickaway') {
@@ -73,11 +79,57 @@ const Shu = () => {
     if (!hasRun.current) {
       hasRun.current = true;
       handleAuth();
-      fetchAllShuttles();
-      fetchAllDrivers();
-      fetchAllCashiers();
+      fetchAllData();
     }
   }, []);
+
+  const filterData = (query) => {
+    const lowerQuery = query.toLowerCase();
+
+    setFilteredShuttles(shuttles.filter(s =>
+      s.shuttleID.toLowerCase().includes(lowerQuery) ||
+      s.vehicleNumber.toLowerCase().includes(lowerQuery)
+    ));
+
+    setFilteredDrivers(drivers.filter(d =>
+      d.username.toLowerCase().includes(lowerQuery) ||
+      d.driverID.toLowerCase().includes(lowerQuery) ||
+      d.shuttleID.toLowerCase().includes(lowerQuery)
+    ));
+
+    setFilteredCashiers(cashiers.filter(c =>
+      c.username.toLowerCase().includes(lowerQuery) ||
+      c.cashierID.toLowerCase().includes(lowerQuery) ||
+      c.email.toLowerCase().includes(lowerQuery)
+    ));
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    filterData(query);
+  };
+
+  const fetchAllData = async () => {
+    try {
+      const [shuttlesData, driversData, cashiersData] = await Promise.all([
+        LocationMethods.getAllShuttles(),
+        DriverMethods.getAllDrivers(),
+        CashierMethods.getAllCashier()
+      ]);
+
+      setShuttles(shuttlesData);
+      setDrivers(driversData);
+      setCashiers(cashiersData);
+
+      setFilteredShuttles(shuttlesData);
+      setFilteredDrivers(driversData);
+      setFilteredCashiers(cashiersData);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Failed to fetch data");
+    }
+  };
 
   const handleAuth = async () => {
     try {
@@ -234,11 +286,15 @@ const Shu = () => {
       <div style={{ display: 'flex' }}>
         <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
         <div style={{ flexGrow: 1 }}>
-          <Header handleDrawerToggle={handleDrawerToggle} />
+          <Header
+            handleDrawerToggle={handleDrawerToggle}
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
+          />
           <MainContent
-            shuttles={shuttles}
-            drivers={drivers}
-            cashiers={cashiers} // Pass cashiers to MainContent
+            shuttles={filteredShuttles}
+            drivers={filteredDrivers}
+            cashiers={filteredCashiers} // Pass cashiers to MainContent
             addShuttle={addShuttle}
             updateShuttle={updateShuttle}
             deleteShuttle={deleteShuttle}
@@ -382,7 +438,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Header = ({ handleDrawerToggle }) => {
+const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
   return (
     <AppBar position="static" color="default" elevation={0} sx={{ padding: '8px 16px' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -400,6 +456,8 @@ const Header = ({ handleDrawerToggle }) => {
           <StyledInputBase
             placeholder="Search…"
             inputProps={{ 'aria-label': 'search' }}
+            value={searchQuery}
+            onChange={onSearchChange}
             startAdornment={<Search sx={{ position: 'absolute', left: '10px' }} />}
           />
         </SearchBar>
@@ -453,6 +511,7 @@ const MainContent = ({
             addCashier={addCashier}
             updateCashier={updateCashier}
             deleteCashier={deleteCashier}
+            refreshCashiers={refreshCashiers}
           />
         </Grid>
       </Grid>
@@ -482,9 +541,9 @@ const ShuttlesTable = ({ shuttles, addShuttle, updateShuttle, deleteShuttle }) =
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Vehicle Number</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Vehicle Number</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -558,10 +617,10 @@ const DriversTable = ({ drivers, shuttles, addDriver, updateDriver, deleteDriver
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Shuttle</TableCell>
-              <TableCell>Driver Name</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Shuttle</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Driver Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Phone</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -638,11 +697,11 @@ const CashiersTable = ({ cashiers, addCashier, updateCashier, deleteCashier }) =
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Cashier ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Cashier ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Phone</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

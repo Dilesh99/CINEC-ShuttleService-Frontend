@@ -21,6 +21,7 @@ const Admin = () => {
   const [loadingStaff, setLoadingStaff] = useState(false);
   const [allDrivers, setAllDrivers] = useState([]);
   const [loadingDrivers, setLoadingDrivers] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const hasRun = useRef(false);
 
@@ -85,17 +86,33 @@ const Admin = () => {
     }
   };
 
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter students and drivers based on the search query
+  const filteredStudents = allStudents.filter(student =>
+    student.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    student.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    student.studentsID.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredDrivers = allDrivers.filter(driver =>
+    driver.shuttleID.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    driver.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={() => setMobileOpen(!mobileOpen)} />
       <div style={{ flexGrow: 1 }}>
-        <Header handleDrawerToggle={() => setMobileOpen(!mobileOpen)} />
+        <Header handleDrawerToggle={() => setMobileOpen(!mobileOpen)} searchQuery={searchQuery} onSearchChange={handleSearchChange} />
         <MainContent 
-          allStudents={allStudents} 
+          allStudents={filteredStudents} 
           loadingStudents={loadingStudents}
           allStaff={allStaff}
           loadingStaff={loadingStaff}
-          allDrivers={allDrivers}
+          allDrivers={filteredDrivers}
           loadingDrivers={loadingDrivers}
         />
       </div>
@@ -229,7 +246,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Header = ({ handleDrawerToggle }) => {
+const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
   return (
     <AppBar position="static" color="default" elevation={0} sx={{ padding: '8px 16px' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -249,6 +266,8 @@ const Header = ({ handleDrawerToggle }) => {
           <StyledInputBase
             placeholder="Search…"
             inputProps={{ 'aria-label': 'search' }}
+            value={searchQuery}
+            onChange={onSearchChange}
             startAdornment={<Search sx={{ position: 'absolute', left: '10px' }} />}
           />
         </SearchBar>
@@ -258,7 +277,6 @@ const Header = ({ handleDrawerToggle }) => {
   );
 };
 
-// MainContent now receives all three data sets and their loading flags
 const MainContent = ({
   allStudents,
   loadingStudents,
@@ -269,7 +287,6 @@ const MainContent = ({
 }) => {
   return (
     <div style={{ padding: '16px' }}>
-      {/* DashboardStats now uses the counts from fetched data */}
       <DashboardStats 
         studentCount={(allStudents ?? []).length}
         staffCount={(allStaff ?? []).length}
@@ -278,18 +295,23 @@ const MainContent = ({
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
         {/* Left column: Students table */}
         <Grid item xs={12} md={8}>
-          <RecentStudents allStudents={allStudents} loadingStudents={loadingStudents} />
+          <RecentStudents 
+            allStudents={allStudents} 
+            loadingStudents={loadingStudents} 
+          />
         </Grid>
         {/* Right column: Drivers table */}
         <Grid item xs={12} md={4}>
-          <DriverDetails allDrivers={allDrivers} loadingDrivers={loadingDrivers} />
+          <DriverDetails 
+            allDrivers={allDrivers} 
+            loadingDrivers={loadingDrivers} 
+          />
         </Grid>
       </Grid>
     </div>
   );
 };
 
-// DashboardStats uses passed counts to display cards
 const DashboardStats = ({ studentCount, staffCount, driverCount }) => {
   const stats = [
     { label: 'Students', value: studentCount, icon: <People /> },
@@ -319,7 +341,6 @@ const DashboardStats = ({ studentCount, staffCount, driverCount }) => {
   );
 };
 
-// Table for displaying student data (unchanged from your original RecentPayments)
 const RecentStudents = ({ allStudents, loadingStudents }) => {
   return (
     <Paper sx={{ padding: '16px', boxShadow: 3 }}>
@@ -377,7 +398,6 @@ const RecentStudents = ({ allStudents, loadingStudents }) => {
   );
 };
 
-// DriverDetails displays a table of driver details (replacing the old NewShuttles component)
 const DriverDetails = ({ allDrivers, loadingDrivers }) => {
   return (
     <Paper sx={{ padding: '16px', boxShadow: 3 }}>
