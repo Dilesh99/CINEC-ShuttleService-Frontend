@@ -146,7 +146,7 @@ const SignUp2 = () => {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ staffID: staffID, username, email, phone_number, password, role: "Staff", paymentStatus: false })
+            body: JSON.stringify({ staffID: staffID, shuttleID: "undefined", username, email, phone_number, password, role: "Staff", paymentStatus: false, scannedStatus: false})
           });
 
           const updateText = await updateResponse.text();

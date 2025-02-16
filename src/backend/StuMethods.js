@@ -8,7 +8,7 @@ export const StuMethods = {
             const accessToken = retrievedData.accessToken;
             console.log("Fetching student data...");
 
-            const response = await fetch(`${backEndURL}/getStudent?studentID=${studentID}`, {
+            const response = await fetch(`${backEndURL}/getStudent?studentID=${studentID}&timestamp=${Date.now()}`, {
                 method: "GET",
                 credentials: "include",
                 headers: {
@@ -24,11 +24,13 @@ export const StuMethods = {
             const data = await response.json();
             const student = {
                 studentID: data.studentsID,
+                shuttleID: data.shuttleID,
                 username: data.username,
                 email: data.email,
                 password: data.password,
                 phone_number: data.phone_number,
-                paymentStatus: data.paymentStatus
+                paymentStatus: data.paymentStatus,
+                scannedStatus: data.scannedStatus
             };
 
             return student;
@@ -101,7 +103,7 @@ export const StuMethods = {
         }
     },
 
-    updateStudent: async function (studentsID, username, email, phone_number, password, paymentStatus) {
+    updateStudent: async function (studentsID, shuttleID, username, email, phone_number, password, paymentStatus, scannedStatus) {
         try {
             const retrievedData = await authMethods.refreshToken();
             const accessToken = retrievedData.accessToken;
@@ -112,7 +114,7 @@ export const StuMethods = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`
                 },
-                body: JSON.stringify({ studentsID, username, email, phone_number, password, paymentStatus })
+                body: JSON.stringify({ studentsID, shuttleID, username, email, phone_number, password, paymentStatus, scannedStatus })
             });
 
             if (!response.ok) {
@@ -140,7 +142,7 @@ export const StuMethods = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`
                 },
-                
+
             });
 
             if (!response.ok) {
@@ -168,7 +170,63 @@ export const StuMethods = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`
                 },
-                
+
+            });
+
+            if (!response.ok) {
+                console.error(`Error updating student (status: ${response.status})`);
+                return null;
+            }
+
+            const data = await response.text();
+            console.log("Student updated:", data);
+            return data;
+        } catch (error) {
+            console.error("Error updating student:", error);
+            return null;
+        }
+    },
+
+    makeStudentScanned: async function (studentsID) {
+        try {
+            const retrievedData = await authMethods.refreshToken();
+            const accessToken = retrievedData.accessToken;
+            const response = await fetch(`${backEndURL}/makeStudentScanned?studentID=${studentsID}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+
+            });
+
+            if (!response.ok) {
+                console.error(`Error updating student (status: ${response.status})`);
+                return null;
+            }
+
+            const data = await response.text();
+            console.log("Student updated:", data);
+            return data;
+        } catch (error) {
+            console.error("Error updating student:", error);
+            return null;
+        }
+    },
+
+    makeStudentUnScanned: async function (studentsID) {
+        try {
+            const retrievedData = await authMethods.refreshToken();
+            const accessToken = retrievedData.accessToken;
+            const response = await fetch(`${backEndURL}/makeStudentUnScanned?studentID=${studentsID}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+
             });
 
             if (!response.ok) {

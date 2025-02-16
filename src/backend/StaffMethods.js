@@ -8,7 +8,7 @@ export const StaffMethods = {
             const accessToken = retrievedData.accessToken;
             console.log("Fetching staff data...");
 
-            const response = await fetch(`${backEndURL}/getStaff?staffID=${staffID}`, {
+            const response = await fetch(`${backEndURL}/getStaff?staffID=${staffID}&timestamp=${Date.now()}`, {
                 method: "GET",
                 credentials: "include",
                 headers: {
@@ -24,11 +24,13 @@ export const StaffMethods = {
             const data = await response.json();
             const staff = {
                 staffID: data.staffID,
+                shuttleID: data.shuttleID,
                 username: data.username,
                 email: data.email,
                 password: data.password,
                 phone_number: data.phone_number,
-                paymentStatus: data.paymentStatus
+                paymentStatus: data.paymentStatus,
+                scannedStatus: data.scannedStatus
             };
 
             return staff;
@@ -100,7 +102,7 @@ export const StaffMethods = {
         }
     },
 
-    updateStaff: async function (staffID, username, email, phone_number, password, paymentStatus) {
+    updateStaff: async function (staffID, shuttleID, username, email, phone_number, password, paymentStatus, scannedStatus) {
         try {
             const retrievedData = await authMethods.refreshToken();
             const accessToken = retrievedData.accessToken;
@@ -111,7 +113,7 @@ export const StaffMethods = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`
                 },
-                body: JSON.stringify({ staffID, username, email, phone_number, password, paymentStatus })
+                body: JSON.stringify({ staffID, shuttleID, username, email, phone_number, password, paymentStatus, scannedStatus })
             });
 
             if (!response.ok) {
@@ -178,6 +180,62 @@ export const StaffMethods = {
             const data = await response.text();
             console.log("Staff updated:", data);
             return data;
+        } catch (error) {
+            console.error("Error updating staff:", error);
+            return null;
+        }
+    },
+
+    makeStaffScanned: async function (staffID) {
+        try {
+            const retrievedData = await authMethods.refreshToken();
+            const accessToken = retrievedData.accessToken;
+            const response = await fetch(`${backEndURL}/makeStaffScanned?staffID=${staffID}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                
+            });
+
+            if (!response.ok) {
+                console.error(`Error updating staff (status: ${response.status})`);
+                return null;
+            }
+
+            const data = await response.text();
+            console.log("Staff updated:", data);
+            return data;
+        } catch (error) {
+            console.error("Error updating staff:", error);
+            return null;
+        }
+    },
+
+    makeStaffUnScanned: async function (staffID) {
+        try {
+            const retrievedData = await authMethods.refreshToken();
+            const accessToken = retrievedData.accessToken;
+            const response = await fetch(`${backEndURL}/makeStaffUnScanned?staffID=${staffID}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                
+            });
+
+            if (!response.ok) {
+                console.error(`Error updating staff (status: ${response.status})`);
+                return null;
+            }
+            const data = await response.text();
+            console.log("Staff updated:", data);
+            return data;
+            
         } catch (error) {
             console.error("Error updating staff:", error);
             return null;

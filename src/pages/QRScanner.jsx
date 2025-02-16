@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { BrowserQRCodeReader } from '@zxing/browser';
 import { Box, Button, CssBaseline, Typography, Modal, CircularProgress } from '@mui/material';
 import BackgroundImage from "/src/assets/bg5.jpg";
@@ -10,6 +10,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 export default function QRScanner() {
+
+  let i = 0;
+
   const videoRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -17,16 +20,25 @@ export default function QRScanner() {
   const [role, setRole] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ icon: null, message: '' });
+  const [isScanning, setIsScanning] = useState(true); // Control whether to continue scanning
 
-  const stopCamera = () => {
+  const stopCamera = useCallback(() => {
     if (videoRef.current?.srcObject) {
       const tracks = videoRef.current.srcObject.getTracks();
       tracks.forEach(track => track.stop());
       videoRef.current.srcObject = null;
     }
-  };
+  }, []);
 
-  const handleAuth = async () => {
+  const handleOk = useCallback(() => {
+    i=0;
+    stopCamera();
+    setModalOpen(false);
+    setIsScanning(false); // Prevent further scans until the user navigates back
+    window.location.href = '/payment';
+  }, [stopCamera]);
+
+  const handleAuth = useCallback(async () => {
     try {
       const res = await authMethods.refreshToken();
       if (res?.accessToken && res.ID && (res.role === 'Student' || res.role === 'Staff')) {
@@ -39,78 +51,88 @@ export default function QRScanner() {
       console.error("Authentication error:", error);
       window.location.href = '/';
     }
-  };
+  }, []);
 
-  const handleScanResult = async (url) => {
-    if (url === backEndURL) {
-      console.log('Decoded URL:', url);
+  const handleScanResult = useCallback(
+    async (url) => {
+      if (!isScanning) return; // Prevent multiple scans
+      setIsScanning(false); // Stop scanning immediately
 
-      let user = null;
+      if (url !== backEndURL) {
+        setErrorMessage('Please scan the CINEC shuttle QR code.');
+        i=0;
+        return;
+      }
+
       try {
+        let user = null;
         if (role === 'Student') {
           user = await StuMethods.getStudent(ID);
         } else if (role === 'Staff') {
           user = await StaffMethods.getStaff(ID);
         }
 
-        if (user) {
-          if (!user.paymentStatus) {
-            setModalContent({
-              icon: <CancelIcon sx={{ fontSize: 60, color: 'white' }} />,
-              message: 'Shuttle Pass Expired.'
-            });
-            setModalOpen(true);
-            stopCamera();
-            return;
-          } else {
-            const currentDate = new Date().toLocaleString();
-            setModalContent({
-              icon: <CheckCircleIcon sx={{ fontSize: 60, color: 'white' }} />,
-              message: `Shuttle Pass Verified. ${currentDate}`
-            });
-            setModalOpen(true);
-            stopCamera();
-            return;
-          }
+        if (!user) {
+          throw new Error('User not found.');
+        }
 
+        if (!user.paymentStatus) {
+          setModalContent({
+            icon: <CancelIcon sx={{ fontSize: 60, color: 'white' }} />,
+            message: 'Shuttle Pass Expired.',
+          });
+          setModalOpen(true);
+          stopCamera();
+          return;
+        }
+
+        if (user.scannedStatus) {
+          setModalContent({
+            icon: <CancelIcon sx={{ fontSize: 60, color: 'white' }} />,
+            message: 'User already scanned.',
+          });
+          setModalOpen(true);
+          stopCamera();
+          return;
+        }
+
+        const currentDate = new Date().toLocaleString();
+        setModalContent({
+          icon: <CheckCircleIcon sx={{ fontSize: 60, color: 'white' }} />,
+          message: `Shuttle Pass Verified.\n${currentDate}`,
+        });
+        setModalOpen(true);
+
+        // Update the scannedStatus in the backend
+        if (role === 'Student') {
+          await StuMethods.makeStudentScanned(ID);
+        } else if (role === 'Staff') {
+          await StaffMethods.makeStaffScanned(ID);
         }
       } catch (error) {
         setModalContent({
           icon: <CancelIcon sx={{ fontSize: 60, color: 'white' }} />,
-          message: 'Failed to retrieve user data.'
+          message: 'Failed to retrieve or update user data.',
         });
         setModalOpen(true);
-        console.error("Error fetching user:", error);
+        console.error("Error handling scan result:", error);
+      } finally {
         stopCamera();
-        return;
       }
-    } else {
-      setErrorMessage('Please scan the CINEC shuttle QR code.');
-      return;
-    }
-
-    stopCamera();
-    window.location.href = url;
-  };
+    },
+    [ID, role, stopCamera, isScanning]
+  );
 
   useEffect(() => {
     handleAuth();
-    setIsRedirecting(false);
+
     const codeReader = new BrowserQRCodeReader();
     let stream = null;
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) stopCamera();
-    };
-
-    const handleWindowBlur = () => {
-      stopCamera();
-    };
 
     const setupScanner = async () => {
       try {
         stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' }
+          video: { facingMode: 'environment' },
         });
 
         const videoElement = videoRef.current;
@@ -123,7 +145,10 @@ export default function QRScanner() {
         await videoElement.play();
 
         codeReader.decodeFromVideoElement(videoElement, (result, error) => {
-          if (result && !isRedirecting) {
+          if (result && isScanning && !isRedirecting && i == 0) {
+            i++;
+            setIsScanning(false); // Stop scanning
+            stopCamera();
             setIsRedirecting(true);
             handleScanResult(result.getText());
           }
@@ -136,7 +161,17 @@ export default function QRScanner() {
       }
     };
 
-    setupScanner();
+    if (isScanning) {
+      setupScanner();
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) stopCamera();
+    };
+
+    const handleWindowBlur = () => {
+      stopCamera();
+    };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('blur', handleWindowBlur);
@@ -146,7 +181,7 @@ export default function QRScanner() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('blur', handleWindowBlur);
     };
-  }, [ID, role]);
+  }, [handleAuth, handleScanResult, isRedirecting, stopCamera, isScanning]);
 
   return (
     <>
@@ -180,22 +215,32 @@ export default function QRScanner() {
             boxShadow: '0 0 15px rgba(0, 0, 0, 0.5)',
             borderRadius: '20px',
             overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          <video
-            ref={videoRef}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-            playsInline
-            autoPlay
-          />
+          {isRedirecting ? (
+            <CircularProgress
+              size={80} // Bigger size
+              sx={{ color: 'white' }} // White color
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+              playsInline
+              autoPlay
+            />
+          )}
         </Box>
         <Button
           variant="contained"
-          onClick={() => window.location.href = "/payment"}
+          onClick={() => (window.location.href = "/payment")}
           sx={{
             mt: 2,
             backgroundColor: "#05183A",
@@ -235,7 +280,11 @@ export default function QRScanner() {
         >
           <Box
             sx={{
-              bgcolor: modalContent.icon ? (modalContent.icon.type === CheckCircleIcon ? 'green' : 'red') : 'transparent',
+              bgcolor: modalContent.icon
+                ? modalContent.icon.type === CheckCircleIcon
+                  ? 'green'
+                  : 'red'
+                : 'transparent',
               color: 'white',
               padding: 4,
               borderRadius: '10px',
@@ -246,6 +295,24 @@ export default function QRScanner() {
             <Typography variant="h6" sx={{ mt: 2 }}>
               {modalContent.message}
             </Typography>
+            <Button
+              variant="contained"
+              onClick={handleOk}
+              sx={{
+                mt: 2,
+                backgroundColor: 'white',
+                color: modalContent.icon
+                  ? modalContent.icon.type === CheckCircleIcon
+                    ? 'green'
+                    : 'red'
+                  : 'transparent',
+                '&:hover': {
+                  backgroundColor: '#f5f5f5',
+                },
+              }}
+            >
+              OK
+            </Button>
           </Box>
         </Modal>
       </Box>
