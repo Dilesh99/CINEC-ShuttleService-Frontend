@@ -55,14 +55,8 @@ export default function QRScanner() {
 
   const handleScanResult = useCallback(
     async (url) => {
-      if (!isScanning) return; // Prevent multiple scans
-      setIsScanning(false); // Stop scanning immediately
-
-      if (url !== backEndURL) {
-        setErrorMessage('Please scan the CINEC shuttle QR code.');
-        i=0;
-        return;
-      }
+      if (!isScanning) return;
+      setIsScanning(false);
 
       try {
         let user = null;
@@ -99,11 +93,16 @@ export default function QRScanner() {
         const currentDate = new Date().toLocaleString();
         setModalContent({
           icon: <CheckCircleIcon sx={{ fontSize: 60, color: 'white' }} />,
-          message: `Shuttle Pass Verified.\n${currentDate}`,
+          message: (
+            <>
+              Shuttle pass verified.
+              <br />
+              {currentDate}
+            </>
+          ),
         });
         setModalOpen(true);
 
-        // Update the scannedStatus in the backend
         if (role === 'Student') {
           await StuMethods.makeStudentScanned(ID);
         } else if (role === 'Staff') {
@@ -148,9 +147,18 @@ export default function QRScanner() {
           if (result && isScanning && !isRedirecting && i == 0) {
             i++;
             setIsScanning(false); // Stop scanning
-            stopCamera();
             setIsRedirecting(true);
-            handleScanResult(result.getText());
+            if(result.getText() !== backEndURL){
+              setErrorMessage("Please scan the CINEC shuttle QR code");
+              i = 0;
+              setIsScanning(true);
+              setIsRedirecting(false);
+            }
+            else{
+              stopCamera();
+              handleScanResult(result.getText());
+            }
+            
           }
           if (error) {
             setErrorMessage('Please ensure the QR code is clear and properly framed.');
