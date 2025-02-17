@@ -132,7 +132,7 @@ export const LocationMethods = {
   getAllShuttles: async function () {
     try {
       const data = await authMethods.refreshToken();
-      if (!data || data.role !== "Admin") {
+      if (!data || (data.role !== "Admin" && data.role !== "Cashier")) {
         console.error("Unauthorized access: Admin role required.");
         return null;
       }
