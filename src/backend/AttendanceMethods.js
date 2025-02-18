@@ -2,15 +2,31 @@ import backEndURL from "./backEndApi";
 import { authMethods } from "./authMethods";
 
 export const AttendanceMethods = {
-  updateAttendance: async function (recordID, userID, shuttleID, date) {
+  updateAttendance: async function (userID, shuttleID) {
     try {
+      const retrievedData = await authMethods.refreshToken();
+      const accessToken = retrievedData.accessToken;
+
+      const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+
+      const date = dateFormatter.format(new Date());
+
       const response = await fetch(`${backEndURL}/updateAttendance`, {
         method: "PUT",
         credentials: "include",
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
         },
-        body: JSON.stringify({ recordID: recordID, userID: userID, shuttleID: shuttleID, date: date })
+        body: JSON.stringify({ recordID: "", userID: userID, shuttleID: shuttleID, date: date.toString() })
       });
 
       if (!response.ok) {
@@ -56,7 +72,7 @@ export const AttendanceMethods = {
     }
   },
 
-  getAttendance: async function(recordID){
+  deleteAllAttendance: async function () {
     try {
       const data = await authMethods.refreshToken();
       if (!data || data.role !== "Admin") {
@@ -65,51 +81,23 @@ export const AttendanceMethods = {
       }
 
       const accessToken = data.accessToken;
-      const response = await fetch(`${backEndURL}/getAttendance?recordID=${recordID}`, {
-        method: "GET",
+
+      const response = await fetch(`${backEndURL}/deleteAllAttendance`, {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
       });
 
       if (!response.ok) {
-        console.error(`Error fetching record (status: ${response.status})`);
+        console.error(`Error deleting all records (status: ${response.status})`);
         return null;
       }
-
-      const records = await response.json();
-      return records;
-    } catch (error) {
-      console.error("Error fetching record:", error);
-      return null;
+      else {
+        return true;
+      }
     }
-  },
-
-  deleteAttendance: async function(recordID){
-    try {
-      const data = await authMethods.refreshToken();
-      if (!data || data.role !== "Admin") {
-        console.error("Unauthorized access: Admin role required.");
-        return null;
-      }
-
-      const accessToken = data.accessToken;
-      const response = await fetch(`${backEndURL}/deleteAttendance?recordID=${recordID}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-
-      if (!response.ok) {
-        console.error(`Error deleting all record (status: ${response.status})`);
-        return null;
-      }
-
-      const records = await response.json();
-      return records;
-    } catch (error) {
-      console.error("Error fetching all records:", error);
+    catch {
       return null;
     }
   }

@@ -8,6 +8,7 @@ import { StuMethods } from '../backend/StuMethods';
 import { StaffMethods } from '../backend/StaffMethods';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { AttendanceMethods } from '../backend/AttendanceMethods';
 
 export default function QRScanner() {
 
@@ -102,6 +103,7 @@ export default function QRScanner() {
           ),
         });
         setModalOpen(true);
+        await AttendanceMethods.updateAttendance(ID, user.shuttleID);
 
         if (role === 'Student') {
           await StuMethods.makeStudentScanned(ID);

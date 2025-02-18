@@ -48,6 +48,7 @@ import { useNavigate } from 'react-router-dom';
 import { StuMethods } from '../backend/StuMethods';
 import { authMethods } from '../backend/authMethods';
 import { LocationMethods } from '../backend/LocationMethods';
+import { PaymentMethods } from '../backend/PaymentMethods';
 
 const St = () => {
   const navigate = useNavigate();
@@ -403,6 +404,7 @@ const RecentPayments = ({
       makeStudentUnpaid(student.studentsID);
     } else {
       makeStudentPaid(student.studentsID);
+      PaymentMethods.updatePayment(student.studentsID, student.shuttleID)
     }
   };
 
