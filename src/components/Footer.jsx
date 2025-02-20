@@ -240,7 +240,9 @@ const Footer = () => {
             All Copyrights Reserved By CINEC Campus - © 2023
           </Typography>
           <Typography variant="body2" sx={{ fontSize: { xs: '11px', sm: '13px' }, mb: 2 }}>
-            Designed and Developed by Faculty of Computing- UGC Batch 03
+          <Link href="/dev" underline="hover" sx={{ cursor: "pointer" }}>
+    Meet Our Development Team
+  </Link>
           </Typography>
           <Typography variant="body2" sx={{ fontSize: { xs: '11px', sm: '13px' }, mb: 2 }}>
             <Link
