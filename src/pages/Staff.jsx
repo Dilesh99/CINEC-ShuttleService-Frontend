@@ -177,7 +177,7 @@ const St = () => {
 const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedIndex, setSelectedIndex] = useState(2);
+  const [selectedIndex, setSelectedIndex] = useState(1);
   const navigate = useNavigate();
 
   const handleListItemClick = (index, route) => {
@@ -196,6 +196,9 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
           { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
+          { text: 'Payment Records', route: '/paymentRecords'},
+          { text: 'Attendance Records', route: '/attendanceRecords'},
+          { text: 'Shuttle locations', route: '/shuttleLocations'},
         ];
 
   const drawerContent = (

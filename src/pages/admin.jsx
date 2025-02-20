@@ -148,6 +148,9 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
           { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
+          { text: 'Payment Records', route: '/paymentRecords'},
+          { text: 'Attendance Records', route: '/attendanceRecords'},
+          { text: 'Shuttle locations', route: '/shuttleLocations'},
         ].map((item, index) => (
           <ListItem
             button

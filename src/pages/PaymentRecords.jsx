@@ -1,69 +1,121 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery, Box } from '@mui/material';
-import { Menu, Search, People, DirectionsBus, AccountBalanceWallet, Help, Settings, Person, Notifications } from '@mui/icons-material';
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Button,
+  Paper,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  InputBase,
+  useMediaQuery,
+  Box,
+  Checkbox,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Select,
+  MenuItem,
+} from '@mui/material';
+import {
+  Menu,
+  Search,
+  People,
+  DirectionsBus,
+  AccountBalanceWallet,
+  Person,
+  Edit,
+  Delete,
+} from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
-import cinecLogo from "/src/assets/cinec.png";
-import { useNavigate } from 'react-router-dom'; // Import the hook
+import cinecLogo from '/src/assets/cinec.png';
+import { useNavigate } from 'react-router-dom';
 
+import { StuMethods } from '../backend/StuMethods';
 import { authMethods } from '../backend/authMethods';
+import { LocationMethods } from '../backend/LocationMethods';
+import { PaymentMethods } from '../backend/PaymentMethods';
 
-
-const Dri = () => {
-
+const PaymentRecords = () => {
   const navigate = useNavigate();
   let ID = null;
+  const [role, setRole] = useState('');
   const hasRun = useRef(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [students, setStudents] = useState([]);
+
   useEffect(() => {
     if (!hasRun.current) {
       hasRun.current = true;
-      try {
-        handleAuth();
-      } catch {
-        return null;
-      }
+      handleAuth();
     }
   }, []);
 
+  
+
+  
+
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID && res.role == "Admin") {
+    if (res && res.accessToken && res.ID && res.role === 'Admin' ) {
       ID = res.ID;
+      setRole(res.role);
+    } else {
+      navigate('/');
     }
-    else {
-      navigate("/");
-    }
-  }
+  };
 
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-
   return (
     <div style={{ display: 'flex' }}>
-      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
+      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} role={role} />
       <div style={{ flexGrow: 1 }}>
         <Header handleDrawerToggle={handleDrawerToggle} />
-        <MainContent />
+        <MainContent/>
       </div>
     </div>
   );
 };
 
-const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
+const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedIndex, setSelectedIndex] = useState(3);
-  const navigate = useNavigate(); // Initialize the hook
+  const [selectedIndex, setSelectedIndex] = useState(1);
+  const navigate = useNavigate();
 
   const handleListItemClick = (index, route) => {
     setSelectedIndex(index);
-    navigate(route); // Navigate to the specified route
+    navigate(route);
   };
+
+  const sidebarItems =[
+          { text: 'Dashboard', route: '/admindashboard' },
+          { text: 'Students', route: '/students' },
+          { text: 'Staff', route: '/staff' },
+          { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
+          { text: 'Payment Records', route: '/paymentRecords'},
+          { text: 'Attendance Records', route: '/attendanceRecords'},
+          { text: 'Shuttle locations', route: '/shuttleLocations'},
+        ];
 
   const drawerContent = (
     <Box
@@ -73,19 +125,11 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
         height: '100%',
       }}
     >
-      <div style={{ padding: '16px', marginLeft: '18px' }}>
-        <img src={cinecLogo} alt="logo" width={100} height={50} />
+      <div style={{ padding: '16px', alignSelf: 'center' }}>
+        <img src={cinecLogo} alt="logo" width={60} height={60} />
       </div>
       <List>
-        {[
-          { text: 'Dashboard', route: '/admindashboard' },
-          { text: 'Students', route: '/students' },
-          { text: 'Staff', route: '/staff' },
-          { text: 'Shuttles', route: '/shuttles' },
-          { text: 'Payment Records', route: '/paymentRecords'},
-          { text: 'Attendance Records', route: '/attendanceRecords'},
-          { text: 'Shuttle locations', route: '/shuttleLocations'},
-        ].map((item, index) => (
+        {sidebarItems.map((item, index) => (
           <ListItem
             button
             key={item.text}
@@ -100,13 +144,13 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
             }}
           >
             <ListItemIcon sx={{ color: selectedIndex === index ? 'black' : 'inherit' }}>
-              {index === 0 ? (
+              {item.text === 'Dashboard' ? (
                 <People />
-              ) : index === 1 ? (
+              ) : item.text === 'Students' ? (
                 <Person />
-              ) : index === 2 ? (
+              ) : item.text === 'Staff' ? (
                 <People />
-              ) : index === 3 ? (
+              ) : item.text === 'Cashiers, Shuttles & Drivers' ? (
                 <DirectionsBus />
               ) : (
                 <AccountBalanceWallet />
@@ -135,7 +179,6 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
       </Box>
     </Box>
   );
-
   return (
     <>
       <Drawer
@@ -170,6 +213,7 @@ const SearchBar = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
     width: '30%',
+    borderRadius: '25px',
   },
 }));
 
@@ -184,7 +228,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Header = ({ handleDrawerToggle }) => {
+const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
   return (
     <AppBar position="static" color="default" elevation={0} sx={{ padding: '8px 16px' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -197,96 +241,56 @@ const Header = ({ handleDrawerToggle }) => {
         >
           <Menu />
         </IconButton>
-        <Typography variant="h6">
-          Dashboard
-        </Typography>
+        <Typography variant="h6">Dashboard</Typography>
         <SearchBar>
           <StyledInputBase
             placeholder="Search…"
             inputProps={{ 'aria-label': 'search' }}
+            value={searchQuery}
+            onChange={onSearchChange}
             startAdornment={<Search sx={{ position: 'absolute', left: '10px' }} />}
           />
         </SearchBar>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Button variant="contained" sx={{
-            color: 'white',
-            backgroundColor: 'secondary.light',
-            '&:hover': {
-              backgroundColor: 'secondary.light2',
-            },
-          }}>
-            Add New
-          </Button>
-          <IconButton color="inherit" sx={{ marginLeft: '16px' }}>
-            <Notifications />
-          </IconButton>
-          <IconButton color="inherit" sx={{ marginLeft: '8px' }}>
-            <Avatar alt="User" src="https://via.placeholder.com/150" />
-          </IconButton>
-        </div>
       </Toolbar>
     </AppBar>
   );
 };
+
 const MainContent = () => {
   return (
     <div style={{ padding: '16px' }}>
-
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
         <Grid item xs={12} md={12}>
-          <NewShuttles />
+          <RecentPayments/>
         </Grid>
-
       </Grid>
     </div>
   );
 };
 
-
-
-const NewShuttles = () => {
-  const shuttles = [
-    { profile: 'Gamini Perera', icon: <Avatar>G</Avatar>, cno: '071 123 4567', age: '47', jdate: '12.12.2022' },
-    { profile: 'W. Wickramasinghe', icon: <Avatar>G</Avatar>, cno: '071 123 4567', age: '47', jdate: '12.12.2022' },
-    { profile: 'S.Perera', icon: <Avatar>W</Avatar>, cno: '071 123 4567', age: '47', jdate: '12.12.2022' },
-  ];
-
+const RecentPayments = () => {
   return (
-    <Paper sx={{ padding: '16px', boxShadow: '3' }}>
-      <Typography variant="h6">Gampaha I - Driver's Details</Typography>
-      <Button href='/shuttles' variant="contained" sx={{
-        float: 'right', marginBottom: '10px', marginRight: '20px', marginTop: '-20px', backgroundColor: 'secondary.light', '&:hover': {
-          backgroundColor: 'secondary.light2',
-        },
-      }}>Back</Button>
+    <Paper sx={{ padding: '16px', boxShadow: 3 }}>
+      <Typography variant="h6" sx={{ marginBottom: 2 }}>
+        Payment Records
+      </Typography>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Profile</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Contact No.</TableCell>
-              <TableCell>Age</TableCell>
-              <TableCell>Joined date</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Phone No.</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Student ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Shuttle ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Paid</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {shuttles.map((shuttle, index) => (
-              <TableRow key={index}>
-                <TableCell>{shuttle.icon}</TableCell>
-                <TableCell>{shuttle.profile}</TableCell>
-                <TableCell>{shuttle.cno}</TableCell>
-                <TableCell>{shuttle.age}</TableCell>
-                <TableCell>{shuttle.jdate}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
         </Table>
       </TableContainer>
     </Paper>
   );
 };
 
-
-
-export default Dri;
+export default PaymentRecords;
