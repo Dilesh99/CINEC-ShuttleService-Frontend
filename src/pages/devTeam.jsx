@@ -6,8 +6,8 @@ import Layout from "../components/Layout";
 
 const teamMembers = [
   {
-    name: "John Smith",
-    role: "Lead Developer",
+    name: "Deshan Wickramasingha",
+    role: "Project Leader",
     description: "Full-stack developer with 8+ years of experience in building scalable web applications.",
     image: "https://creatie.ai/ai/api/search-image?query=A%20professional%20headshot%20of%20a%20young%20male%20software%20developer&width=400&height=400",
     email: "john.smith@company.com",
@@ -15,9 +15,9 @@ const teamMembers = [
     github: "https://github.com/johnsmith"
   },
   {
-    name: "Sarah Johnson",
-    role: "Frontend Developer",
-    description: "UI/UX specialist with expertise in React and modern frontend frameworks.",
+    name: "Naveen Sandaru",
+    role: "Full Stack Developer",
+    description: "Full Stack Developer with 8+ years of experience in building scalable web applications.",
     image: "https://creatie.ai/ai/api/search-image?query=A%20professional%20headshot%20of%20a%20young%20female%20software%20engineer&width=400&height=400",
     email: "sarah.johnson@company.com",
     linkedin: "https://linkedin.com",
