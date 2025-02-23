@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
+  InputAdornment,
   AppBar,
   Toolbar,
   IconButton,
@@ -57,24 +58,65 @@ const PaymentRecords = () => {
   let ID = null;
   const [role, setRole] = useState('');
   const hasRun = useRef(false);
+  const [records, setRecords] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filteredRecords, setFilteredRecords] = useState([]);
 
-  const [students, setStudents] = useState([]);
 
   useEffect(() => {
     if (!hasRun.current) {
       hasRun.current = true;
       handleAuth();
+      getAllRecords();
     }
   }, []);
 
-  
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredRecords(records);
+    } else {
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const lowercasedQuery = searchQuery.toLowerCase();
+      const filtered = records.filter((record) => {
+        if (!record.date) return false;
+        const dateParts = record.date.split('/');
+        if (dateParts.length < 3) return false;
+      
+        const monthIndex = parseInt(dateParts[1]) - 1;
+        const year = dateParts[2].split(',')[0];
+      
+        return (
+          record.userID.toLowerCase().includes(lowercasedQuery) ||
+          record.shuttleID.toLowerCase().includes(lowercasedQuery) ||
+          year.toLowerCase().includes(lowercasedQuery) ||
+          (monthIndex >= 0 && monthIndex < 12 && monthNames[monthIndex].toLowerCase().includes(lowercasedQuery))
+        );
+      });
+      setFilteredRecords(filtered);
+    }
+  }, [searchQuery, records]);
 
-  
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const getAllRecords = async () => {
+    const retrievedData = await PaymentMethods.getAllPayments();
+    setRecords(retrievedData);
+  };
+
+  const deleteAllRecords = async () => {
+    try {
+      await PaymentMethods.deleteAllPayments();
+      getAllRecords();
+    } catch (error) {
+      console.error("Error deleting records:", error);
+    }
+  }
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID && res.role === 'Admin' ) {
+    if (res && res.accessToken && res.ID && res.role === 'Admin') {
       ID = res.ID;
       setRole(res.role);
     } else {
@@ -91,8 +133,8 @@ const PaymentRecords = () => {
     <div style={{ display: 'flex' }}>
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} role={role} />
       <div style={{ flexGrow: 1 }}>
-        <Header handleDrawerToggle={handleDrawerToggle} />
-        <MainContent/>
+        <Header handleDrawerToggle={handleDrawerToggle} searchQuery={searchQuery} onSearchChange={handleSearchChange} />
+        <MainContent records={filteredRecords} deleteAllRecords={deleteAllRecords} />
       </div>
     </div>
   );
@@ -109,15 +151,15 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
     navigate(route);
   };
 
-  const sidebarItems =[
-          { text: 'Dashboard', route: '/admindashboard'},
-          { text: 'Students', route: '/students' },
-          { text: 'Staff', route: '/staff' },
-          { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
-          { text: 'Payment Records', route: '/paymentRecords'},
-          { text: 'Attendance Records', route: '/attendanceRecords'},
-          { text: 'Shuttle locations', route: '/shuttleLocations'},
-        ];
+  const sidebarItems = [
+    { text: 'Dashboard', route: '/admindashboard' },
+    { text: 'Students', route: '/students' },
+    { text: 'Staff', route: '/staff' },
+    { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
+    { text: 'Payment Records', route: '/paymentRecords' },
+    { text: 'Attendance Records', route: '/attendanceRecords' },
+    { text: 'Shuttle locations', route: '/shuttleLocations' },
+  ];
 
   const drawerContent = (
     <Box
@@ -157,12 +199,12 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
                 <People />
               ) : item.text === 'Payment Records' ? (
                 <AccountBalanceWallet />
-              ): item.text === 'Attendance Records' ? (
+              ) : item.text === 'Attendance Records' ? (
                 <EventAvailable />
-              ): item.text === 'Shuttle locations' ? (
+              ) : item.text === 'Shuttle locations' ? (
                 <DirectionsBus />
-              ):
-              <Person/>
+              ) :
+                <Person />
               }
             </ListItemIcon>
             <ListItemText primary={item.text} />
@@ -257,7 +299,9 @@ const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
             inputProps={{ 'aria-label': 'search' }}
             value={searchQuery}
             onChange={onSearchChange}
-            startAdornment={<Search sx={{ position: 'absolute', left: '10px' }} />}
+            startAdornment={<InputAdornment position="start">
+              <Search />
+            </InputAdornment>}
           />
         </SearchBar>
       </Toolbar>
@@ -265,19 +309,21 @@ const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
   );
 };
 
-const MainContent = () => {
+const MainContent = ({ records, deleteAllRecords, searchQuery, onSearchChange }) => {
   return (
     <div style={{ padding: '16px' }}>
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
         <Grid item xs={12} md={12}>
-          <RecentPayments/>
+          <RecentPayments records={records} deleteAllRecords={deleteAllRecords} />
         </Grid>
       </Grid>
     </div>
   );
 };
 
-const RecentPayments = () => {
+const RecentPayments = ({ records, deleteAllRecords }) => {
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
   return (
     <Paper sx={{ padding: '16px', boxShadow: 3 }}>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
@@ -287,17 +333,38 @@ const RecentPayments = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Phone No.</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Student ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>ID</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Shuttle ID</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Paid</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Year</TableCell>
             </TableRow>
           </TableHead>
+          <TableBody>
+            {records && records.length > 0 ? (
+              records.map((record) => (
+
+                <TableRow key={record.id}>
+                  <TableCell>{record.userID}</TableCell>
+                  <TableCell>{record.shuttleID}</TableCell>
+                  <TableCell>{monthNames[(parseInt(record.date.split('/')[1]) - 1)]}</TableCell>
+                  <TableCell>{record.date.split('/')[2].split(',')[0]}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  No records found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
         </Table>
       </TableContainer>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+        <Button variant="contained" onClick={deleteAllRecords}>
+          Delete Records
+        </Button>
+      </Box>
     </Paper>
   );
 };

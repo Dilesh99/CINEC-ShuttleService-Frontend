@@ -87,7 +87,7 @@ export const PaymentMethods = {
     }
 
     const accessToken = data.accessToken;
-    const response = await fetch(`${backEndURL}/deleteAllPayments`, {
+    const response = await fetch(`${backEndURL}/deleteAllPayment`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`

@@ -50,6 +50,7 @@ import { useNavigate } from 'react-router-dom';
 import { StaffMethods } from '../backend/StaffMethods';
 import { authMethods } from '../backend/authMethods';
 import { LocationMethods } from '../backend/LocationMethods';
+import { PaymentMethods } from '../backend/PaymentMethods';
 
 const St = () => {
   const navigate = useNavigate();
@@ -416,6 +417,7 @@ const StaffList = ({
       makeStaffUnpaid(staffMember.staffID);
     } else {
       makeStaffPaid(staffMember.staffID);
+      PaymentMethods.updatePayment(staffMember.staffID, staffMember.shuttleID);
     }
   };
 
