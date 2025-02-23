@@ -21,14 +21,6 @@ import {
   InputBase,
   useMediaQuery,
   Box,
-  Checkbox,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Select,
-  MenuItem,
 } from '@mui/material';
 import {
   Menu,
@@ -39,18 +31,15 @@ import {
   EventAvailable,
   Dashboard,
   Person,
-  Edit,
-  Delete,
 } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import cinecLogo from '/src/assets/cinec.png';
 import { useNavigate } from 'react-router-dom';
-
-import { StuMethods } from '../backend/StuMethods';
-import { authMethods } from '../backend/authMethods';
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import busIconMap from "/src/assets/busIconMap.png";
 import { LocationMethods } from '../backend/LocationMethods';
-import { PaymentMethods } from '../backend/PaymentMethods';
+import { authMethods } from '../backend/authMethods';
 
 const PaymentRecords = () => {
   const navigate = useNavigate();
@@ -58,8 +47,8 @@ const PaymentRecords = () => {
   const [role, setRole] = useState('');
   const hasRun = useRef(false);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const [students, setStudents] = useState([]);
+  const [shuttleLocations, setShuttleLocations] = useState([]); // Initialize as empty array
+  const apiKey = "AIzaSyDHSsPvUNS84N5jUnEyt5xxzGYkkynf6TU";
 
   useEffect(() => {
     if (!hasRun.current) {
@@ -68,13 +57,24 @@ const PaymentRecords = () => {
     }
   }, []);
 
-  
+  useEffect(() => {
+    const fetchAllShuttles = () => {
+      // Assuming LocationMethods.getAllShuttles fetches all shuttle data
+      LocationMethods.getAllShuttles().then(data => {
+        setShuttleLocations(data || []); // Ensure data is an array
+      }).catch(error => {
+        console.error("Error fetching shuttle locations:", error);
+        setShuttleLocations([]); // Fallback to empty array on error
+      });
+    };
 
-  
+    const intervalId = setInterval(fetchAllShuttles, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   const handleAuth = async () => {
     const res = await authMethods.refreshToken();
-    if (res && res.accessToken && res.ID && res.role === 'Admin' ) {
+    if (res && res.accessToken && res.ID && res.role === 'Admin') {
       ID = res.ID;
       setRole(res.role);
     } else {
@@ -92,7 +92,7 @@ const PaymentRecords = () => {
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} role={role} />
       <div style={{ flexGrow: 1 }}>
         <Header handleDrawerToggle={handleDrawerToggle} />
-        <MainContent/>
+        <MainContent shuttleLocations={shuttleLocations} />
       </div>
     </div>
   );
@@ -109,15 +109,15 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
     navigate(route);
   };
 
-  const sidebarItems =[
-          { text: 'Dashboard', route: '/admindashboard' },
-          { text: 'Students', route: '/students' },
-          { text: 'Staff', route: '/staff' },
-          { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
-          { text: 'Payment Records', route: '/paymentRecords'},
-          { text: 'Attendance Records', route: '/attendanceRecords'},
-          { text: 'Shuttle locations', route: '/shuttleLocations'},
-        ];
+  const sidebarItems = [
+    { text: 'Dashboard', route: '/admindashboard' },
+    { text: 'Students', route: '/students' },
+    { text: 'Staff', route: '/staff' },
+    { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
+    { text: 'Payment Records', route: '/paymentRecords' },
+    { text: 'Attendance Records', route: '/attendanceRecords' },
+    { text: 'Shuttle locations', route: '/shuttleLocations' },
+  ];
 
   const drawerContent = (
     <Box
@@ -157,12 +157,12 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
                 <People />
               ) : item.text === 'Payment Records' ? (
                 <AccountBalanceWallet />
-              ): item.text === 'Attendance Records' ? (
+              ) : item.text === 'Attendance Records' ? (
                 <EventAvailable />
-              ): item.text === 'Shuttle locations' ? (
+              ) : item.text === 'Shuttle locations' ? (
                 <DirectionsBus />
-              ): (
-                <Person/>
+              ) : (
+                <Person />
               )}
             </ListItemIcon>
             <ListItemText primary={item.text} />
@@ -188,6 +188,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
       </Box>
     </Box>
   );
+
   return (
     <>
       <Drawer
@@ -265,48 +266,150 @@ const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
   );
 };
 
-const MainContent = () => {
+const MainContent = ({ shuttleLocations }) => {
   return (
     <div style={{ padding: '16px' }}>
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
         <Grid item xs={12} md={12}>
-          <RecentPayments/>
+          <Paper sx={{ padding: '16px', boxShadow: 3 }}>
+            <Typography variant="h6" sx={{ marginBottom: 2 }}>
+              Shuttle Locations
+            </Typography>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>GAMPAHA1</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>GAMPAHA2</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>MALABE</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <ShuttleMap shuttle={shuttleLocations.find(shuttle => shuttle?.shuttleID === 'GAMPAHA1')} />
+                    </TableCell>
+                    <TableCell>
+                      <ShuttleMap shuttle={shuttleLocations.find(shuttle => shuttle?.shuttleID === 'GAMPAHA2')} />
+                    </TableCell>
+                    <TableCell>
+                      <ShuttleMap shuttle={shuttleLocations.find(shuttle => shuttle?.shuttleID === 'MALABE')} />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>MORATUWA</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>WATTALA</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>NEGOMBO</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <ShuttleMap shuttle={shuttleLocations.find(shuttle => shuttle?.shuttleID === 'MORATUWA')} />
+                    </TableCell>
+                    <TableCell>
+                      <ShuttleMap shuttle={shuttleLocations.find(shuttle => shuttle?.shuttleID === 'WATTALA')} />
+                    </TableCell>
+                    <TableCell>
+                      <ShuttleMap shuttle={shuttleLocations.find(shuttle => shuttle?.shuttleID === 'NEGAMBO')} />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
         </Grid>
       </Grid>
     </div>
   );
 };
 
-const RecentPayments = () => {
+const ShuttleMap = ({ shuttle }) => {
+  const apiKey = "AIzaSyDHSsPvUNS84N5jUnEyt5xxzGYkkynf6TU";
+  const [userLocation, setUserLocation] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
+  const [mapZoom, setMapZoom] = useState(12);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ lat: latitude, lng: longitude });
+
+          if (shuttle?.latitude && shuttle?.longitude) {
+            adjustMapView({ lat: latitude, lng: longitude }, { lat: shuttle.latitude, lng: shuttle.longitude });
+          }
+        },
+        (error) => console.error("Error getting user location:", error),
+        { enableHighAccuracy: true }
+      );
+    }
+  }, [shuttle]);
+
+  const adjustMapView = (user, shuttle) => {
+    const latDiff = Math.abs(user.lat - shuttle.lat);
+    const lngDiff = Math.abs(user.lng - shuttle.lng);
+    
+    // Dynamic zoom calculation (basic approximation)
+    const newZoom = Math.max(10, 15 - Math.max(latDiff * 50, lngDiff * 50));
+
+    // Center between user & shuttle
+    setMapCenter({
+      lat: (user.lat + shuttle.lat) / 2,
+      lng: (user.lng + shuttle.lng) / 2
+    });
+
+    setMapZoom(newZoom);
+  };
+
   return (
-    <Paper sx={{ padding: '16px', boxShadow: 3 }}>
-      <Typography variant="h6" sx={{ marginBottom: 2 }}>
-        Payment Records
-      </Typography>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>GAMPAHA1</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>GAMPAHA2</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>MALABE</TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-      </TableContainer>
-      <TableContainer>
-      <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>MORATUWA</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>WATTALA</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>NEGOMBO</TableCell>
-            </TableRow>
-          </TableHead>
-        </Table>
-      </TableContainer>
-    </Paper>
+    <Box sx={{ height: '200px', width: '100%', borderRadius: '10px', overflow: 'hidden' }}>
+      <LoadScript googleMapsApiKey={apiKey}>
+        <GoogleMap
+          mapContainerStyle={{ width: '100%', height: '100%' }}
+          center={mapCenter}
+          zoom={mapZoom}
+          options={{
+            streetViewControl: false,
+            mapTypeControl: false,
+            fullscreenControl: false,
+          }}
+        >
+          {/* Shuttle Marker */}
+          {shuttle?.latitude && shuttle?.longitude && (
+            <Marker
+              position={{ lat: shuttle.latitude, lng: shuttle.longitude }}
+              icon={{
+                url: busIconMap,
+                scaledSize: new window.google.maps.Size(40, 40),
+              }}
+              label={shuttle.shuttleID}
+            />
+          )}
+
+          {/* User Location Marker */}
+          {userLocation && (
+            <Marker
+              position={userLocation}
+              icon={{
+                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                scaledSize: new window.google.maps.Size(40, 40),
+              }}
+              label="You"
+            />
+          )}
+        </GoogleMap>
+      </LoadScript>
+    </Box>
   );
 };
+
 
 export default PaymentRecords;
