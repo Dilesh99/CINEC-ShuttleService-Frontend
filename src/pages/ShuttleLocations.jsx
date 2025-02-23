@@ -36,6 +36,8 @@ import {
   People,
   DirectionsBus,
   AccountBalanceWallet,
+  EventAvailable,
+  Dashboard,
   Person,
   Edit,
   Delete,
@@ -99,7 +101,7 @@ const PaymentRecords = () => {
 const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedIndex, setSelectedIndex] = useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(6);
   const navigate = useNavigate();
 
   const handleListItemClick = (index, route) => {
@@ -136,6 +138,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
             selected={selectedIndex === index}
             onClick={() => handleListItemClick(index, item.route)}
             sx={{
+              cursor: 'pointer',
               color: selectedIndex === index ? 'white' : 'inherit',
               backgroundColor: selectedIndex === index ? 'secondary.light2' : 'inherit',
               '&:hover': {
@@ -145,15 +148,21 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
           >
             <ListItemIcon sx={{ color: selectedIndex === index ? 'black' : 'inherit' }}>
               {item.text === 'Dashboard' ? (
-                <People />
+                <Dashboard />
               ) : item.text === 'Students' ? (
                 <Person />
               ) : item.text === 'Staff' ? (
-                <People />
+                <Person />
               ) : item.text === 'Cashiers, Shuttles & Drivers' ? (
-                <DirectionsBus />
-              ) : (
+                <People />
+              ) : item.text === 'Payment Records' ? (
                 <AccountBalanceWallet />
+              ): item.text === 'Attendance Records' ? (
+                <EventAvailable />
+              ): item.text === 'Shuttle locations' ? (
+                <DirectionsBus />
+              ): (
+                <Person/>
               )}
             </ListItemIcon>
             <ListItemText primary={item.text} />
@@ -278,13 +287,20 @@ const RecentPayments = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Phone No.</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Student ID</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Shuttle ID</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Paid</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>GAMPAHA1</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>GAMPAHA2</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>MALABE</TableCell>
+            </TableRow>
+          </TableHead>
+        </Table>
+      </TableContainer>
+      <TableContainer>
+      <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ fontWeight: 'bold' }}>MORATUWA</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>WATTALA</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>NEGOMBO</TableCell>
             </TableRow>
           </TableHead>
         </Table>

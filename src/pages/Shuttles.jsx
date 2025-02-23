@@ -38,6 +38,8 @@ import {
   People,
   DirectionsBus,
   AccountBalanceWallet,
+  Dashboard,
+  EventAvailable,
   Edit,
   Delete
 } from '@mui/icons-material';
@@ -348,6 +350,9 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
           { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
+          { text: 'Payment Records', route: '/paymentRecords' },
+          { text: 'Attendance Records', route: '/attendanceRecords' },
+          { text: 'Shuttle locations', route: '/shuttleLocations' },
         ].map((item, index) => (
           <ListItem
             button
@@ -355,6 +360,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
             selected={selectedIndex === index}
             onClick={() => handleListItemClick(index, item.route)}
             sx={{
+              cursor: 'pointer',
               color: selectedIndex === index ? 'white' : 'inherit',
               backgroundColor: selectedIndex === index ? 'secondary.light2' : 'inherit',
               '&:hover': {
@@ -363,7 +369,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
             }}
           >
             <ListItemIcon sx={{ color: selectedIndex === index ? 'black' : 'inherit' }}>
-              {index === 0 ? <People /> : index === 1 ? <Person /> : index === 2 ? <People /> : index === 3 ? <DirectionsBus /> : <AccountBalanceWallet />}
+              {index === 0 ? <Dashboard /> : index === 1 ? <Person /> : index === 2 ? <Person /> : index === 3 ? <People /> : index === 4? <AccountBalanceWallet/> : index === 5? <EventAvailable/> : index === 6? <DirectionsBus />: <Person/>}
             </ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>

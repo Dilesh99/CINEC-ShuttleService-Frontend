@@ -36,6 +36,8 @@ import {
   People,
   DirectionsBus,
   AccountBalanceWallet,
+  EventAvailable,
+  Dashboard,
   Person,
   Edit,
   Delete,
@@ -67,11 +69,11 @@ const St = () => {
   }, []);
 
   // Filter staff based on search query
-  const filteredStaff = staff.filter((staffMember) =>
+  const filteredStaff = staff? (staff.filter((staffMember) =>
     staffMember.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
     staffMember.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     staffMember.staffID.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  )):[];
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value); // Update search query state
@@ -177,7 +179,7 @@ const St = () => {
 const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedIndex, setSelectedIndex] = useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(2);
   const navigate = useNavigate();
 
   const handleListItemClick = (index, route) => {
@@ -220,6 +222,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
             selected={selectedIndex === index}
             onClick={() => handleListItemClick(index, item.route)}
             sx={{
+              cursor: 'pointer',
               color: selectedIndex === index ? 'white' : 'inherit',
               backgroundColor: selectedIndex === index ? 'secondary.light2' : 'inherit',
               '&:hover': {
@@ -229,16 +232,22 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
           >
             <ListItemIcon sx={{ color: selectedIndex === index ? 'black' : 'inherit' }}>
               {item.text === 'Dashboard' ? (
-                <People />
+                <Dashboard />
               ) : item.text === 'Students' ? (
                 <Person />
               ) : item.text === 'Staff' ? (
-                <People />
+                <Person />
               ) : item.text === 'Cashiers, Shuttles & Drivers' ? (
-                <DirectionsBus />
-              ) : (
+                <People />
+              ) : item.text === 'Payment Records' ? (
                 <AccountBalanceWallet />
-              )}
+              ): item.text === 'Attendance Records' ? (
+                <EventAvailable />
+              ): item.text === 'Shuttle locations' ? (
+                <DirectionsBus />
+              ):
+              <Person/>
+              }
             </ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>

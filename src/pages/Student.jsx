@@ -36,9 +36,12 @@ import {
   People,
   DirectionsBus,
   AccountBalanceWallet,
+  EventAvailable,
+  Dashboard,
   Person,
   Edit,
   Delete,
+  QuestionAnswer,
 } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
@@ -67,11 +70,11 @@ const St = () => {
     }
   }, []);
 
-  const filteredStudents = students.filter(student =>
+  const filteredStudents = students ? (students.filter(student =>
     student.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
     student.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     student.studentsID.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  )) : [];
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -155,10 +158,10 @@ const St = () => {
     <div style={{ display: 'flex' }}>
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} role={role} />
       <div style={{ flexGrow: 1 }}>
-        <Header 
-        handleDrawerToggle={handleDrawerToggle} 
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
+        <Header
+          handleDrawerToggle={handleDrawerToggle}
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
         />
         <MainContent
           students={filteredStudents}
@@ -177,7 +180,7 @@ const St = () => {
 const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
   const theme = useTheme();
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(1);
   const navigate = useNavigate();
 
   const handleListItemClick = (index, route) => {
@@ -188,18 +191,18 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
   const sidebarItems =
     role === 'Cashier'
       ? [
-          { text: 'Students', route: '/students' },
-          { text: 'Staff', route: '/staff' },
-        ]
+        { text: 'Students', route: '/students' },
+        { text: 'Staff', route: '/staff' },
+      ]
       : [
-          { text: 'Dashboard', route: '/admindashboard' },
-          { text: 'Students', route: '/students' },
-          { text: 'Staff', route: '/staff' },
-          { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
-          { text: 'Payment Records', route: '/paymentRecords'},
-          { text: 'Attendance Records', route: '/attendanceRecords'},
-          { text: 'Shuttle locations', route: '/shuttleLocations'},
-        ];
+        { text: 'Dashboard', route: '/admindashboard' },
+        { text: 'Students', route: '/students' },
+        { text: 'Staff', route: '/staff' },
+        { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
+        { text: 'Payment Records', route: '/paymentRecords' },
+        { text: 'Attendance Records', route: '/attendanceRecords' },
+        { text: 'Shuttle locations', route: '/shuttleLocations' },
+      ];
 
   const drawerContent = (
     <Box
@@ -220,6 +223,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
             selected={selectedIndex === index}
             onClick={() => handleListItemClick(index, item.route)}
             sx={{
+              cursor: 'pointer',
               color: selectedIndex === index ? 'white' : 'inherit',
               backgroundColor: selectedIndex === index ? 'secondary.light2' : 'inherit',
               '&:hover': {
@@ -229,16 +233,22 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, role }) => {
           >
             <ListItemIcon sx={{ color: selectedIndex === index ? 'black' : 'inherit' }}>
               {item.text === 'Dashboard' ? (
-                <People />
+                <Dashboard />
               ) : item.text === 'Students' ? (
                 <Person />
               ) : item.text === 'Staff' ? (
-                <People />
+                <Person />
               ) : item.text === 'Cashiers, Shuttles & Drivers' ? (
-                <DirectionsBus />
-              ) : (
+                <People />
+              ) : item.text === 'Payment Records' ? (
                 <AccountBalanceWallet />
-              )}
+              ) : item.text === 'Attendance Records' ? (
+                <EventAvailable />
+              ) : item.text === 'Shuttle locations' ? (
+                <DirectionsBus />
+              ) :
+                <Person />
+              }
             </ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>

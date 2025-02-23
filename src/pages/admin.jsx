@@ -3,7 +3,7 @@ import {
   AppBar, Toolbar, IconButton, Typography, Button, Paper, Drawer, List, ListItem, ListItemIcon, ListItemText,
   Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, InputBase, useMediaQuery, Box
 } from '@mui/material';
-import { Menu, Search, People, DirectionsBus, Person } from '@mui/icons-material';
+import { Menu, Search, People, DirectionsBus, Person, AccountBalanceWallet, EventAvailable, Dashboard } from '@mui/icons-material';
 import { styled, alpha } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import { Link, useNavigate } from 'react-router-dom';
@@ -91,24 +91,24 @@ const Admin = () => {
   };
 
   // Filter students and drivers based on the search query
-  const filteredStudents = allStudents.filter(student =>
+  const filteredStudents = allStudents ? (allStudents.filter(student =>
     student.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
     student.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     student.studentsID.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  )) : [];
 
-  const filteredDrivers = allDrivers.filter(driver =>
+  const filteredDrivers = allDrivers ? (allDrivers.filter(driver =>
     driver.shuttleID.toLowerCase().includes(searchQuery.toLowerCase()) ||
     driver.username.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  )) : [];
 
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={() => setMobileOpen(!mobileOpen)} />
       <div style={{ flexGrow: 1 }}>
         <Header handleDrawerToggle={() => setMobileOpen(!mobileOpen)} searchQuery={searchQuery} onSearchChange={handleSearchChange} />
-        <MainContent 
-          allStudents={filteredStudents} 
+        <MainContent
+          allStudents={filteredStudents}
           loadingStudents={loadingStudents}
           allStaff={allStaff}
           loadingStaff={loadingStaff}
@@ -148,9 +148,9 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           { text: 'Students', route: '/students' },
           { text: 'Staff', route: '/staff' },
           { text: 'Cashiers, Shuttles & Drivers', route: '/shuttles' },
-          { text: 'Payment Records', route: '/paymentRecords'},
-          { text: 'Attendance Records', route: '/attendanceRecords'},
-          { text: 'Shuttle locations', route: '/shuttleLocations'},
+          { text: 'Payment Records', route: '/paymentRecords' },
+          { text: 'Attendance Records', route: '/attendanceRecords' },
+          { text: 'Shuttle locations', route: '/shuttleLocations' },
         ].map((item, index) => (
           <ListItem
             button
@@ -158,6 +158,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
             selected={selectedIndex === index}
             onClick={() => handleListItemClick(index, item.route)}
             sx={{
+              cursor: 'pointer',
               color: selectedIndex === index ? 'white' : 'inherit',
               backgroundColor: selectedIndex === index ? 'secondary.light2' : 'inherit',
               '&:hover': {
@@ -167,16 +168,21 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
           >
             <ListItemIcon sx={{ color: selectedIndex === index ? 'black' : 'inherit' }}>
               {index === 0 ? (
-                <People />
+                <Dashboard />
               ) : index === 1 ? (
                 <Person />
               ) : index === 2 ? (
-                <People />
+                <Person />
               ) : index === 3 ? (
-                <DirectionsBus />
-              ) : (
+                <People />
+              ) : index === 4 ? (
                 <AccountBalanceWallet />
-              )}
+              ) : index === 5 ? (
+                <EventAvailable />
+              ) : index === 6 ? (
+                <DirectionsBus />
+              ) : <Person />
+              }
             </ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
@@ -290,7 +296,7 @@ const MainContent = ({
 }) => {
   return (
     <div style={{ padding: '16px' }}>
-      <DashboardStats 
+      <DashboardStats
         studentCount={(allStudents ?? []).length}
         staffCount={(allStaff ?? []).length}
         driverCount={(allDrivers ?? []).length}
@@ -298,16 +304,16 @@ const MainContent = ({
       <Grid container spacing={2} sx={{ marginTop: '16px' }}>
         {/* Left column: Students table */}
         <Grid item xs={12} md={8}>
-          <RecentStudents 
-            allStudents={allStudents} 
-            loadingStudents={loadingStudents} 
+          <RecentStudents
+            allStudents={allStudents}
+            loadingStudents={loadingStudents}
           />
         </Grid>
         {/* Right column: Drivers table */}
         <Grid item xs={12} md={4}>
-          <DriverDetails 
-            allDrivers={allDrivers} 
-            loadingDrivers={loadingDrivers} 
+          <DriverDetails
+            allDrivers={allDrivers}
+            loadingDrivers={loadingDrivers}
           />
         </Grid>
       </Grid>
@@ -354,9 +360,9 @@ const RecentStudents = ({ allStudents, loadingStudents }) => {
           sx={{
             float: 'right',
             marginBottom: '8px',
-            backgroundColor: 'secondary.light',
+            backgroundColor: '#D4790E',
             '&:hover': {
-              backgroundColor: 'secondary.light2',
+              backgroundColor: '#945409',
             },
           }}
         >
@@ -411,9 +417,9 @@ const DriverDetails = ({ allDrivers, loadingDrivers }) => {
           sx={{
             float: 'right',
             marginBottom: '8px',
-            backgroundColor: 'secondary.light',
+            backgroundColor: '#D4790E',
             '&:hover': {
-              backgroundColor: 'secondary.light2',
+              backgroundColor: '#945409',
             },
           }}
         >

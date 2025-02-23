@@ -27,7 +27,7 @@ import Dri from './pages/Driver';
 import QRScanner from './pages/QRScanner';
 import TestPage from './pages/testPage';
 import PaymentRecords from './pages/PaymentRecords';
-import AttendanceRecords from './pages/AttendanceRecoeds';
+import AttendanceRecords from './pages/AttendanceRecords';
 import ShuttleLocations from './pages/ShuttleLocations';
 import DevelopmentTeam from './pages/devTeam';
 
@@ -61,7 +61,7 @@ function App() {
 
       <BrowserRouter>
         <Routes>
-        <Route index element={<DevelopmentTeam/>} ></Route>
+        <Route index element={<SignIn/>} ></Route>
         
         <Route path='/interaction' element={<Interaction/>} ></Route>
         <Route path='/signup' element={<SignUp/>} ></Route>
@@ -90,6 +90,8 @@ function App() {
         <Route path='/qrscanner' element={<QRScanner/>} ></Route>
         <Route path='/testPage' element={<TestPage/>} ></Route> 
         <Route path='/paymentRecords' element={<PaymentRecords/>}></Route>
+        <Route path='/attendanceRecords' element={<AttendanceRecords/>}></Route>
+        <Route path='/shuttleLocations' element={<ShuttleLocations/>}></Route>
         <Route path='/dev' element={<DevelopmentTeam/>}></Route>
         </Routes>
       </BrowserRouter>
