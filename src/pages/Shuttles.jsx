@@ -457,7 +457,7 @@ const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
         >
           <Menu />
         </IconButton>
-        <Typography variant="h6">Dashboard</Typography>
+        <Typography variant="h6">Cashiers, Shuttles & Drivers</Typography>
         <SearchBar>
           <StyledInputBase
             placeholder="Search…"

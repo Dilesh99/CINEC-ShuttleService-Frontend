@@ -3,7 +3,7 @@ import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import BackgroundImage from "/src/assets/bg5.jpg";
 import InnerBackgroundImage from "/src/assets/home img.jpg";
 import { useNavigate } from "react-router-dom";
-import Layout from "../components/Layout";
+import Layout from "../components/layout";
 
 import React, { useEffect, useRef } from 'react'
 

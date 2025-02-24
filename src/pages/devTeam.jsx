@@ -6,6 +6,7 @@ import Layout from "../components/Layout";
 
 import naveenImg from "../assets/naveen.jpg";
 import deshanImg from "../assets/deshan.jpg";
+import dileshaImg from "../assets/dilesha.jpg";
 import thepuliImg from "../assets/thepuli.jpg";
 import imashaImg from "../assets/imasha.jpg";
 import buddhikaImg from "../assets/buddhika.jpg";
@@ -33,8 +34,8 @@ const teamMembers = [
     name: "Dilesha Gayashan",
     role: "Front End Developer",
     description: "Frontend Developer",
-    image: "https://creatie.ai/ai/api/search-image?query=A%20professional%20headshot%20of%20a%20young%20male%20software%20developer&width=400&height=400",
-    email: "john.smith@company.com",
+    image: dileshaImg,
+    email: "gayashandile@gmail.com",
     linkedin: "https://lk.linkedin.com/in/dilesha-gayashan-11bb15282",
     github: "https://github.com/Dilesh99"
   },

@@ -292,7 +292,7 @@ const Header = ({ handleDrawerToggle, searchQuery, onSearchChange }) => {
         >
           <Menu />
         </IconButton>
-        <Typography variant="h6">Dashboard</Typography>
+        <Typography variant="h6">Attendance Records</Typography>
         <SearchBar>
           <StyledInputBase
             placeholder="Search…"

@@ -295,7 +295,7 @@ const SignUp2 = () => {
               id="outlined-basic"
               label=""
               variant="outlined"
-              placeholder="ID"
+              placeholder="Staff ID"
               onChange={(e) => setStaffID(e.target.value)}
               InputProps={{
                 startAdornment: (
